@@ -1,0 +1,81 @@
+{
+  "home": {
+    "hero": {
+      "tagline": "Codescope",
+      "headline": "Your Trusted Partner in",
+      "subheadline": "Digital Transformation",
+      "caption": " From custom applications to website solutions we help businesses and travel agencies thrive",
+      "cta-button": "Discover Our Services"
+    },
+    "about": {
+      "title": "Who are we?",
+      "caption": "Codescope was founded to drive growth for businesses in Iraq by delivering precisely tailored applications and innovative websites. From initial concept to final deployment, we’re dedicated to creating products that combine thoughtful design, robust development, and meticulous quality assurance.",
+      "mainCard": {
+        "label": "Ready for the future",
+        "title": "Create seamless booking experiences with custom systems that help you grow.",
+        "button": "Contact Us Today"
+      },
+      "get-started-card": {
+        "title": "Get started now!",
+        "caption": "Stand out online with a secure, user-friendly e-commerce platform."
+      },
+      "lets-talk-card": {
+        "title": "Lets talk",
+        "caption": "Impress clients with a sleek, polished website that builds trust."
+      },
+      "get-started-now-card": {
+        "title": "Get started now!",
+        "caption": "Stand out online with a secure, user-friendly e-commerce platform."
+      }
+    },
+    "our-expertises": {
+      "title": "Our Expertise, Your Advantage",
+      "subtitle": "Your Partner in Innovative Solutions",
+      "caption": "At Codescope, we specialize in crafting high-quality, responsive digital solutions that empower businesses to grow and thrive. Our team delivers excellence across several key areas:",
+      "services": {
+        "app-development": {
+          "title": "Application <br></br> Development",
+          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+        },
+        "web-development": {
+          "title": "Website <br></br> Development",
+          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+        },
+        "management-systems": {
+          "title": "Management <br></br> Systems",
+          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+        }
+      }
+    },
+    "featured-project": {
+      "label": "Featured Project",
+      "title": "<i><strong>Fly4all,</strong></i> All-In-One Travel Booking Platform",
+      "caption": "We built Fly4All from the ground up, crafting its brand identity, designing its user-friendly interface, and developing every line of code. It’s a complete solution for flights, hotels, travel packages, and visa applications—all in one place. If you’re looking for a similar seamless experience, we can create it for you.",
+      "button": "Let’s start building your platform today"
+    },
+    "tourscope": {
+      "title": "<strong>Tourscope</strong> <br></br> Travel made simple",
+      "caption": "Tourscope, a signature product by Codescope, is designed for travel agencies to provide their clients with a seamless booking experience. Its intuitive design and lightning-fast performance make it easy to browse flights, hotels, packages, and visa services—giving travelers everything they need, quickly and effortlessly.",
+      "button": "Contact us"
+    }
+  },
+  "header": {
+    "links": {
+      "about": "About",
+      "services": "Our Services",
+      "tourscope": "Tourscope",
+      "contact": "Contact"
+    }
+  },
+  "contactUsDialog": {
+    "title": "Contact Us",
+    "locations": {
+      "baghdad": "Baghdad - Al Mansur - Yarmouk",
+      "karbala": "Iraq - Karbala - Sharie Almakhazin",
+      "aman": "Amman - muscat"
+    }
+  },
+  "common": {
+    "video-error": "Your browser does not support the video tag."
+  }
+}
