@@ -1,16 +1,59 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-export default createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
+
+function getPathnameWithoutLocale(pathname: string, locales: string[]) {
+  for (const locale of locales) {
+    if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
+      return pathname.slice(locale.length + 1) || "/";
+    }
+  }
+  return pathname;
+}
+
+export default async function middleware(request: NextRequest) {
+  const token = (await cookies()).get("token");
+  const pathname = request.nextUrl.pathname;
+
+  const pathnameWithoutLocale = getPathnameWithoutLocale(
+    pathname,
+    routing.locales,
+  );
+
+  if (!token && pathnameWithoutLocale.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (
+    token &&
+    (pathnameWithoutLocale.startsWith("/dashboard") ||
+      pathnameWithoutLocale === "/login")
+  ) {
+    const url = new URL("/api/auth/checkAuth", request.url);
+
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === 200 && pathnameWithoutLocale === "/login") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    if (response.status === 401) {
+      (await cookies()).delete("token");
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  return intlMiddleware(request);
+}
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: [
-    // Match all pathnames except for
-    // - API routes
-    // - files with extensions (e.g. favicon.ico)
-    // - _next (Next.js internals)
-    // - _vercel (Vercel internals)
-    "/((?!api|_next|_vercel|.*\\..*).*)",
-  ],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

@@ -10,6 +10,10 @@ export type VariablesStore = {
   contactUs: boolean;
   showContactUs: () => void;
   hideContactUs: () => void;
+  // Application form message
+  isMessageVisible: boolean;
+  showMessage: () => void;
+  hideMessage: () => void;
 };
 
 export const useVariablesStore = create<VariablesStore>((set) => ({
@@ -20,4 +24,8 @@ export const useVariablesStore = create<VariablesStore>((set) => ({
   contactUs: false,
   showContactUs: () => set(() => ({ contactUs: true })),
   hideContactUs: () => set(() => ({ contactUs: false })),
+  // Application form message
+  isMessageVisible: false,
+  showMessage: () => set(() => ({ isMessageVisible: true })),
+  hideMessage: () => set(() => ({ isMessageVisible: false })),
 }));

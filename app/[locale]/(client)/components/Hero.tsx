@@ -27,7 +27,7 @@ const SplitWords = ({
   wordClass: string;
 }) => {
   return (
-    <span className={cn("inline-flex flex-wrap", className)}>
+    <span className={cn("inline-flex flex-wrap items-center justify-center", className)}>
       {text.split(" ").map((word, i) => (
         <span
           key={i}
@@ -47,6 +47,7 @@ export const Hero = () => {
   const [scope, animate] = useAnimate();
   const t = useTranslations("home.hero");
   const commonTrans = useTranslations("common");
+
   useEffect(() => {
     runAnimation();
   }, []);
@@ -159,7 +160,7 @@ export const Hero = () => {
         </div>
         <div className="text-center flex flex-col items-center gap-16">
           <h2
-            className="2xl:text-[6.875rem] lg:text-8xl sm:text-7xl text-5xl leading-[100%] rtl:leading-tight"
+            className="2xl:text-[6.875rem] lg:text-8xl sm:text-7xl text-5xl leading-[100%] rtl:leading-tight text-center"
             style={{ letterSpacing: -1 }}
           >
             <SplitWords
