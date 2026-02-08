@@ -32,7 +32,7 @@ export default async function middleware(request: NextRequest) {
     (pathnameWithoutLocale.startsWith("/dashboard") ||
       pathnameWithoutLocale === "/login")
   ) {
-    const url = new URL("/api/auth/checkAuth", request.url);
+    const url = new URL("/api/auth/checkAuth", "http://127.0.0.1:3000");
 
     const response = await fetch(url.toString(), {
       method: "POST",
