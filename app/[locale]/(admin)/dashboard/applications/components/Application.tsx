@@ -92,6 +92,17 @@ export const Application = ({
   const { mutate: deleteApplication, isPending: isDeleting } =
     useDeleteApplication(application.id);
 
+  // Helper to ensure we use the API route for uploads
+  const getCvUrl = (url?: string) => {
+    if (!url) return "";
+    if (url.startsWith("/uploads/")) {
+      return `/api${url}`;
+    }
+    return url;
+  };
+
+  const cvUrl = getCvUrl(application?.cvUrl);
+
   return (
     <div
       className={clsx(
@@ -130,40 +141,40 @@ export const Application = ({
           >
             {(application?.status == "PENDING" ||
               application?.status != "APPROVED") && (
-              <Button
-                variant="ghost"
-                className="w-full justify-start hover:bg-emerald-100 rounded-none"
-                size={"sm"}
-                onClick={() => mutate({ status: "APPROVED" })}
-              >
-                <Check className="mr-1 h-4 w-4 text-emerald-700 hover:text-emerald-800" />
-                Accept
-              </Button>
-            )}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-emerald-100 rounded-none"
+                  size={"sm"}
+                  onClick={() => mutate({ status: "APPROVED" })}
+                >
+                  <Check className="mr-1 h-4 w-4 text-emerald-700 hover:text-emerald-800" />
+                  Accept
+                </Button>
+              )}
             {(application?.status == "PENDING" ||
               application?.status != "INTERVIEWED") && (
-              <Button
-                variant="ghost"
-                className="w-full justify-start hover:bg-indigo-100 rounded-none"
-                size={"sm"}
-                onClick={() => mutate({ status: "INTERVIEWED" })}
-              >
-                <Phone className="mr-1 h-4 w-4 text-indigo-800 hover:text-indigo-900" />
-                Interviewed
-              </Button>
-            )}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-indigo-100 rounded-none"
+                  size={"sm"}
+                  onClick={() => mutate({ status: "INTERVIEWED" })}
+                >
+                  <Phone className="mr-1 h-4 w-4 text-indigo-800 hover:text-indigo-900" />
+                  Interviewed
+                </Button>
+              )}
             {(application?.status == "PENDING" ||
               application?.status != "REJECTED") && (
-              <Button
-                variant="ghost"
-                className="w-full justify-start hover:bg-rose-100 rounded-none"
-                size={"sm"}
-                onClick={() => mutate({ status: "REJECTED" })}
-              >
-                <X className="mr-1 h-4 w-4 text-rose-700 hover:text-rose-800" />
-                Reject
-              </Button>
-            )}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-rose-100 rounded-none"
+                  size={"sm"}
+                  onClick={() => mutate({ status: "REJECTED" })}
+                >
+                  <X className="mr-1 h-4 w-4 text-rose-700 hover:text-rose-800" />
+                  Reject
+                </Button>
+              )}
             <Button
               variant="ghost"
               className="w-full justify-start hover:bg-rose-100 rounded-none"
@@ -240,8 +251,8 @@ export const Application = ({
             <p className="font-semibold text-base">
               {application?.availabilityToStart
                 ? new Date(
-                    application?.availabilityToStart,
-                  ).toLocaleDateString()
+                  application?.availabilityToStart,
+                ).toLocaleDateString()
                 : "Immediately"}
             </p>
           </div>
@@ -367,7 +378,7 @@ export const Application = ({
                   variant="ghost"
                   size="sm"
                   className="justify-start gap-2"
-                  onClick={() => window.open(application?.cvUrl, "_blank")}
+                  onClick={() => window.open(cvUrl, "_blank")}
                 >
                   <Eye size={16} />
                   View CV
@@ -378,7 +389,7 @@ export const Application = ({
                   className="justify-start gap-2"
                   asChild
                 >
-                  <a href={application?.cvUrl} download>
+                  <a href={cvUrl} download>
                     <Download size={16} />
                     Download CV
                   </a>

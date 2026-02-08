@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
-    const fileUrl = `/uploads/cvs/${fileName}`;
+    const fileUrl = `/api/uploads/cvs/${fileName}`;
 
     return NextResponse.json(
       {
