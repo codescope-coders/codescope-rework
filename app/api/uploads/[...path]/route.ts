@@ -24,7 +24,15 @@ export async function GET(
         }
 
         const buffer = await readFile(filePath);
-        const contentType = mime.getType(filePath) || "application/octet-stream";
+
+        // Simple MIME type map
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeMap: Record<string, string> = {
+            ".pdf": "application/pdf",
+            ".doc": "application/msword",
+            ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        };
+        const contentType = mimeMap[ext] || "application/octet-stream";
 
         return new NextResponse(buffer, {
             headers: {
