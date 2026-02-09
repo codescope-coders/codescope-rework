@@ -227,7 +227,7 @@ export const ApplicationForm = () => {
       const cvFormData = new FormData();
       cvFormData.append("cv", cvFile!);
       const uploadResponse = await uploadFile(cvFormData);
-
+      console.log(availabilityDate);
       mutate({
         jobId: id,
         fullName: (form.get("fullName") as string)?.trim(),
@@ -243,7 +243,7 @@ export const ApplicationForm = () => {
           ? { expectedSalary: form.get("expectedSalary") as ExpectedSalary }
           : {}),
         ...(availabilityDate
-          ? { availabilityDate: availabilityDate.toISOString() }
+          ? { availabilityToStart: availabilityDate!.toISOString() }
           : {}),
         ...(form.get("yearsOfExperience")
           ? { yearsOfExperience: Number(form.get("yearsOfExperience")) }
@@ -491,9 +491,18 @@ export const ApplicationForm = () => {
                     setAvailabilityDate(date);
                     clearFieldError("availabilityDate");
                   }}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const endOfYear = new Date(today.getFullYear(), 11, 31);
+                    return date < today || date > endOfYear;
+                  }}
+                  fromMonth={new Date()}
+                  toMonth={new Date(new Date().getFullYear(), 11)}
                   fromYear={new Date().getFullYear()}
-                  toYear={new Date().getFullYear() + 1}
+                  toYear={new Date().getFullYear()}
                   captionLayout="dropdown"
+                  defaultMonth={availabilityDate || new Date()}
                 />
               </PopoverContent>
             </Popover>
