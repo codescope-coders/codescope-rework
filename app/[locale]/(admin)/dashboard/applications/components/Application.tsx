@@ -141,40 +141,40 @@ export const Application = ({
           >
             {(application?.status == "PENDING" ||
               application?.status != "APPROVED") && (
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start hover:bg-emerald-100 rounded-none"
-                  size={"sm"}
-                  onClick={() => mutate({ status: "APPROVED" })}
-                >
-                  <Check className="mr-1 h-4 w-4 text-emerald-700 hover:text-emerald-800" />
-                  Accept
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                className="w-full justify-start hover:bg-emerald-100 rounded-none"
+                size={"sm"}
+                onClick={() => mutate({ status: "APPROVED" })}
+              >
+                <Check className="mr-1 h-4 w-4 text-emerald-700 hover:text-emerald-800" />
+                Accept
+              </Button>
+            )}
             {(application?.status == "PENDING" ||
               application?.status != "INTERVIEWED") && (
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start hover:bg-indigo-100 rounded-none"
-                  size={"sm"}
-                  onClick={() => mutate({ status: "INTERVIEWED" })}
-                >
-                  <Phone className="mr-1 h-4 w-4 text-indigo-800 hover:text-indigo-900" />
-                  Interviewed
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                className="w-full justify-start hover:bg-indigo-100 rounded-none"
+                size={"sm"}
+                onClick={() => mutate({ status: "INTERVIEWED" })}
+              >
+                <Phone className="mr-1 h-4 w-4 text-indigo-800 hover:text-indigo-900" />
+                Interviewed
+              </Button>
+            )}
             {(application?.status == "PENDING" ||
               application?.status != "REJECTED") && (
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start hover:bg-rose-100 rounded-none"
-                  size={"sm"}
-                  onClick={() => mutate({ status: "REJECTED" })}
-                >
-                  <X className="mr-1 h-4 w-4 text-rose-700 hover:text-rose-800" />
-                  Reject
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                className="w-full justify-start hover:bg-rose-100 rounded-none"
+                size={"sm"}
+                onClick={() => mutate({ status: "REJECTED" })}
+              >
+                <X className="mr-1 h-4 w-4 text-rose-700 hover:text-rose-800" />
+                Reject
+              </Button>
+            )}
             <Button
               variant="ghost"
               className="w-full justify-start hover:bg-rose-100 rounded-none"
@@ -241,6 +241,17 @@ export const Application = ({
             </div>
           </div>
         )}
+        <div className="flex gap-2">
+          <div className="size-7 flex items-center justify-center rounded-sm border border-input/50 bg-white">
+            <Calendar size={18} className="text-primary" />
+          </div>
+          <div className="text-xs leading-[100%]">
+            <h3 className="text-gray-600">Date of Birth</h3>
+            <p className="font-semibold text-base">
+              {new Date(application.date_of_birth).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
 
         <div className="flex gap-2">
           <div className="size-7 flex items-center justify-center rounded-sm border border-input/50 bg-white">
@@ -251,8 +262,8 @@ export const Application = ({
             <p className="font-semibold text-base">
               {application?.availabilityToStart
                 ? new Date(
-                  application?.availabilityToStart,
-                ).toLocaleDateString()
+                    application?.availabilityToStart,
+                  ).toLocaleDateString()
                 : "Immediately"}
             </p>
           </div>

@@ -7,7 +7,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import localFont from "next/font/local";
 import { QueryProvider } from "@/lib/queryClientProvider";
-import { Toaster } from "sonner";
 import { ApplicationSentMessage } from "@/components/ApplicationSentMessage";
 
 export const urbanist = Urbanist({

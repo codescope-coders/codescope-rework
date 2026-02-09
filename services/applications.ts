@@ -91,7 +91,7 @@ export type ApplicationDto = {
   email: string;
   phoneNumber?: string;
   currentCity?: string;
-  date_of_birth?: string;
+  date_of_birth: string;
   nationality?: string;
   expectedSalary?: ExpectedSalary;
   availabilityToStart?: string;

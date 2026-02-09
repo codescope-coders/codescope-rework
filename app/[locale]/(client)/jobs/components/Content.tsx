@@ -62,7 +62,12 @@ export const Content = () => {
           })}
         {displayedJobs?.map((job, i) => (
           <div
-            className="job p-4 bg-[#34333b] rounded-md transition duration-200 flex flex-col"
+            className={clsx(
+              "job p-4 bg-[#34333b] rounded-md transition duration-200 flex flex-col",
+              {
+                "pointer-events-none opacity-70": job.status == "CLOSED",
+              },
+            )}
             key={i}
           >
             <div className="header pb-4 border-b mb-4 border-b-[#4d4b57] items-satrt flex flex-col">
@@ -97,7 +102,7 @@ export const Content = () => {
                 </div>
               </div>
               <Link href={`/jobs/${job.id}`}>
-                <Button className="flex w-full h-10 rounded-sm hover:bg-primary bg-secondary transition duration-200 text-white font-bold text-lg cursor-pointer no-underline shadow-lg hover:shadow-xl">
+                <Button className="flex w-full h-10 rounded-sm hover:bg-primary bg-secondary transition duration-200 text-white font-bold text-lg no-underline shadow-lg hover:shadow-xl">
                   Apply Now
                 </Button>
               </Link>
