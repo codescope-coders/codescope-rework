@@ -1,16 +1,16 @@
 "use client";
-import { useState } from "react";
-import Container from "./Container";
-import { Link, usePathname, useRouter } from "@/i18n/routing";
-import { Button } from "./ui/button";
-import { Languages } from "lucide-react";
-import LottiePlayer from "./lotties/LottiePlayer";
 import LogoAnimationData from "@/assets/lotties/header-logo.json";
-import { useLocale, useTranslations } from "next-intl";
-import { useTransition } from "react";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { useVariablesStore } from "@/stores/variables";
+import clsx from "clsx";
+import { Languages } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
 import { AnimatedMenuIcon } from "./AnimatedMenuIcon";
+import Container from "./Container";
+import LottiePlayer from "./lotties/LottiePlayer";
 import { Sidebar } from "./Sidebar";
+import { Button } from "./ui/button";
 
 const links = [
   {
@@ -44,7 +44,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="h-18.5 bg-primary">
+      <header className="h-header-height bg-primary">
         <Container className="flex items-center justify-between h-full">
           <Link href={"/"} className="min-w-60">
             <LottiePlayer
@@ -72,13 +72,18 @@ export const Header = () => {
               <li key={i}>
                 <Link
                   href={link.path}
-                  className="font-semibold text-base leading-[150%] hover:text-secondary transition-colors"
+                  className={clsx(
+                    "font-semibold text-base leading-[150%] hover:text-secondary transition-colors opacity-90",
+                    {
+                      "opacity-100": pathname.startsWith(link.path),
+                    },
+                  )}
                 >
                   {t(`links.${link.name}`)}
                 </Link>
               </li>
             ))}
-            <Link href={"/#tourscope"}>
+            <Link href={"/tourscope"}>
               <Button variant={"white"} className="uppercase font-bold">
                 {t("links.tourscope")}
               </Button>

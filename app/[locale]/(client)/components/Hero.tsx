@@ -2,14 +2,13 @@
 
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { AnimationSequence, stagger, useAnimate } from "motion/react";
+import { useLocale, useTranslations } from "next-intl";
 import { Inter } from "next/font/google";
 import { useEffect } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
-import { Link } from "@/i18n/routing";
-import { useVariablesStore } from "@/stores/variables";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +26,12 @@ const SplitWords = ({
   wordClass: string;
 }) => {
   return (
-    <span className={cn("inline-flex flex-wrap items-center justify-center", className)}>
+    <span
+      className={cn(
+        "inline-flex flex-wrap items-center justify-center",
+        className,
+      )}
+    >
       {text.split(" ").map((word, i) => (
         <span
           key={i}

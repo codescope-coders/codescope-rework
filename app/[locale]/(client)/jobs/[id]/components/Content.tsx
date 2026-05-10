@@ -1,12 +1,12 @@
 "use client";
 import Container from "@/components/Container";
-import { useGetJobById } from "@/hooks/useJobs";
-import { useParams } from "next/navigation";
-import DetailsSkeleton from "./DetailsSkeleton";
-import clsx from "clsx";
-import { Building, ClockIcon, MapPinIcon, TableIcon } from "lucide-react";
 import { timeAgo } from "@/helpers/date";
+import { useGetJobById } from "@/hooks/useJobs";
+import clsx from "clsx";
+import { ClockIcon, MapPinIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { ApplicationForm } from "./ApplicationForm";
+import DetailsSkeleton from "./DetailsSkeleton";
 
 export const Content = () => {
   const { id } = useParams<{ id: string }>();
