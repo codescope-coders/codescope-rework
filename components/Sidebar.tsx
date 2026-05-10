@@ -1,12 +1,11 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
-import { Button } from "./ui/button";
+import { useVariablesStore } from "@/stores/variables";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import { Languages, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
-import { useVariablesStore } from "@/stores/variables";
+import { Button } from "./ui/button";
 
 const links = [
   {
@@ -23,7 +22,7 @@ const links = [
   },
   {
     name: "tourscope",
-    path: "/#tourscope",
+    path: "/tourscope",
   },
 ];
 

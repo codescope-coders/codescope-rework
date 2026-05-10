@@ -4,79 +4,269 @@
       "tagline": "Codescope",
       "headline": "Your Trusted Partner in",
       "subheadline": "Digital Transformation",
-      "caption": " From custom applications to website solutions we help businesses and travel agencies thrive",
-      "cta-button": "Discover Our Services"
+      "caption": "From custom applications to web solutions, we help businesses and travel agencies grow and thrive.",
+      "cta-button": "Explore Our Services"
     },
     "about": {
-      "title": "Who are we?",
-      "caption": "Codescope was founded to drive growth for businesses in Iraq by delivering precisely tailored applications and innovative websites. From initial concept to final deployment, we’re dedicated to creating products that combine thoughtful design, robust development, and meticulous quality assurance.",
+      "title": "Who Are We?",
+      "caption": "Codescope was founded to drive business growth in Iraq by delivering precisely crafted applications and innovative websites. From the first idea to the final launch, we are committed to building products that combine thoughtful design, robust development, and the highest quality standards.",
       "mainCard": {
-        "label": "Ready for the future",
-        "title": "Create seamless booking experiences with custom systems that help you grow.",
+        "label": "Ready for the Future",
+        "title": "Build seamless booking experiences through custom systems that help you grow.",
         "button": "Contact Us Today"
       },
       "get-started-card": {
-        "title": "Get started now!",
-        "caption": "Stand out online with a secure, user-friendly e-commerce platform."
+        "title": "Get Started Now!",
+        "caption": "Stand out online with a secure and easy-to-use e-commerce platform."
       },
       "lets-talk-card": {
-        "title": "Lets talk",
-        "caption": "Impress clients with a sleek, polished website that builds trust."
+        "title": "Let's Talk",
+        "caption": "Impress your clients with an elegant, professional website that builds trust."
       },
       "get-started-now-card": {
-        "title": "Get started now!",
-        "caption": "Stand out online with a secure, user-friendly e-commerce platform."
+        "title": "Get Started Now!",
+        "caption": "Stand out online with a secure and easy-to-use e-commerce platform."
       }
     },
     "our-expertises": {
       "title": "Our Expertise, Your Advantage",
       "subtitle": "Your Partner in Innovative Solutions",
-      "caption": "At Codescope, we specialize in crafting high-quality, responsive digital solutions that empower businesses to grow and thrive. Our team delivers excellence across several key areas:",
+      "caption": "At Codescope, we specialise in delivering high-quality, responsive digital solutions that help businesses grow and succeed. Our team strives for excellence across several key areas:",
       "services": {
         "app-development": {
-          "title": "Application <br></br> Development",
-          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+          "title": "App <br></br> Development",
+          "desc": "Whether you need a mobile app or a custom enterprise solution, we build applications designed for smooth performance, ease of use, and high reliability. Every product is carefully developed to fit your unique business needs."
         },
         "web-development": {
-          "title": "Website <br></br> Development",
-          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+          "title": "Web <br></br> Development",
+          "desc": "Whether you need a landing page or a full-featured platform, we build modern websites focused on performance, seamless experience, and high quality that meets your business goals."
         },
         "management-systems": {
           "title": "Management <br></br> Systems",
-          "desc": "Whether you need a mobile app or a tailored enterprise solution, we build custom applications designed for seamless performance, usability, and reliability. Each product is carefully crafted to meet your unique business needs."
+          "desc": "We develop custom management systems that help you organise your business efficiently, improve operations, and make better decisions through reliable, scalable solutions."
         }
       }
     },
     "featured-project": {
       "label": "Featured Project",
-      "title": "<i><strong>Fly4all,</strong></i> All-In-One Travel Booking Platform",
-      "caption": "We built Fly4All from the ground up, crafting its brand identity, designing its user-friendly interface, and developing every line of code. It’s a complete solution for flights, hotels, travel packages, and visa applications—all in one place. If you’re looking for a similar seamless experience, we can create it for you.",
-      "button": "Let’s start building your platform today"
+      "title": "<i><strong>Fly4all,</strong></i> an all-in-one travel booking platform",
+      "caption": "We built Fly4All from scratch — starting with visual identity design, through an intuitive user interface, to developing every line of code. It is a complete platform for flights, hotels, travel packages, and visa services — all in one place. If you are looking for a similar experience, we can build it for you.",
+      "button": "Let's Start Building Your Platform Today"
     },
     "tourscope": {
-      "title": "<strong>Tourscope</strong> <br></br> Travel made simple",
-      "caption": "Tourscope, a signature product by Codescope, is designed for travel agencies to provide their clients with a seamless booking experience. Its intuitive design and lightning-fast performance make it easy to browse flights, hotels, packages, and visa services—giving travelers everything they need, quickly and effortlessly.",
-      "button": "Contact us"
+      "title": "<strong>Tourscope</strong> <br></br> Travel Made Easier",
+      "caption": "Tourscope is a flagship product from Codescope, designed specifically for travel agencies to deliver a seamless booking experience for their clients. It features an intuitive design and lightning-fast performance that makes browsing flights, hotels, packages, and visa services effortless — giving travellers everything they need, quickly and easily.",
+      "button": "Contact Us"
+    }
+  },
+  "tourscope": {
+    "hero": {
+      "title": "Packages & <br></br> Pricing Proposal",
+      "tagline": "Pricing Proposal · 2026",
+      "caption": "The complete infrastructure to manage and grow your travel business — under your brand, and under your full control.",
+      "qualificationDays": "Extra Onboarding Days",
+      "extraUnits": "Add-on Modules",
+      "platformCapabilities": "Platform Capabilities",
+      "basicPackages": "Core Packages",
+      "validity": "Validity",
+      "issueDate": "Issue Date"
+    },
+    "whyTourscope": {
+      "tagline": "01 · Why Tourscope",
+      "title": "Why Tourscope",
+      "caption": "Nine pillars that set Tourscope apart from traditional solutions in the travel sector. Each pillar is designed to give agencies deeper control, higher efficiency, and a real capacity to scale.",
+      "cards": {
+        "01": {
+          "title": "Full Brand Ownership",
+          "body": "The platform is delivered under your brand: your domain, your identity, your interface. Your clients see a fully integrated digital platform bearing your name — not a third-party tool."
+        },
+        "02": {
+          "title": "Centralised Booking System",
+          "body": "A complete lifecycle from zero to confirmation: search ← pricing ← payment ← confirmation ← follow-up. An end to fragmentation and manual processing."
+        },
+        "03": {
+          "title": "Advanced Pricing Control",
+          "body": "Define pricing logic based on season, demand, service type, or customer segment. Real-time inventory and dynamic profit margins."
+        },
+        "04": {
+          "title": "Integrated Travel Services",
+          "body": "Flights, hotels, visas, tours, insurance, and eSIMs — in one experience with a consistent workflow."
+        },
+        "05": {
+          "title": "Multi-Level Control Structure",
+          "bullets": {
+            "0": "White-label control panel",
+            "1": "Sub-agency management",
+            "2": "Staff roles and permissions"
+          }
+        },
+        "06": {
+          "title": "Conversion-Optimised Experience",
+          "bullets": {
+            "0": "Instant search with live results",
+            "1": "Structured booking flows",
+            "2": "Optimised for mobile and desktop"
+          }
+        },
+        "07": {
+          "title": "Fully Automated Workflow",
+          "body": "From booking confirmation to visa follow-up and supplier coordination — automated notifications reduce the operational burden."
+        },
+        "08": {
+          "title": "Scalable Business Infrastructure",
+          "body": "Add services, sub-agencies, or new suppliers — and multiply booking volume without rebuilding the system."
+        },
+        "09": {
+          "title": "Financial Control Layer",
+          "bullets": {
+            "0": "Integrated client wallet",
+            "1": "Flexible payment gateways",
+            "2": "Profit and commission tracking",
+            "3": "Supplier balance management"
+          }
+        }
+      },
+      "flow": {
+        "book": "Book",
+        "pay": "Pay",
+        "confirm": "Confirm",
+        "doc": "Document",
+        "follow": "Follow-up"
+      },
+      "metrics": {
+        "monthlyRevenue": "Monthly Revenue",
+        "walletBalance": "Wallet Balance",
+        "commissions": "Earned Commissions"
+      },
+      "quote": {
+        "body": "Most solutions give you tools. <strong>Tourscope gives you infrastructure</strong> — a complete system to manage and scale your travel business from start to finish.",
+        "attribution": "Tourscope · Positioning Statement"
+      }
+    },
+    "pricingPlans": {
+      "tagline": "02 · Pricing",
+      "title": "Packages & Pricing",
+      "caption": "Three packages covering the full spectrum of travel agencies — from the specialist operator to the multi-market aggregator.",
+      "yearly": "/ yearly",
+      "monthly": "per month · billed annually",
+      "quarterly": "Quarterly",
+      "twoYears": "2 Years",
+      "perMonth": "/mo",
+      "setupFees": "Setup Fee",
+      "setupFeesBadge": "One-time payment",
+      "mostPopular": "Recommended · Most Popular",
+      "footnote": "Includes hosting · servers · updates · support",
+      "notes": {
+        "qualification": {
+          "title": "Two Extra Onboarding Weeks",
+          "description": "Subscription and setup fees are due at signing, but the subscription period only begins after two dedicated weeks for training and data preparation."
+        },
+        "minimum": {
+          "title": "3-Month Minimum",
+          "description": "Single monthly billing is not available. Annual is the default, and two years represents the maximum long-term savings."
+        }
+      },
+      "plans": {
+        "charter": {
+          "title": "Charter",
+          "type": "Charter",
+          "details": "For operators of chartered flights to Iran.",
+          "features": {
+            "0": "Iraq–Iran routes and domestic flights",
+            "1": "5 team seats",
+            "2": "White-label control panel",
+            "3": "Multi-currency support",
+            "4": "Email support"
+          }
+        },
+        "standard": {
+          "title": "Standard",
+          "type": "Standard",
+          "details": "For full-service travel agencies in regional and global markets.",
+          "features": {
+            "0": "Flights · Hotels · Tours · Visas",
+            "1": "Global routes + Iran flights",
+            "2": "15 team seats",
+            "3": "Full white-label",
+            "4": "Priority support"
+          }
+        },
+        "advanced": {
+          "title": "Advanced",
+          "type": "Advanced",
+          "details": "For multi-market operators and agency network owners.",
+          "features": {
+            "0": "Everything in Standard",
+            "1": "iOS & Android apps (included)",
+            "2": "Travel insurance built-in",
+            "3": "eSIM included",
+            "4": "50 team seats + custom domain",
+            "5": "Top-priority support"
+          }
+        }
+      }
+    },
+    "addons-and-decision": {
+      "tagline": "03 · Add-ons & Decision",
+      "title": "Add-ons & Decision",
+      "subtitle": "Add-on Modules",
+      "tag": "Optional Modules",
+      "additions": {
+        "ios_app": "iOS App",
+        "android_app": "Android App",
+        "ios_android_bundle": "iOS + Android Bundle",
+        "starter_module": "Charter Module",
+        "starter_module_subtext": "for non-specialised packages",
+        "travel_insurance": "Travel Insurance",
+        "esim": "eSIM",
+        "qicard_gateway": "QiCard Payment Gateway",
+        "zaincash_gateway": "ZainCash Payment Gateway",
+        "fastpay_gateway": "FastPay Payment Gateway",
+        "outbound_api": "Outbound API",
+        "extra_users": "+10 User Seats"
+      },
+      "setup": {
+        "title": "Setup Fee Includes",
+        "tag": "One-time · Non-recurring",
+        "items": {
+          "branding": "Visual brand identity design (Branding) and integration across the entire platform",
+          "domain": "Custom domain deployment and SSL certificate binding",
+          "gds": "Supplier credential configuration and GDS distribution system setup",
+          "training": "Initial team training and database preparation"
+        },
+        "footnote": "<strong>Setup fees are not charged again</strong> upon renewal, and are not applied to add-on modules created later within the same subscription (apps and API are excluded)."
+      }
     }
   },
   "header": {
     "links": {
-      "about": "About",
+      "about": "About Us",
       "services": "Our Services",
       "tourscope": "Tourscope",
-      "contact": "Contact",
+      "contact": "Contact Us",
       "jobs": "Jobs"
     }
   },
   "contactUsDialog": {
     "title": "Contact Us",
     "locations": {
-      "baghdad": "Baghdad - Al Mansur - Yarmouk",
-      "karbala": "Iraq - Karbala - Sharie Almakhazin",
-      "aman": "Amman - muscat"
+      "baghdad": "Iraq - Baghdad - Mansour - Yarmouk",
+      "karbala": "Iraq - Karbala - Al-Makhazin Street",
+      "aman": "Amman - Muscat"
+    }
+  },
+  "table": {
+    "columns": {
+      "addition": "Add-on",
+      "setup": "Setup",
+      "quarterly": "Quarterly",
+      "annually": "Annual",
+      "two_years": "2 Years"
     }
   },
   "common": {
-    "video-error": "Your browser does not support the video tag."
+    "video-error": "Your browser does not support video playback.",
+    "days": "days",
+    "optional": "Optional"
   }
 }

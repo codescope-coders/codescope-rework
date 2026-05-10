@@ -1,12 +1,12 @@
 "use client";
-import { MapPinIcon, TimerIcon } from "lucide-react";
-import clsx from "clsx";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import JobCardSkeleton from "./JobSkeleton";
-import { useGetJobs } from "@/hooks/useJobs";
 import { timeAgo } from "@/helpers/date";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useGetJobs } from "@/hooks/useJobs";
+import clsx from "clsx";
+import { BriefcaseIcon, MapPinIcon, TimerIcon } from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import JobCardSkeleton from "./JobSkeleton";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -47,6 +47,24 @@ export const Content = () => {
       }
     };
   }, [loadMore]);
+
+  // ── Empty state ──
+  if (!isPending && totalJobs === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#34333b]">
+          <BriefcaseIcon className="text-gray-400" width={28} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-bold text-white">No jobs available</h3>
+          <p className="text-sm text-gray-400 max-w-xs">
+            There are no open positions right now. Check back soon — new roles
+            are added regularly.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
