@@ -4,12 +4,12 @@
       "tagline": "Codescope",
       "headline": "Your Trusted Partner in",
       "subheadline": "Digital Transformation",
-      "caption": "From custom applications to web solutions, we help businesses and travel agencies grow and thrive.",
+      "caption": "From custom applications to website solutions, we help businesses and travel agencies grow and thrive.",
       "cta-button": "Explore Our Services"
     },
     "about": {
-      "title": "Who Are We?",
-      "caption": "Codescope was founded to drive business growth in Iraq by delivering precisely crafted applications and innovative websites. From the first idea to the final launch, we are committed to building products that combine thoughtful design, robust development, and the highest quality standards.",
+      "title": "Who We Are",
+      "caption": "Codescope was founded to drive business growth in Iraq by delivering precision-crafted applications and innovative websites. From the first idea to the final launch, we are committed to building products that combine thoughtful design, robust development, and the highest quality standards.",
       "mainCard": {
         "label": "Ready for the Future",
         "title": "Build seamless booking experiences through custom systems that help you grow.",
@@ -17,7 +17,7 @@
       },
       "get-started-card": {
         "title": "Get Started Now!",
-        "caption": "Stand out online with a secure and easy-to-use e-commerce platform."
+        "caption": "Stand out online with a secure, easy-to-use e-commerce platform."
       },
       "lets-talk-card": {
         "title": "Let's Talk",
@@ -25,95 +25,95 @@
       },
       "get-started-now-card": {
         "title": "Get Started Now!",
-        "caption": "Stand out online with a secure and easy-to-use e-commerce platform."
+        "caption": "Stand out online with a secure, easy-to-use e-commerce platform."
       }
     },
     "our-expertises": {
       "title": "Our Expertise, Your Advantage",
       "subtitle": "Your Partner in Innovative Solutions",
-      "caption": "At Codescope, we specialise in delivering high-quality, responsive digital solutions that help businesses grow and succeed. Our team strives for excellence across several key areas:",
+      "caption": "At Codescope, we specialize in delivering high-quality, responsive digital solutions that help businesses grow and succeed. Our team strives for excellence across several key areas:",
       "services": {
         "app-development": {
           "title": "App <br></br> Development",
-          "desc": "Whether you need a mobile app or a custom enterprise solution, we build applications designed for smooth performance, ease of use, and high reliability. Every product is carefully developed to fit your unique business needs."
+          "desc": "Whether you need a mobile app or a custom enterprise solution, we build applications designed for smooth performance, ease of use, and high reliability. Every product is carefully crafted to fit your unique business needs."
         },
         "web-development": {
-          "title": "Web <br></br> Development",
-          "desc": "Whether you need a landing page or a full-featured platform, we build modern websites focused on performance, seamless experience, and high quality that meets your business goals."
+          "title": "Website <br></br> Development",
+          "desc": "Whether you need a brochure site or a full-featured platform, we build modern websites focused on performance, seamless experience, and high quality — all tailored to meet your business goals."
         },
         "management-systems": {
           "title": "Management <br></br> Systems",
-          "desc": "We develop custom management systems that help you organise your business efficiently, improve operations, and make better decisions through reliable, scalable solutions."
+          "desc": "We develop custom management systems that help you organize your operations efficiently, improve workflows, and make better decisions through reliable, scalable solutions."
         }
       }
     },
     "featured-project": {
       "label": "Featured Project",
-      "title": "<i><strong>Fly4all,</strong></i> an all-in-one travel booking platform",
-      "caption": "We built Fly4All from scratch — starting with visual identity design, through an intuitive user interface, to developing every line of code. It is a complete platform for flights, hotels, travel packages, and visa services — all in one place. If you are looking for a similar experience, we can build it for you.",
+      "title": "<i><strong>Fly4all,</strong></i> a Complete Travel Booking Platform",
+      "caption": "We built Fly4All from scratch — from visual identity design, through an intuitive user interface, to every line of code. It's a full-featured platform for flights, hotels, travel packages, and visa services — all in one place. If you're looking for a similar experience, we can build it for you.",
       "button": "Let's Start Building Your Platform Today"
     },
     "tourscope": {
       "title": "<strong>Tourscope</strong> <br></br> Travel Made Easier",
-      "caption": "Tourscope is a flagship product from Codescope, designed specifically for travel agencies to deliver a seamless booking experience for their clients. It features an intuitive design and lightning-fast performance that makes browsing flights, hotels, packages, and visa services effortless — giving travellers everything they need, quickly and easily.",
+      "caption": "Tourscope is a flagship product from Codescope designed specifically for travel agencies to deliver a seamless booking experience for their clients. It features an intuitive design and exceptional performance that makes browsing flights, hotels, packages, and visa services fast and effortless.",
       "button": "Contact Us"
     }
   },
   "tourscope": {
     "hero": {
-      "title": "Packages & <br></br> Pricing Proposal",
-      "tagline": "Pricing Proposal · 2026",
-      "caption": "The complete infrastructure to manage and grow your travel business — under your brand, and under your full control.",
-      "qualificationDays": "Extra Onboarding Days",
-      "extraUnits": "Add-on Modules",
+      "title": "Packages & <br></br> Pricing Offer",
+      "tagline": "Price Offer · 2026",
+      "caption": "The complete infrastructure for managing and growing your travel business — under your brand, under your full control.",
+      "qualificationDays": "Additional Onboarding Days",
+      "extraUnits": "Additional Units",
       "platformCapabilities": "Platform Capabilities",
-      "basicPackages": "Core Packages",
+      "basicPackages": "Base Packages",
       "validity": "Validity",
       "issueDate": "Issue Date"
     },
     "whyTourscope": {
       "tagline": "01 · Why Tourscope",
       "title": "Why Tourscope",
-      "caption": "Nine pillars that set Tourscope apart from traditional solutions in the travel sector. Each pillar is designed to give agencies deeper control, higher efficiency, and a real capacity to scale.",
+      "caption": "Nine pillars that set Tourscope apart from traditional solutions in the travel sector. Each pillar is designed to give agencies deeper control, higher efficiency, and real scalability.",
       "cards": {
         "01": {
           "title": "Full Brand Ownership",
-          "body": "The platform is delivered under your brand: your domain, your identity, your interface. Your clients see a fully integrated digital platform bearing your name — not a third-party tool."
+          "body": "The platform is delivered under your brand: your domain, your identity, your interface. Your clients see a complete digital platform bearing your name — not a third-party tool."
         },
         "02": {
-          "title": "Centralised Booking System",
-          "body": "A complete lifecycle from zero to confirmation: search ← pricing ← payment ← confirmation ← follow-up. An end to fragmentation and manual processing."
+          "title": "Centralized Booking System",
+          "body": "A complete lifecycle from zero to confirmation: Search ← Pricing ← Payment ← Confirmation ← Follow-up. No more fragmentation or manual processing."
         },
         "03": {
           "title": "Advanced Pricing Control",
-          "body": "Define pricing logic based on season, demand, service type, or customer segment. Real-time inventory and dynamic profit margins."
+          "body": "Define your pricing logic by season, demand, service type, or customer segment. Real-time inventory and dynamic profit margins."
         },
         "04": {
           "title": "Integrated Travel Services",
-          "body": "Flights, hotels, visas, tours, insurance, and eSIMs — in one experience with a consistent workflow."
+          "body": "Flights, hotels, visas, tours, insurance, and eSIMs — all in one experience with a consistent workflow."
         },
         "05": {
           "title": "Multi-Level Control Structure",
           "bullets": {
             "0": "White-label control panel",
             "1": "Sub-agency management",
-            "2": "Staff roles and permissions"
+            "2": "Staff permissions and roles"
           }
         },
         "06": {
-          "title": "Conversion-Optimised Experience",
+          "title": "Conversion-Optimized Experience",
           "bullets": {
-            "0": "Instant search with live results",
+            "0": "Real-time search with live results",
             "1": "Structured booking flows",
-            "2": "Optimised for mobile and desktop"
+            "2": "Optimized for mobile and desktop"
           }
         },
         "07": {
-          "title": "Fully Automated Workflow",
-          "body": "From booking confirmation to visa follow-up and supplier coordination — automated notifications reduce the operational burden."
+          "title": "Fully Automated Workflows",
+          "body": "From booking confirmation to visa follow-ups and supplier coordination — automated notifications reduce operational overhead."
         },
         "08": {
-          "title": "Scalable Business Infrastructure",
+          "title": "Scalable Business Architecture",
           "body": "Add services, sub-agencies, or new suppliers — and multiply booking volume without rebuilding the system."
         },
         "09": {
@@ -131,7 +131,7 @@
         "pay": "Pay",
         "confirm": "Confirm",
         "doc": "Document",
-        "follow": "Follow-up"
+        "follow": "Follow Up"
       },
       "metrics": {
         "monthlyRevenue": "Monthly Revenue",
@@ -139,31 +139,31 @@
         "commissions": "Earned Commissions"
       },
       "quote": {
-        "body": "Most solutions give you tools. <strong>Tourscope gives you infrastructure</strong> — a complete system to manage and scale your travel business from start to finish.",
+        "body": "Most solutions give you tools. <strong>Tourscope gives you infrastructure</strong> — a complete system for managing and scaling travel operations from start to finish.",
         "attribution": "Tourscope · Positioning Statement"
       }
     },
     "pricingPlans": {
       "tagline": "02 · Pricing",
       "title": "Packages & Pricing",
-      "caption": "Three packages covering the full spectrum of travel agencies — from the specialist operator to the multi-market aggregator.",
-      "yearly": "/ yearly",
-      "monthly": "per month · billed annually",
+      "caption": "Three packages covering the full spectrum of travel agencies — from the specialized operator to the multi-market aggregator.",
+      "yearly": "Yearly",
+      "monthly": "Monthly · Billed Annually",
       "quarterly": "Quarterly",
       "twoYears": "2 Years",
       "perMonth": "/mo",
-      "setupFees": "Setup Fee",
+      "setupFees": "Setup Fees",
       "setupFeesBadge": "One-time payment",
       "mostPopular": "Recommended · Most Popular",
       "footnote": "Includes hosting · servers · updates · support",
       "notes": {
         "qualification": {
-          "title": "Two Extra Onboarding Weeks",
-          "description": "Subscription and setup fees are due at signing, but the subscription period only begins after two dedicated weeks for training and data preparation."
+          "title": "Two Additional Onboarding Weeks",
+          "description": "Subscription and setup fees are paid upon signing, but the subscription period does not begin until after two weeks dedicated to training and data preparation."
         },
         "minimum": {
           "title": "3-Month Minimum",
-          "description": "Single monthly billing is not available. Annual is the default, and two years represents the maximum long-term savings."
+          "description": "Single monthly billing is not available. Annual is the default; two years represents the maximum long-term savings."
         }
       },
       "plans": {
@@ -174,7 +174,7 @@
           "features": {
             "0": "Iraq–Iran routes and domestic flights",
             "1": "5 team seats",
-            "2": "White-label control panel",
+            "2": "Branded control panel",
             "3": "Multi-currency support",
             "4": "Email support"
           }
@@ -185,7 +185,7 @@
           "details": "For full-service travel agencies in regional and global markets.",
           "features": {
             "0": "Flights · Hotels · Tours · Visas",
-            "1": "Global routes + Iran flights",
+            "1": "Global airlines + Iran routes",
             "2": "15 team seats",
             "3": "Full white-label",
             "4": "Priority support"
@@ -196,10 +196,10 @@
           "type": "Advanced",
           "details": "For multi-market operators and agency network owners.",
           "features": {
-            "0": "Everything in Standard",
+            "0": "All Standard plan services",
             "1": "iOS & Android apps (included)",
             "2": "Travel insurance built-in",
-            "3": "eSIM included",
+            "3": "eSIM",
             "4": "50 team seats + custom domain",
             "5": "Top-priority support"
           }
@@ -209,14 +209,14 @@
     "addons-and-decision": {
       "tagline": "03 · Add-ons & Decision",
       "title": "Add-ons & Decision",
-      "subtitle": "Add-on Modules",
+      "subtitle": "Additional Modules",
       "tag": "Optional Modules",
       "additions": {
         "ios_app": "iOS App",
         "android_app": "Android App",
         "ios_android_bundle": "iOS + Android Bundle",
         "starter_module": "Charter Module",
-        "starter_module_subtext": "for non-specialised packages",
+        "starter_module_subtext": "For non-specialized packages",
         "travel_insurance": "Travel Insurance",
         "esim": "eSIM",
         "qicard_gateway": "QiCard Payment Gateway",
@@ -226,15 +226,15 @@
         "extra_users": "+10 User Seats"
       },
       "setup": {
-        "title": "Setup Fee Includes",
+        "title": "Setup Fees Include",
         "tag": "One-time · Non-recurring",
         "items": {
-          "branding": "Visual brand identity design (Branding) and integration across the entire platform",
+          "branding": "Brand visual identity design (Branding) and integration across the entire platform",
           "domain": "Custom domain deployment and SSL certificate binding",
-          "gds": "Supplier credential configuration and GDS distribution system setup",
+          "gds": "Supplier credentials and distribution system (GDS) configuration",
           "training": "Initial team training and database preparation"
         },
-        "footnote": "<strong>Setup fees are not charged again</strong> upon renewal, and are not applied to add-on modules created later within the same subscription (apps and API are excluded)."
+        "footnote": "Setup fees are <strong>not repeated</strong> upon renewal, and are not charged for additional modules created later within the same subscription (apps and API are excluded)."
       }
     }
   },
@@ -260,8 +260,191 @@
       "addition": "Add-on",
       "setup": "Setup",
       "quarterly": "Quarterly",
-      "annually": "Annual",
+      "annually": "Annually",
       "two_years": "2 Years"
+    }
+  },
+  "faq": {
+    "tagline": "FAQ",
+    "title": "Most Frequently Asked Questions",
+    "caption": "Real questions from the sales context — answers ready to use.",
+
+    "categories": {
+      "commercial": "Commercial & Pricing",
+      "technical": "Technical",
+      "operational": "Operational",
+      "data": "Data & Ownership",
+      "hardSales": "Hard Sales Questions",
+      "afterSales": "After-Sales & Support"
+    },
+
+    "commercial": {
+      "c1": {
+        "q": "How does the pricing model work? Is it a one-time payment or a subscription?",
+        "setup": "One-time setup fee",
+        "setupDetails": "($500 / $2,000 / $3,250 depending on the plan) paid upon signing and never repeated.",
+        "subscription": "Recurring subscription",
+        "subscriptionDetails": "Available in three cycles: quarterly, annual (default), or two years (maximum savings).",
+        "note": "Single monthly billing is not available. The minimum commitment is three months."
+      },
+      "c2": {
+        "q": "What is the difference between the three plans?",
+        "charter": "$1,500/year + $500 setup — for Iraq–Iran charter flight operators. 5 staff accounts in the admin panel.",
+        "standard": "$4,500/year + $2,000 setup — for full-service travel agencies. Flights + hotels + tours + visas. 15 accounts. <strong>Most popular.</strong>",
+        "advanced": "$9,000/year + $3,250 setup — for multi-market operators. Includes iOS & Android apps, insurance, eSIM, 50 accounts, custom domain, and top-priority support."
+      },
+      "c3": {
+        "q": "Why an annual subscription instead of monthly?",
+        "a": "Three reasons: (1) Annual gives you a much better price. (2) It provides operational stability — no monthly renewals disrupting your business. (3) The platform powers fixed infrastructure (servers, GDS integrations, supplier licenses); monthly billing would be expensive and impractical for both sides."
+      },
+      "c4": {
+        "q": "What is the price difference between the three billing cycles?",
+        "intro": "The longer the cycle, the lower the equivalent monthly price. Example using the Standard plan:",
+        "quarterly": "$1,350 = $450/month equivalent",
+        "yearly": "$4,500 = $375/month equivalent",
+        "twoYears": "$8,100 = $338/month equivalent — ~25% savings vs. quarterly"
+      },
+      "c5": {
+        "q": "Do you take a percentage of my bookings?",
+        "a": "We do not take a percentage of your booking value. We charge <strong>$0.10 per segment</strong> applied equally across all services — flights, hotels, visas, insurance, group tours. A segment is counted only on confirmed bookings, not on queries or searches. This fee covers technical processing costs only, not a share of your revenue."
+      },
+      "c6": {
+        "q": "What requires additional fees outside the plan?",
+        "intro": "Optional add-ons only:",
+        "item1": "iOS or Android app ($1,500 setup + $1,200/year) — included in Advanced",
+        "item2": "Travel insurance ($500 + $800/year) — included in Advanced",
+        "item3": "eSIM ($300 + $600/year) — included in Advanced",
+        "item4": "Local payment gateways: QiCard / ZainCash / FastPay at $333/year each",
+        "item5": "+10 additional staff accounts at $500/year"
+      },
+      "c7": {
+        "q": "Do you offer a free trial?",
+        "a": "There is no free trial in the traditional sense, but we offer a detailed demo with live screens covering all platform flows. For serious prospects, we arrange a hands-on exploration session with their team."
+      },
+      "c8": {
+        "q": "Can I upgrade or downgrade my plan later?",
+        "upgrade": "Yes, at any time and immediately. You pay only the pro-rated difference for the remaining days plus the difference in setup fees. No service interruption.",
+        "downgrade": "Takes effect at the end of your current paid cycle only. No refund on the difference since the features were already provided to you.",
+        "upgradeLabel": "Upgrade",
+        "downgradeLabel": "Downgrade"
+      },
+      "c9": {
+        "q": "What is the renewal policy? Does it auto-renew?",
+        "a": "Yes, auto-renewal is enabled by default. The platform sends renewal reminders 30, 14, 7, and 3 days before expiry. You can manually disable auto-renewal at least 30 days before the end of your cycle."
+      },
+      "c10": {
+        "q": "How long does setup take? When does the subscription period start?",
+        "a": "We dedicate two weeks for onboarding: training, data preparation, supplier connections, and flow testing. The subscription period does not begin until after these two weeks — effectively you get <strong>a year and 14 days</strong> for the price of the annual plan."
+      },
+      "c11": {
+        "q": "What is the setup fee refund policy?",
+        "before": "Full refund",
+        "during": "Partial refund (50%)",
+        "after": "Non-refundable — work has already been completed",
+        "beforeLabel": "Before start",
+        "duringLabel": "After start, before delivery",
+        "afterLabel": "After delivery"
+      }
+    },
+
+    "technical": {
+      "t1": {
+        "q": "Which airline suppliers do you integrate with?",
+        "a": "Currently Amadeus, Sabre, and Travelport (Galileo and Worldspan) — the world's largest GDS systems. This gives you access to hundreds of airlines worldwide."
+      },
+      "t2": {
+        "q": "Is the platform hosted by you or do we host it ourselves?",
+        "a": "Fully hosted by us (SaaS), with daily backups, SSL certificates, and 24/7 monitoring. No setup required on your servers. Self-hosting is only available under custom Enterprise agreements at a separate price."
+      },
+      "t3": {
+        "q": "What languages and currencies are supported?",
+        "languagesLabel": "Languages",
+        "languages": "Any language — Arabic, English, French, Persian, Turkish, Kurdish, and more. The interface fully supports RTL. Dynamic translations are AI-generated.",
+        "currenciesLabel": "Currencies",
+        "currencies": "Managed manually by the brand — you add the currencies you want and set exchange rates yourself from the control panel. There is no automatic exchange rate update; you have full control."
+      },
+      "t4": {
+        "q": "Is the platform mobile-ready?",
+        "a": "Yes. The end-customer experience (Storefront) is fully responsive and mobile-optimized. Admin panels are desktop-first since they handle dense tables, but they work on tablets and phones. A native mobile app under your brand is available as an add-on — or included in the Advanced plan."
+      },
+      "t5": {
+        "q": "What payment gateways are available?",
+        "localLabel": "Locally (Iraq)",
+        "a": "QiCard, ZainCash, and FastPay — each as an add-on at $333/year. Other gateways can be added depending on your market."
+      },
+      "t6": {
+        "q": "What is the White-Label wallet and why do I need it?",
+        "a": "A prepaid wallet you top up in advance; it is automatically debited with every API booking. Your margins from each successful booking are added to it. You can withdraw your earnings at any time to your bank account. Top-up is available via multiple methods: bank transfer, card, local gateways, or Crypto."
+      }
+    },
+
+    "operational": {
+      "o1": {
+        "q": "Do I need a technical team to operate the platform?",
+        "a": "No. The admin panels are designed for non-technical users. All you need is an operations manager, booking staff, and a marketing team. Anything technical (servers, updates, fixes, supplier management) is handled on our end."
+      },
+      "o2": {
+        "q": "Can I grant access to partners or agencies outside my company?",
+        "a": "No. The platform does not allow granting access to external parties or independent agencies under your brand. What you can do is create <strong>internal staff accounts</strong> for your company's team — each with its own permissions and assigned profit margin — but they operate under your direct management and are not independent entities."
+      },
+      "o3": {
+        "q": "What happens if a booking fails after payment?",
+        "a": "The system initiates an automatic refund, notifies the client, and logs the process in the tracking record. You can intervene as an administrator in exceptional cases."
+      },
+      "o4": {
+        "q": "What happens if my wallet balance drops to zero during operations?",
+        "a": "The platform sends progressive alerts at 80%, 90%, 95%, and 100% depletion. You can enable Auto Top-up to avoid interruption. If the balance runs out, the API pauses temporarily with a generic message to the client — your brand is never embarrassed by revealing a financial reason."
+      },
+      "o5": {
+        "q": "What if I need a feature that doesn't exist?",
+        "a": "Some features may already be on a near-term roadmap and will reach you automatically via updates. Highly custom features may require a separate custom development agreement. We assess each case individually."
+      }
+    },
+
+    "data": {
+      "d1": {
+        "q": "Who owns the data? Do you share it with other brands?",
+        "a": "The data is entirely yours — your bookings, your clients, your financial transactions. We provide CSV exports for any report. Each brand is strictly isolated from others with strict permissions. Even we cannot access your data without your consent."
+      },
+      "d2": {
+        "q": "What happens to my data when the subscription ends?",
+        "grace": "Grace period for renewal with no data loss",
+        "freeze": "Account frozen (data preserved, service disabled)",
+        "delete": "Deletion policy begins — with notifications at each stage",
+        "graceLabel": "7 days after expiry",
+        "freezeLabel": "Day 8 — Day 90",
+        "deleteLabel": "After day 90"
+      },
+      "d3": {
+        "q": "What happens if Tourscope shuts down?",
+        "a": "The contract defines service continuity guarantees. In the event of any emergency, we commit to a notice period and a safe migration of your data. All your data remains yours — we provide a full export in CSV/JSON format upon request."
+      }
+    },
+
+    "hardSales": {
+      "h1": {
+        "q": "What's stopping me from buying a cheaper system?",
+        "a": "You can. But compare: does the cheaper system offer real GDS integration, complex group tours, visa workflows end-to-end, insurance, eSIM, multi-currency and multi-language support, hosting and updates, and a Prepaid wallet system with automatic financial distribution? And is its interface built to a standard worthy of your brand — or just generic templates that all look the same? Usually not. The cheaper price costs you incomplete services, manual operations, and a user experience that drives your clients away."
+      },
+      "h2": {
+        "q": "Why not just use WordPress + a Plugin?",
+        "a": "WordPress + Plugin = a showcase product, not an operating system. It doesn't manage sub-agencies, doesn't run a real GDS, doesn't manage supplier budgets, doesn't calculate partial refunds, and doesn't support automated ticket issuance. It works for a travel blog, not a travel company."
+      }
+    },
+
+    "afterSales": {
+      "a1": {
+        "q": "Can I cancel my subscription mid-cycle?",
+        "a": "You can disable auto-renewal, but we do not refund amounts paid for the current period. The subscription continues until the end of the current cycle and then stops."
+      },
+      "a2": {
+        "q": "What if I notice a financial discrepancy in my invoices?",
+        "a": "Our system maintains a complete, immutable audit trail of every transaction. Open a ticket through the control panel; the finance team reviews it within 48 hours, and if an error is confirmed, we issue a Credit Note and return the amount to your wallet."
+      },
+      "a3": {
+        "q": "Can I view my financial reports at any time?",
+        "a": "Yes. The wallet dashboard displays balance, reserved funds, reserves, and revenue in real time. Monthly reports are automatically generated and sent by email, and are exportable as CSV."
+      }
     }
   },
   "common": {
