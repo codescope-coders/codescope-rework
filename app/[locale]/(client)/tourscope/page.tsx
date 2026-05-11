@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useLocale } from "next-intl";
 import { IBM_Plex_Sans_Arabic, Urbanist } from "next/font/google";
 import { AddonsAndDecisions } from "./components/AddonsAndDecisions";
+import { FAQSection } from "./components/FAQSection";
 import { HeroSection } from "./components/Hero";
 import { PricingPlans } from "./components/PricingPlans";
 import { WhyTourscope } from "./components/WhyTourscope";
@@ -32,6 +33,7 @@ export default function page() {
       <WhyTourscope />
       <PricingPlans />
       <AddonsAndDecisions />
+      <FAQSection />
     </main>
   );
 }

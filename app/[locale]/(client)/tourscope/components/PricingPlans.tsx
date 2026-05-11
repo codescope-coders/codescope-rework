@@ -170,7 +170,7 @@ const PricingPlan = ({
           <div className="font-bold leading-normal text-5xl whitespace-nowrap">
             {price.yearly}{" "}
             <span className="text-sm font-normal -translate-y-1 inline-block text-subtitle-color">
-              {t("yearly")}
+              / {t("yearly")}
             </span>
           </div>
           <div className="text-xs text-subtitle-color">
