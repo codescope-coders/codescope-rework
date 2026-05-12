@@ -81,7 +81,7 @@ export const ListInput = forwardRef<
               }
             }}
             size="sm"
-            maxLength={50}
+            maxLength={255}
             className={props.className}
           />
 
