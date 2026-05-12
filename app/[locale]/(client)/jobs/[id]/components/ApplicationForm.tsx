@@ -1,5 +1,11 @@
+"use client";
+import {
+  educationLevelLabel,
+  expectedSalaryLabel,
+} from "@/app/[locale]/(admin)/dashboard/applications/components/Application";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -7,16 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import * as React from "react";
-import { format } from "date-fns";
-import {
-  Calendar as CalendarIcon,
-  Plus,
-  X,
-  FileText,
-  Upload,
-} from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
   SelectContent,
@@ -24,23 +20,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { educationLevelEnum, expectedSalaryEnum } from "@/lib/db/schema";
-import {
-  educationLevelLabel,
-  expectedSalaryLabel,
-} from "@/app/[locale]/(admin)/dashboard/applications/components/Application";
-import { useVariablesStore } from "@/stores/variables";
-import { useRouter } from "@/i18n/routing";
 import { useCreateApplication } from "@/hooks/useApplications";
-import {
-  CreateApplicationDto,
-  EducationLevel,
-  ExpectedSalary,
-} from "@/services/applications";
-import { toast } from "sonner";
-import clsx from "clsx";
-import { useParams } from "next/navigation";
 import { useUpload } from "@/hooks/useUpload";
+import { useRouter } from "@/i18n/routing";
+import { educationLevelEnum, expectedSalaryEnum } from "@/lib/db/schema";
+import { EducationLevel, ExpectedSalary } from "@/services/applications";
+import { useVariablesStore } from "@/stores/variables";
+import clsx from "clsx";
+import { format } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  FileText,
+  Plus,
+  Upload,
+  X,
+} from "lucide-react";
+import { useParams } from "next/navigation";
+import * as React from "react";
+import { toast } from "sonner";
 
 type FieldErrors = {
   fullName?: string;
@@ -103,11 +100,11 @@ export const ApplicationForm = () => {
     (error: any) => {
       if (error?.fieldErrors) {
         setFieldErrors(error.fieldErrors);
-        toast.error("Please fix the errors in the form");
+        toast.error("يرجى تصحيح الأخطاء في النموذج");
       } else if (error?.message) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to submit application. Please try again.");
+        toast.error("فشل إرسال الطلب. يرجى المحاولة مجدداً.");
       }
     },
   );
@@ -165,39 +162,38 @@ export const ApplicationForm = () => {
     const form = new FormData(e.currentTarget);
 
     if (!form.get("fullName")) {
-      errors.fullName = "Full name is required";
+      errors.fullName = "الاسم الكامل مطلوب";
     }
 
     if (!form.get("email")) {
-      errors.email = "Email is required";
+      errors.email = "البريد الإلكتروني مطلوب";
     } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.get("email") as string)
     ) {
-      errors.email = "Please enter a valid email address";
+      errors.email = "يرجى إدخال بريد إلكتروني صحيح";
     }
 
     if (!form.get("currentCity")) {
-      errors.currentCity = "Current city is required";
+      errors.currentCity = "المدينة الحالية مطلوبة";
     }
 
     if (!form.get("nationality")) {
-      errors.nationality = "Nationality is required";
+      errors.nationality = "الجنسية مطلوبة";
     }
 
     if (!dateOfBirth) {
-      errors.dateOfBirth = "Date of birth is required";
+      errors.dateOfBirth = "تاريخ الميلاد مطلوب";
     }
 
     if (!cvFile) {
-      errors.cv = "CV is required";
+      errors.cv = "السيرة الذاتية مطلوبة";
     }
 
     if (
       form.get("yearsOfExperience") &&
       Number(form.get("yearsOfExperience")) < 0
     ) {
-      errors.yearsOfExperience =
-        "Years of experience must be a positive number";
+      errors.yearsOfExperience = "يجب أن تكون سنوات الخبرة عدداً موجباً";
     }
 
     if (
@@ -205,7 +201,7 @@ export const ApplicationForm = () => {
       (Number(form.get("graduationYear")) < 1950 ||
         Number(form.get("graduationYear")) > new Date().getFullYear() + 10)
     ) {
-      errors.graduationYear = "Please enter a valid graduation year";
+      errors.graduationYear = "يرجى إدخال سنة تخرج صحيحة";
     }
 
     setFieldErrors(errors);
@@ -217,7 +213,7 @@ export const ApplicationForm = () => {
     setFieldErrors({});
 
     if (!validateForm(e)) {
-      toast.error("Please fill in all required fields");
+      toast.error("يرجى ملء جميع الحقول المطلوبة");
       return;
     }
 
@@ -272,22 +268,22 @@ export const ApplicationForm = () => {
           : {}),
       });
     } catch (err) {
-      toast.error("Failed to upload CV. Please try again.");
+      toast.error("فشل رفع السيرة الذاتية. يرجى المحاولة مجدداً.");
       console.error("Upload error:", err);
     }
   };
 
   return (
     <Container>
-      <form onSubmit={handleSubmit}>
-        <h2 className="font-semibold text-4xl pb-4">Contact Info</h2>
+      <form onSubmit={handleSubmit} dir="rtl">
+        <h2 className="font-semibold text-4xl pb-4">معلومات التواصل</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Full Name <span className="text-destructive">*</span>
+              الاسم الكامل <span className="text-destructive">*</span>
             </Label>
             <Input
-              placeholder="Enter your full name"
+              placeholder="أدخل اسمك الكامل"
               name="fullName"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
@@ -302,11 +298,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Email <span className="text-destructive">*</span>
+              البريد الإلكتروني <span className="text-destructive">*</span>
             </Label>
             <Input
               name="email"
-              placeholder="Enter your email"
+              placeholder="أدخل بريدك الإلكتروني"
               type="email"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
@@ -321,11 +317,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Current City <span className="text-destructive">*</span>
+              المدينة الحالية <span className="text-destructive">*</span>
             </Label>
             <Input
               name="currentCity"
-              placeholder="Enter your current city"
+              placeholder="أدخل مدينتك الحالية"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.currentCity,
@@ -339,14 +335,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Phone Number{" "}
+              رقم الهاتف{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="phoneNumber"
-              placeholder="Enter your phone number"
+              placeholder="أدخل رقم هاتفك"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.phoneNumber,
@@ -360,7 +356,7 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Date of Birth <span className="text-destructive">*</span>
+              تاريخ الميلاد <span className="text-destructive">*</span>
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -379,7 +375,7 @@ export const ApplicationForm = () => {
                   {dateOfBirth ? (
                     format(dateOfBirth, "PPP")
                   ) : (
-                    <span>Pick a date</span>
+                    <span>اختر تاريخاً</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -405,11 +401,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Nationality <span className="text-destructive">*</span>
+              الجنسية <span className="text-destructive">*</span>
             </Label>
             <Input
               name="nationality"
-              placeholder="Enter your nationality"
+              placeholder="أدخل جنسيتك"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.nationality,
@@ -423,13 +419,13 @@ export const ApplicationForm = () => {
           </div>
         </div>
         <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">Position & Availability</h2>
+        <h2 className="font-semibold text-4xl pb-4">المنصب والتوفر</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Expected Salary{" "}
+              الراتب المتوقع{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Select name="expectedSalary">
@@ -439,7 +435,7 @@ export const ApplicationForm = () => {
                     fieldErrors.expectedSalary,
                 })}
               >
-                <SelectValue placeholder="Choose your Expected Salary" />
+                <SelectValue placeholder="اختر الراتب المتوقع" />
               </SelectTrigger>
               <SelectContent>
                 {expectedSalaryEnum?.enumValues.map((v, i) => (
@@ -457,9 +453,9 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Availability to start{" "}
+              تاريخ الاستعداد للبدء{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional, immediately by default)
+                (اختياري، فوري بشكل افتراضي)
               </span>
             </Label>
             <Popover>
@@ -479,7 +475,7 @@ export const ApplicationForm = () => {
                   {availabilityDate ? (
                     format(availabilityDate, "PPP")
                   ) : (
-                    <span>Pick a date</span>
+                    <span>اختر تاريخاً</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -514,18 +510,18 @@ export const ApplicationForm = () => {
           </div>
         </div>
         <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">Professional Background</h2>
+        <h2 className="font-semibold text-4xl pb-4">الخلفية المهنية</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Years of Experience{" "}
+              سنوات الخبرة{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="yearsOfExperience"
-              placeholder="Enter your Years of Experience"
+              placeholder="أدخل سنوات خبرتك"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.yearsOfExperience,
@@ -541,14 +537,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Last Job Title{" "}
+              المسمى الوظيفي الأخير{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="lastJobTitle"
-              placeholder="Enter your Last Job Title"
+              placeholder="أدخل مسماك الوظيفي الأخير"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.lastJobTitle,
@@ -562,14 +558,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Last Company Name{" "}
+              اسم آخر شركة{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="lastCompanyName"
-              placeholder="Enter Last Company Name"
+              placeholder="أدخل اسم آخر شركة عملت بها"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.lastCompanyName,
@@ -585,9 +581,9 @@ export const ApplicationForm = () => {
 
         <div className="grid gap-4 mt-4">
           <Label className="text-base font-semibold">
-            Links{" "}
+            الروابط{" "}
             <span className="text-muted-foreground text-sm font-normal">
-              (Optional - Portfolio, GitHub, LinkedIn, etc.)
+              (اختياري - معرض الأعمال، GitHub، LinkedIn، إلخ)
             </span>
           </Label>
           {links.map((link, index) => (
@@ -595,7 +591,7 @@ export const ApplicationForm = () => {
               <Input
                 value={link}
                 onChange={(e) => handleLinkChange(index, e.target.value)}
-                placeholder="Portfolio Website / Behance / GitHub"
+                placeholder="موقع معرض الأعمال / Behance / GitHub"
                 className={clsx("text-white flex-1", {
                   "border-destructive focus-visible:ring-destructive":
                     fieldErrors.links,
@@ -620,7 +616,7 @@ export const ApplicationForm = () => {
                   className="whitespace-nowrap"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add another link
+                  أضف رابطاً آخر
                 </Button>
               )}
             </div>
@@ -632,7 +628,7 @@ export const ApplicationForm = () => {
 
         <div className="grid gap-2 mt-4">
           <Label className="text-base font-semibold">
-            Upload your CV <span className="text-destructive">*</span>
+            ارفع سيرتك الذاتية <span className="text-destructive">*</span>
           </Label>
 
           {!cvFile ? (
@@ -657,8 +653,10 @@ export const ApplicationForm = () => {
                 className="cursor-pointer flex flex-col items-center justify-center gap-2 text-muted-foreground"
               >
                 <Upload className="h-8 w-8" />
-                <span className="font-medium">Click to upload your CV</span>
-                <span className="text-sm">PDF, DOC, or DOCX (max 5MB)</span>
+                <span className="font-medium">انقر لرفع سيرتك الذاتية</span>
+                <span className="text-sm">
+                  PDF أو DOC أو DOCX (حجم أقصى 5 ميغابايت)
+                </span>
               </label>
             </div>
           ) : (
@@ -671,7 +669,7 @@ export const ApplicationForm = () => {
                   <div>
                     <p className="font-medium text-sm">{cvFile.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {(cvFile.size / 1024).toFixed(2)} KB
+                      {(cvFile.size / 1024).toFixed(2)} كيلوبايت
                     </p>
                   </div>
                 </div>
@@ -693,13 +691,13 @@ export const ApplicationForm = () => {
         </div>
 
         <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">Education</h2>
+        <h2 className="font-semibold text-4xl pb-4">التعليم</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Highest Education Level{" "}
+              أعلى مستوى تعليمي{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Select name="highestEducationLevel">
@@ -709,7 +707,7 @@ export const ApplicationForm = () => {
                     fieldErrors.highestEducationLevel,
                 })}
               >
-                <SelectValue placeholder="Enter your Highest Education Level" />
+                <SelectValue placeholder="اختر أعلى مستوى تعليمي" />
               </SelectTrigger>
               <SelectContent>
                 {educationLevelEnum?.enumValues.map((v, i) => (
@@ -727,14 +725,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Field of Study{" "}
+              التخصص الدراسي{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="fieldOfStudy"
-              placeholder="Enter your Field of Study"
+              placeholder="أدخل تخصصك الدراسي"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.fieldOfStudy,
@@ -748,14 +746,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-base font-semibold">
-              Graduation Year{" "}
+              سنة التخرج{" "}
               <span className="text-muted-foreground text-sm font-normal">
-                (Optional)
+                (اختياري)
               </span>
             </Label>
             <Input
               name="graduationYear"
-              placeholder="Enter Graduation Year"
+              placeholder="أدخل سنة التخرج"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.graduationYear,
@@ -778,10 +776,10 @@ export const ApplicationForm = () => {
           className="w-full mt-8 h-14 text-base font-semibold sticky bottom-5 left-0 opacity-100"
         >
           {isUploadingFile
-            ? "Uploading CV..."
+            ? "جارٍ رفع السيرة الذاتية..."
             : isPending
-              ? "Submitting Application..."
-              : "Send Application"}
+              ? "جارٍ إرسال الطلب..."
+              : "إرسال الطلب"}
         </Button>
       </form>
     </Container>

@@ -4,7 +4,7 @@ export default function page() {
   return (
     <main
       className="min-h-[calc(100vh-4.625rem)] bg-secondary text-white"
-      dir="ltr"
+      dir="rtl"
     >
       <Content />
     </main>

@@ -9,6 +9,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import JobCardSkeleton from "./JobSkeleton";
 
 const ITEMS_PER_PAGE = 6;
+export const JOB_TYPE_AR: Record<string, string> = {
+  FULL_TIME: "دوام كامل",
+  PART_TIME: "دوام جزئي",
+  CONTRACT: "عقد",
+  FREELANCE: "عمل حر",
+  INTERNSHIP: "تدريب",
+  TEMPORARY: "مؤقت",
+};
 
 export const Content = () => {
   const { data, isPending } = useGetJobs();
@@ -56,10 +64,9 @@ export const Content = () => {
           <BriefcaseIcon className="text-gray-400" width={28} />
         </div>
         <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-bold text-white">No jobs available</h3>
+          <h3 className="text-lg font-bold text-white">لا توجد وظائف متاحة</h3>{" "}
           <p className="text-sm text-gray-400 max-w-xs">
-            There are no open positions right now. Check back soon — new roles
-            are added regularly.
+            لا توجد مناصب مفتوحة حالياً. تحقق لاحقاً.
           </p>
         </div>
       </div>
@@ -104,7 +111,7 @@ export const Content = () => {
                 ></div>
               </div>
               <div className="w-fit py-1 px-2 bg-[#42414b] rounded-sm font-bold text-sm capitalize">
-                <span>{job?.type.toLowerCase().replace(/_/g, " ")}</span>
+                <span>{JOB_TYPE_AR[job?.type]}</span>
               </div>
             </div>
             <p className="grow">{job?.description}</p>
@@ -112,7 +119,7 @@ export const Content = () => {
               <div className="flex gap-3">
                 <div className="time flex items-center gap-1 text-gray-300">
                   <TimerIcon width={20} />
-                  <span>{timeAgo(job?.createdAt)}</span>
+                  <span>{timeAgo(job?.createdAt, 'ar')}</span>
                 </div>
                 <div className="time flex items-center gap-1 text-gray-300">
                   <MapPinIcon width={20} />
@@ -121,7 +128,7 @@ export const Content = () => {
               </div>
               <Link href={`/jobs/${job.id}`}>
                 <Button className="flex w-full h-10 rounded-sm hover:bg-primary bg-secondary transition duration-200 text-white font-bold text-lg no-underline shadow-lg hover:shadow-xl">
-                  Apply Now
+                  تقدّم الآن
                 </Button>
               </Link>
             </div>
@@ -134,7 +141,7 @@ export const Content = () => {
           ref={observerTarget}
           className="h-20 flex items-center justify-center mt-4"
         >
-          <div className="text-sm text-gray-400">Loading more jobs...</div>
+          <div className="text-sm text-gray-400">جارٍ تحميل المزيد...</div>
         </div>
       )}
 
