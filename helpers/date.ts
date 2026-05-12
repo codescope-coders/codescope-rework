@@ -1,9 +1,41 @@
-export function timeAgo(isoString: string): string {
+const TRANSLATIONS = {
+  en: {
+    justNow: "just now",
+    ago: (n: number, unit: string) =>
+      n === 1 ? `1 ${unit} ago` : `${n} ${unit}s ago`,
+    units: {
+      year: "year",
+      month: "month",
+      week: "week",
+      day: "day",
+      hour: "hour",
+      minute: "minute",
+      second: "second",
+    },
+  },
+  ar: {
+    justNow: "الآن",
+    ago: (n: number, unit: string) => `منذ ${n} ${unit}`,
+    units: {
+      year: "سنة",
+      month: "شهر",
+      week: "أسبوع",
+      day: "يوم",
+      hour: "ساعة",
+      minute: "دقيقة",
+      second: "ثانية",
+    },
+  },
+} as const;
+
+type Locale = keyof typeof TRANSLATIONS;
+
+export function timeAgo(isoString: string, locale: Locale = "en"): string {
   const date = new Date(isoString);
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  const intervals = {
+  const intervals: Record<string, number> = {
     year: 31536000,
     month: 2592000,
     week: 604800,
@@ -13,44 +45,16 @@ export function timeAgo(isoString: string): string {
     second: 1,
   };
 
-  if (seconds < 5) return "just now";
+  const t = TRANSLATIONS[locale];
+
+  if (seconds < 5) return t.justNow;
 
   for (const [unit, secondsInUnit] of Object.entries(intervals)) {
     const interval = Math.floor(seconds / secondsInUnit);
     if (interval >= 1) {
-      return interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`;
+      return t.ago(interval, t.units[unit as keyof typeof t.units]);
     }
   }
 
-  return "just now";
+  return t.justNow;
 }
-
-export const getTimeAgoISO = () => {
-  const now = new Date();
-
-  const subtractMinutes = (minutes: number): string =>
-    new Date(now.getTime() - minutes * 60 * 1000).toISOString();
-  const subtractHours = (hours: number) =>
-    new Date(now.getTime() - hours * 60 * 60 * 1000).toISOString();
-  const subtractDays = (days: number) =>
-    new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
-
-  return {
-    last30Minutes: subtractMinutes(30),
-    last24Hours: subtractHours(24),
-    last7Days: subtractDays(7),
-    last30Days: subtractDays(30),
-  };
-};
-
-export const formatIfDate = (value: string): string => {
-  const date = new Date(value);
-  if (!isNaN(date.getTime())) {
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-  return value;
-};

@@ -5,6 +5,7 @@ import { useGetJobById } from "@/hooks/useJobs";
 import clsx from "clsx";
 import { ClockIcon, MapPinIcon } from "lucide-react";
 import { useParams } from "next/navigation";
+import { JOB_TYPE_AR } from "../../components/Content";
 import { ApplicationForm } from "./ApplicationForm";
 import DetailsSkeleton from "./DetailsSkeleton";
 
@@ -33,11 +34,11 @@ export const Content = () => {
                   {data?.payload?.position}
                 </h1>
                 <div className="details flex items-start gap-2 min-w-fit">
-                  <div className="department px-3 py-1 bg-blue-500 rounded-sm font-bold min-w-fit capitalize">
-                    <span>
-                      {data?.payload?.type.toLowerCase().replace(/_/g, " ")}
-                    </span>
-                  </div>
+                  {data?.payload?.type && (
+                    <div className="department px-3 py-1 bg-blue-500 rounded-sm font-bold min-w-fit capitalize">
+                      <span>{JOB_TYPE_AR[data?.payload?.type]}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <p className="w-[90%]">{data?.payload?.description}</p>
@@ -53,8 +54,8 @@ export const Content = () => {
               </div>
             </div>
             {data && data?.payload?.requirements?.length > 0 && (
-              <div className="mt-4">
-                <h1 className="text-xl font-bold">Requirements:</h1>
+              <div className="mt-8">
+                <h1 className="text-2xl mb-2 font-bold">المتطلبات:</h1>
                 {data?.payload?.requirements?.map((r, i: number) => (
                   <li className="text-base font-medium ms-6" key={i}>
                     {r}
@@ -64,7 +65,7 @@ export const Content = () => {
             )}
             {data && data?.payload?.responsibilities?.length > 0 && (
               <div className="mt-4">
-                <h1 className="text-xl font-bold">Responsibilities:</h1>
+                <h1 className="text-2xl mb-2 font-bold">المسؤوليات:</h1>
                 {data?.payload?.responsibilities?.map((r, i: number) => (
                   <li className="text-base font-medium ms-6" key={i}>
                     {r}

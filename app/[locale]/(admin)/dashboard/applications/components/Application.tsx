@@ -1,5 +1,23 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { timeAgo } from "@/helpers/date";
 import { displayUrl } from "@/helpers/links";
+import {
+  useDeleteApplication,
+  useUpdateApplication,
+} from "@/hooks/useApplications";
+import {
+  ApplicationDto,
+  ApplicationStatus,
+  EducationLevel,
+  ExpectedSalary,
+} from "@/services/applications";
+import clsx from "clsx";
 import {
   BookOpen,
   Briefcase,
@@ -8,13 +26,15 @@ import {
   CheckCircle,
   Clock,
   DollarSign,
+  Download,
+  Eye,
+  FileText,
   Flag,
   GraduationCap,
   Hourglass,
   Mail,
   MapPin,
   MessageSquare,
-  MoreHorizontal,
   MoreVertical,
   Phone,
   Trash,
@@ -22,49 +42,29 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { FileText, Eye, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  ApplicationDto,
-  ApplicationStatus,
-  EducationLevel,
-  ExpectedSalary,
-} from "@/services/applications";
-import { timeAgo } from "@/helpers/date";
-import {
-  useDeleteApplication,
-  useUpdateApplication,
-} from "@/hooks/useApplications";
 import { useState } from "react";
-import clsx from "clsx";
 
 export const expectedSalaryLabel: Record<ExpectedSalary, string> = {
-  RANGE_400_600: "400k - 600k IQD",
-  RANGE_700_900: "700k - 900k IQD",
-  RANGE_1000_1500: "1m - 1.5m IQD",
-  RANGE_1500_2000: "1.5m - 2m IQD",
-  OTHER: "Negotiable",
+  RANGE_400_600: "400 - 600 ألف دينار",
+  RANGE_700_900: "700 - 900 ألف دينار",
+  RANGE_1000_1500: "1 - 1.5 مليون دينار",
+  RANGE_1500_2000: "1.5 - 2 مليون دينار",
+  OTHER: "قابل للتفاوض",
 };
 
 export const educationLevelLabel: Record<EducationLevel, string> = {
-  NO_FORMAL_EDUCATION: "No formal education",
-  PRIMARY: "Primary school",
-  INTERMEDIATE: "Intermediate school",
-  SECONDARY: "Secondary / High school",
-  DIPLOMA: "Diploma",
-  BACHELORS: "Bachelor’s degree",
-  MASTERS: "Master’s degree",
-  DOCTORATE: "Doctorate (PhD)",
-  POSTDOCTORATE: "Post-doctorate",
-  CERTIFICATE: "Certificate",
-  PROFESSIONAL_CERTIFICATION: "Professional certification",
+  NO_FORMAL_EDUCATION: "بدون تعليم رسمي",
+  PRIMARY: "المرحلة الابتدائية",
+  INTERMEDIATE: "المرحلة المتوسطة",
+  SECONDARY: "المرحلة الثانوية / الإعدادية",
+  DIPLOMA: "دبلوم",
+  BACHELORS: "بكالوريوس",
+  MASTERS: "ماجستير",
+  DOCTORATE: "دكتوراه (PhD)",
+  POSTDOCTORATE: "ما بعد الدكتوراه",
+  CERTIFICATE: "شهادة",
+  PROFESSIONAL_CERTIFICATION: "شهادة مهنية",
 };
-
 const statusVariantMap: Record<
   ApplicationStatus,
   "pending" | "green" | "gray" | "destructive" | "default"
