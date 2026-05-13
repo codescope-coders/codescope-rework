@@ -34,10 +34,10 @@ export const PricingPlans = () => {
               t(`plans.charter.features.${i}`),
             )}
             price={{
-              yearly: "1,500$",
-              monthly: "125$",
-              quarterly: { total: "450$", perMonth: "150$" },
-              twoYears: { total: "2,700$", perMonth: "113$" },
+              yearly: "900$",
+              monthly: "75$",
+              quarterly: { total: "270$", perMonth: "90$" },
+              twoYears: { total: "1,620$", perMonth: "67.5$" },
             }}
             preparationFees="500$"
           />
@@ -173,9 +173,22 @@ const PricingPlan = ({
               / {t("yearly")}
             </span>
           </div>
-          <div className="text-xs text-subtitle-color">
-            <span className="font-semibold text-accent">{price.monthly}</span>{" "}
-            {t("monthly")}
+          <div className="text-sm text-subtitle-color">
+            <span className="font-semibold text-[#6f00ff]">
+              {price.monthly}
+            </span>{" "}
+            {t("monthly")}{" "}
+            <Badge
+              className={clsx(
+                "text-[10px] px-2 py-0.5 rounded-full text-[#1a7f35] bg-[#34c7591f] border-[#34c75947] ms-1",
+                {
+                  "text-[#6effa0] bg-[#34c7592e] border-[#34c7594d]":
+                    mostPopular,
+                },
+              )}
+            >
+              وفّر 17%
+            </Badge>
           </div>
         </div>
 
@@ -191,15 +204,32 @@ const PricingPlan = ({
               label: t("twoYears"),
               perMonth: price.twoYears.perMonth,
               total: price.twoYears.total,
+              hasDiscout: true,
+              discount: 25,
             },
-          ].map(({ label, perMonth, total }) => (
+          ].map(({ label, perMonth, total, discount, hasDiscout }) => (
             <div
               key={label}
               className="flex items-center justify-between gap-3"
             >
-              <dt className="text-subtitle-color text-[12.5px]">{label}</dt>
+              <dt className="text-subtitle-color text-[12.5px]">
+                {label}{" "}
+                {hasDiscout && (
+                  <Badge
+                    className={clsx(
+                      "text-[10px] px-2 py-0.5 rounded-full text-[#1a7f35] bg-[#34c7591f] border-[#34c75947] ms-1",
+                      {
+                        "text-[#6effa0] bg-[#34c7592e] border-[#34c7594d]":
+                          mostPopular,
+                      },
+                    )}
+                  >
+                    وفّر %{discount}
+                  </Badge>
+                )}
+              </dt>
               <dd className="flex items-center gap-4">
-                <span className="text-[#aeaeb2] text-[11px]">
+                <span className="text-[#aeaeb2] text-xs font-medium">
                   {perMonth}
                   {t("perMonth")}
                 </span>
