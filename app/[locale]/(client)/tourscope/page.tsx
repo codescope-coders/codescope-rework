@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useLocale } from "next-intl";
 import { IBM_Plex_Sans_Arabic, Urbanist } from "next/font/google";
-import { AddonsAndDecisions } from "./components/AddonsAndDecisions";
+import { AddonsAndDecisions } from "./components/addons-and-decisions";
 import { FAQSection } from "./components/FAQSection";
 import { HeroSection } from "./components/Hero";
 import { PricingPlans } from "./components/PricingPlans";
