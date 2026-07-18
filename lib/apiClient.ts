@@ -41,7 +41,7 @@ export default class ApiClient<Req, Res> {
       .put<Res>(`${this.endpoint}${id ? `/${id}` : ""}`, data)
       .then((res) => res.data)
       .catch((err) => {
-        throw err.response.data;
+        throw err.response?.data ?? { message: err.message ?? "Network error." };
       });
   };
 
@@ -50,7 +50,7 @@ export default class ApiClient<Req, Res> {
       .post<Res>(!id ? this.endpoint : `${this.endpoint}/${id}`, data, headers)
       .then((res) => res.data)
       .catch((err) => {
-        throw err.response.data;
+        throw err.response?.data ?? { message: err.message ?? "Network error." };
       });
   };
 
@@ -61,7 +61,7 @@ export default class ApiClient<Req, Res> {
       })
       .then((res) => res.data)
       .catch((err) => {
-        throw err.response.data;
+        throw err.response?.data ?? { message: err.message ?? "Network error." };
       });
   };
 }

@@ -1,4 +1,30 @@
 {
+  "auth": {
+    "login_title": "تسجيل الدخول",
+    "login_subtitle": "أدخل بريدك الإلكتروني وسنرسل إليك رمز الدخول.",
+    "email_label": "البريد الإلكتروني",
+    "email_placeholder": "name@codescope.dev",
+    "continue": "متابعة",
+    "logging_in": "جارٍ تسجيل الدخول…",
+    "verify_title": "أدخل الرمز",
+    "otp_sent": "أرسلنا رمزاً مكوّناً من 6 أرقام إلى",
+    "verify": "تحقّق",
+    "invalid_otp": "الرمز غير صحيح. حاول مرة أخرى.",
+    "resend": "إعادة إرسال الرمز",
+    "otp_expires_in": "تنتهي صلاحية الرمز خلال",
+    "back": "رجوع",
+    "copyright": "© كودسكوب. جميع الحقوق محفوظة.",
+    "panel_tagline": "منصّة واحدة لكل ما تبنيه كودسكوب.",
+    "value_prop_apps": "تطبيقات مصمّمة خصيصاً لتنمو مع أعمالك.",
+    "value_prop_web": "مواقع مبتكرة مبنيّة لتحقيق النتائج.",
+    "value_prop_delivery": "من الفكرة الأولى حتى الإطلاق النهائي.",
+    "otp_group_label": "رمز التحقق",
+    "otp_digit_label": "الخانة {index} من {total}",
+    "email_invalid": "أدخل بريداً إلكترونياً صحيحاً.",
+    "no_access": "هذا البريد لا يملك صلاحية الدخول إلى المنصّة.",
+    "rate_limited": "يرجى الانتظار قليلاً قبل طلب رمز جديد.",
+    "too_many_attempts": "محاولات كثيرة. اطلب رمزاً جديداً."
+  },
   "home": {
     "hero": {
       "tagline": "كودسكوب",
@@ -479,5 +505,51 @@
     "video-error": "متصفحك لا يدعم تشغيل الفيديو.",
     "days": "يوماً",
     "optional": "اختياري"
+  },
+  "dash": {
+    "nav": {
+      "dashboard": "لوحة المتابعة",
+      "pipeline": "متابعة المبيعات",
+      "projects": "متابعة التنفيذ",
+      "servers": "السيرفرات",
+      "reports": "تقارير الموظفين",
+      "support": "الدعم",
+      "leaves": "الإجازات",
+      "finance": "المتابعة المالية",
+      "finance_ledger": "الحركات المالية",
+      "finance_requests": "طلبات الصرف",
+      "finance_payroll": "سلم الرواتب",
+      "finance_subs": "اشتراكات الشركات",
+      "finance_invoices": "الفواتير",
+      "finance_archive": "الأرشيف الشهري",
+      "partners": "إدارة الشركاء",
+      "careers": "التوظيف",
+      "users": "المستخدمون",
+      "settings": "الإعدادات"
+    },
+    "common": {
+      "search": "بحث سريع",
+      "command_placeholder": "ابحث عن صفحة...",
+      "no_results": "لا توجد نتائج",
+      "notifications": "الإشعارات",
+      "no_notifications": "لا توجد إشعارات حالياً",
+      "logout": "تسجيل خروج",
+      "collapse_menu": "طيّ القائمة",
+      "expand": "توسيع القائمة",
+      "home": "الرئيسية",
+      "close": "إغلاق"
+    },
+    "roles": {
+      "ADMIN": "الإدارة",
+      "ACCOUNTANT": "محاسب",
+      "EMPLOYEE": "دعم ومبيعات",
+      "DEVELOPER": "مبرمج",
+      "DESIGNER": "مصمم تجربة مستخدم",
+      "SYSADMIN": "مسؤول سيرفرات"
+    },
+    "dashboard": {
+      "title": "لوحة المتابعة",
+      "subtitle": "نظرة سريعة على المبيعات والفريق والوضع المالي"
+    }
   }
 }

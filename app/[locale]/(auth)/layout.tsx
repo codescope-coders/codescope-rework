@@ -1,20 +1,21 @@
-import { ContactUsDialog } from "@/components/ContactUsDialog";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import SmoothScrollingProvider from "@/providers/ lenis-provider";
+import { getLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 
-export default function ClientLayout({ children }: { children: ReactNode }) {
+// Minimal, full-screen chrome for the single public route (login). Intentionally
+// omits the marketing Header/Footer + smooth-scroll provider so the login owns
+// the whole viewport (editorial split layout).
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const locale = await getLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
   return (
-    <div dir="ltr">
-      <SmoothScrollingProvider>
-        <Toaster dir="ltr" />
-        <Header />
-        {children}
-        <ContactUsDialog />
-        <Footer />
-      </SmoothScrollingProvider>
-    </div>
+    <>
+      <Toaster dir={dir} position="top-center" richColors />
+      {children}
+    </>
   );
 }

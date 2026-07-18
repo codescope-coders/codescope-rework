@@ -20,5 +20,7 @@ RUN npm run build
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application
-CMD [ "npm", "start" ]
+# On start: apply DB migrations + seed baseline data, then start Next.js.
+# (See docker-entrypoint.sh. drizzle-kit / tsx are present because `npm install`
+# above installs devDependencies too.)
+CMD [ "sh", "docker-entrypoint.sh" ]

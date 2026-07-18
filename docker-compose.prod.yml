@@ -9,6 +9,11 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
       - JWT_SECRET=${JWT_SECRET}
+      # OTP email delivery — REQUIRED in production (lib/email.ts throws if the
+      # key is missing, so sign-in codes can't be sent). Define both on the prod
+      # host (its .env next to this compose file).
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
     depends_on:
       postgres:
         condition: service_healthy

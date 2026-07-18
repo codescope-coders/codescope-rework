@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -201,4 +202,583 @@ html {
       height: 0;
     }
   }
+}
+
+/* ============================================================================
+   CODESCOPE FOLLOW-UP DASHBOARD — DESIGN SYSTEM
+   Ported from whitelabel-console (Geist-style tokens) and repainted in the
+   Codescope teal. Purely ADDITIVE: the public marketing site keeps its own
+   :root tokens above and is never touched. The dashboard tree is wrapped in an
+   element carrying [data-theme="light"|"dark"]; the shared shadcn base vars
+   (--primary, --card, --foreground, ...) are re-pointed to --theme-* ONLY within
+   that [data-theme] scope, so codescope's existing radix components auto-retheme
+   inside the dashboard while the site stays pixel-identical.
+   ============================================================================ */
+
+/* New color ramps + spacing exposed as Tailwind utilities. Names chosen so they
+   never collide with the site's tokens (canvas / overlay / *-50..900 / neutral-*). */
+@theme inline {
+  --color-canvas: var(--theme-canvas);
+  --color-overlay: var(--theme-overlay);
+  --color-header-background: var(--theme-header-background);
+  --color-header-foreground: var(--theme-header-foreground);
+
+  --color-neutral-50: var(--theme-neutral-50);
+  --color-neutral-100: var(--theme-neutral-100);
+  --color-neutral-200: var(--theme-neutral-200);
+  --color-neutral-300: var(--theme-neutral-300);
+  --color-neutral-400: var(--theme-neutral-400);
+  --color-neutral-500: var(--theme-neutral-500);
+  --color-neutral-600: var(--theme-neutral-600);
+  --color-neutral-700: var(--theme-neutral-700);
+  --color-neutral-800: var(--theme-neutral-800);
+  --color-neutral-900: var(--theme-neutral-900);
+  --color-neutral-950: var(--theme-neutral-950);
+
+  --color-primary-50: var(--theme-primary-50);
+  --color-primary-100: var(--theme-primary-100);
+  --color-primary-200: var(--theme-primary-200);
+  --color-primary-300: var(--theme-primary-300);
+  --color-primary-400: var(--theme-primary-400);
+  --color-primary-500: var(--theme-primary-500);
+  --color-primary-600: var(--theme-primary-600);
+  --color-primary-700: var(--theme-primary-700);
+  --color-primary-800: var(--theme-primary-800);
+  --color-primary-900: var(--theme-primary-900);
+  --color-primary-50-foreground: var(--theme-primary-50-foreground);
+  --color-primary-100-foreground: var(--theme-primary-100-foreground);
+  --color-primary-200-foreground: var(--theme-primary-200-foreground);
+  --color-primary-300-foreground: var(--theme-primary-300-foreground);
+  --color-primary-400-foreground: var(--theme-primary-400-foreground);
+  --color-primary-500-foreground: var(--theme-primary-500-foreground);
+  --color-primary-600-foreground: var(--theme-primary-600-foreground);
+  --color-primary-700-foreground: var(--theme-primary-700-foreground);
+  --color-primary-800-foreground: var(--theme-primary-800-foreground);
+  --color-primary-900-foreground: var(--theme-primary-900-foreground);
+
+  --color-secondary-50: var(--theme-secondary-50);
+  --color-secondary-100: var(--theme-secondary-100);
+  --color-secondary-200: var(--theme-secondary-200);
+  --color-secondary-300: var(--theme-secondary-300);
+  --color-secondary-400: var(--theme-secondary-400);
+  --color-secondary-500: var(--theme-secondary-500);
+  --color-secondary-600: var(--theme-secondary-600);
+  --color-secondary-700: var(--theme-secondary-700);
+  --color-secondary-800: var(--theme-secondary-800);
+  --color-secondary-900: var(--theme-secondary-900);
+
+  --color-success-50: var(--theme-success-50);
+  --color-success-100: var(--theme-success-100);
+  --color-success-200: var(--theme-success-200);
+  --color-success-300: var(--theme-success-300);
+  --color-success-400: var(--theme-success-400);
+  --color-success-500: var(--theme-success-500);
+  --color-success-600: var(--theme-success-600);
+  --color-success-700: var(--theme-success-700);
+  --color-success-800: var(--theme-success-800);
+  --color-success-900: var(--theme-success-900);
+
+  --color-warning-50: var(--theme-warning-50);
+  --color-warning-100: var(--theme-warning-100);
+  --color-warning-200: var(--theme-warning-200);
+  --color-warning-300: var(--theme-warning-300);
+  --color-warning-400: var(--theme-warning-400);
+  --color-warning-500: var(--theme-warning-500);
+  --color-warning-600: var(--theme-warning-600);
+  --color-warning-700: var(--theme-warning-700);
+  --color-warning-800: var(--theme-warning-800);
+  --color-warning-900: var(--theme-warning-900);
+
+  --color-info-50: var(--theme-info-50);
+  --color-info-100: var(--theme-info-100);
+  --color-info-200: var(--theme-info-200);
+  --color-info-300: var(--theme-info-300);
+  --color-info-400: var(--theme-info-400);
+  --color-info-500: var(--theme-info-500);
+  --color-info-600: var(--theme-info-600);
+  --color-info-700: var(--theme-info-700);
+  --color-info-800: var(--theme-info-800);
+  --color-info-900: var(--theme-info-900);
+
+  --color-destructive-50: var(--theme-destructive-50);
+  --color-destructive-100: var(--theme-destructive-100);
+  --color-destructive-200: var(--theme-destructive-200);
+  --color-destructive-300: var(--theme-destructive-300);
+  --color-destructive-400: var(--theme-destructive-400);
+  --color-destructive-500: var(--theme-destructive-500);
+  --color-destructive-600: var(--theme-destructive-600);
+  --color-destructive-700: var(--theme-destructive-700);
+  --color-destructive-800: var(--theme-destructive-800);
+  --color-destructive-900: var(--theme-destructive-900);
+
+  --color-teal-50: var(--theme-teal-50);
+  --color-teal-100: var(--theme-teal-100);
+  --color-teal-200: var(--theme-teal-200);
+  --color-teal-300: var(--theme-teal-300);
+  --color-teal-400: var(--theme-teal-400);
+  --color-teal-500: var(--theme-teal-500);
+  --color-teal-600: var(--theme-teal-600);
+  --color-teal-700: var(--theme-teal-700);
+  --color-teal-800: var(--theme-teal-800);
+  --color-teal-900: var(--theme-teal-900);
+
+  --color-pink-50: var(--theme-pink-50);
+  --color-pink-100: var(--theme-pink-100);
+  --color-pink-200: var(--theme-pink-200);
+  --color-pink-300: var(--theme-pink-300);
+  --color-pink-400: var(--theme-pink-400);
+  --color-pink-500: var(--theme-pink-500);
+  --color-pink-600: var(--theme-pink-600);
+  --color-pink-700: var(--theme-pink-700);
+  --color-pink-800: var(--theme-pink-800);
+  --color-pink-900: var(--theme-pink-900);
+
+  --color-orange-50: var(--theme-orange-50);
+  --color-orange-100: var(--theme-orange-100);
+  --color-orange-200: var(--theme-orange-200);
+  --color-orange-300: var(--theme-orange-300);
+  --color-orange-400: var(--theme-orange-400);
+  --color-orange-500: var(--theme-orange-500);
+  --color-orange-600: var(--theme-orange-600);
+  --color-orange-700: var(--theme-orange-700);
+  --color-orange-800: var(--theme-orange-800);
+  --color-orange-900: var(--theme-orange-900);
+
+  --spacing-sidebar-width: 260px;
+  --spacing-sidebar-collapsed-width: 68px;
+}
+
+/* Dashboard tokens — LIGHT defaults (also serve [data-theme="light"]). Teal primary.
+   The primary tint ramp (50–900) is defined here and intentionally NOT re-inverted
+   in dark mode (Geist convention: primary-50/100 stay light on dark surfaces). */
+:root {
+  --theme-background: #ffffff;
+  --theme-canvas: #f1f1f1;
+  --theme-foreground: #171717;
+  --theme-overlay: #ffffff;
+  --theme-border: #ebebeb;
+  --theme-ring: var(--theme-primary);
+  --theme-muted: #f2f2f2;
+  --theme-muted-foreground: #666666;
+  --theme-card: #fafafa;
+  --theme-card-foreground: #171717;
+
+  --theme-neutral: #a1a1a1;
+  --theme-neutral-50: #fafafa;
+  --theme-neutral-100: #f2f2f2;
+  --theme-neutral-200: #ebebeb;
+  --theme-neutral-300: #e0e0e0;
+  --theme-neutral-400: #a1a1a1;
+  --theme-neutral-500: #737373;
+  --theme-neutral-600: #525252;
+  --theme-neutral-700: #404040;
+  --theme-neutral-800: #262626;
+  --theme-neutral-900: #171717;
+  --theme-neutral-950: #0a0a0a;
+
+  /* Primary — CODESCOPE TEAL */
+  --theme-primary: #08baa8;
+  --theme-primary-foreground: #ffffff;
+  --theme-primary-50: #e7faf8;
+  --theme-primary-50-foreground: #0b4f48;
+  --theme-primary-100: #c4f2ec;
+  --theme-primary-100-foreground: #0b4f48;
+  --theme-primary-200: #92e6dc;
+  --theme-primary-200-foreground: #0b4f48;
+  --theme-primary-300: #57d6c8;
+  --theme-primary-300-foreground: #083c37;
+  --theme-primary-400: #1fc9b8;
+  --theme-primary-400-foreground: #ffffff;
+  --theme-primary-500: #08baa8;
+  --theme-primary-500-foreground: #ffffff;
+  --theme-primary-600: #079e8f;
+  --theme-primary-600-foreground: #ffffff;
+  --theme-primary-700: #097e73;
+  --theme-primary-700-foreground: #ffffff;
+  --theme-primary-800: #0c6259;
+  --theme-primary-800-foreground: #ffffff;
+  --theme-primary-900: #0e514a;
+  --theme-primary-900-foreground: #ffffff;
+
+  --theme-secondary: #292929;
+  --theme-secondary-foreground: #ffffff;
+  --theme-secondary-50: #f2f2f2;
+  --theme-secondary-100: #cacaca;
+  --theme-secondary-200: #a2a2a2;
+  --theme-secondary-300: #797979;
+  --theme-secondary-400: #515151;
+  --theme-secondary-500: #292929;
+  --theme-secondary-600: #232323;
+  --theme-secondary-700: #1c1c1c;
+  --theme-secondary-800: #161616;
+  --theme-secondary-900: #101010;
+
+  --theme-header-background: rgba(255, 255, 255, 0.8);
+  --theme-header-foreground: #262626;
+
+  --theme-success-50: #e7f7ee;
+  --theme-success-100: #c7ecd5;
+  --theme-success-200: #95dab2;
+  --theme-success-300: #63c88f;
+  --theme-success-400: #38b673;
+  --theme-success-500: #1a9f55;
+  --theme-success-600: #14803f;
+  --theme-success-700: #106633;
+  --theme-success-800: #0c4d27;
+  --theme-success-900: #08331a;
+
+  --theme-warning-50: #fef6e8;
+  --theme-warning-100: #fde9c4;
+  --theme-warning-200: #fbd489;
+  --theme-warning-300: #f9be4f;
+  --theme-warning-400: #f7b133;
+  --theme-warning-500: #f5a623;
+  --theme-warning-600: #d3870c;
+  --theme-warning-700: #a4670a;
+  --theme-warning-800: #744908;
+  --theme-warning-900: #4d3005;
+
+  --theme-info-50: #e9f2ff;
+  --theme-info-100: #cfe3ff;
+  --theme-info-200: #9ec6ff;
+  --theme-info-300: #6eaaff;
+  --theme-info-400: #3d8dff;
+  --theme-info-500: #0070f3;
+  --theme-info-600: #005ac4;
+  --theme-info-700: #004393;
+  --theme-info-800: #002d62;
+  --theme-info-900: #001631;
+
+  --theme-destructive-50: #fdecec;
+  --theme-destructive-100: #fbd5d6;
+  --theme-destructive-200: #f5abad;
+  --theme-destructive-300: #ef8184;
+  --theme-destructive-400: #ea676b;
+  --theme-destructive-500: #e5484d;
+  --theme-destructive-600: #cf2b30;
+  --theme-destructive-700: #a51f24;
+  --theme-destructive-800: #7a181c;
+  --theme-destructive-900: #501013;
+
+  --theme-teal-50: #f0fdfa;
+  --theme-teal-100: #ccfbf1;
+  --theme-teal-200: #99f6e4;
+  --theme-teal-300: #5eead4;
+  --theme-teal-400: #2dd4bf;
+  --theme-teal-500: #14b8a6;
+  --theme-teal-600: #0d9488;
+  --theme-teal-700: #0f766e;
+  --theme-teal-800: #115e59;
+  --theme-teal-900: #134e4a;
+
+  --theme-pink-50: #fdf2f8;
+  --theme-pink-100: #fce7f3;
+  --theme-pink-200: #fbcfe8;
+  --theme-pink-300: #f9a8d4;
+  --theme-pink-400: #f472b6;
+  --theme-pink-500: #ec4899;
+  --theme-pink-600: #db2777;
+  --theme-pink-700: #be185d;
+  --theme-pink-800: #9d174d;
+  --theme-pink-900: #831843;
+
+  --theme-orange-50: #fff7ed;
+  --theme-orange-100: #ffedd5;
+  --theme-orange-200: #fed7aa;
+  --theme-orange-300: #fdba74;
+  --theme-orange-400: #fb923c;
+  --theme-orange-500: #f97316;
+  --theme-orange-600: #ea580c;
+  --theme-orange-700: #c2410c;
+  --theme-orange-800: #9a3412;
+  --theme-orange-900: #7c2d12;
+}
+
+/* Dashboard tokens — DARK overrides (teal primary brightens for legibility). */
+[data-theme="dark"] {
+  --theme-background: #0d0d0d;
+  --theme-canvas: #0d0d0d;
+  --theme-foreground: #ededed;
+  --theme-overlay: #161616;
+  --theme-border: #2e2e2e;
+  --theme-muted: #1f1f1f;
+  --theme-muted-foreground: #888888;
+  --theme-card: #161616;
+  --theme-card-foreground: #ededed;
+
+  --theme-neutral: #5c5c5c;
+  --theme-neutral-50: #161616;
+  --theme-neutral-100: #1f1f1f;
+  --theme-neutral-200: #2e2e2e;
+  --theme-neutral-300: #3d3d3d;
+  --theme-neutral-400: #5c5c5c;
+  --theme-neutral-500: #7a7a7a;
+  --theme-neutral-600: #a3a3a3;
+  --theme-neutral-700: #cfcfcf;
+  --theme-neutral-800: #e3e3e3;
+  --theme-neutral-900: #f2f2f2;
+  --theme-neutral-950: #fafafa;
+
+  /* Primary — brighter Codescope teal on dark. Tint ramp (50–900) inherited from
+     :root (kept light on purpose). */
+  --theme-primary: #1fd9c4;
+  --theme-primary-foreground: #04302c;
+
+  --theme-secondary: #c4c4c4;
+  --theme-secondary-foreground: #0a0a0a;
+  --theme-secondary-50: #fafafa;
+  --theme-secondary-100: #f2f2f2;
+  --theme-secondary-200: #e3e3e3;
+  --theme-secondary-300: #cfcfcf;
+  --theme-secondary-400: #a3a3a3;
+  --theme-secondary-500: #7a7a7a;
+  --theme-secondary-600: #5c5c5c;
+  --theme-secondary-700: #3d3d3d;
+  --theme-secondary-800: #2e2e2e;
+  --theme-secondary-900: #1f1f1f;
+
+  --theme-header-background: rgba(0, 0, 0, 0.8);
+  --theme-header-foreground: #ffffff;
+
+  --theme-success-50: #08331a;
+  --theme-success-100: #0c4d27;
+  --theme-success-200: #106633;
+  --theme-success-300: #14803f;
+  --theme-success-400: #1a9f55;
+  --theme-success-500: #2bb96a;
+  --theme-success-600: #5ccb8d;
+  --theme-success-700: #8eddb1;
+  --theme-success-800: #c0eed4;
+  --theme-success-900: #e7f7ee;
+
+  --theme-warning-50: #2e1d05;
+  --theme-warning-100: #4d3005;
+  --theme-warning-200: #744908;
+  --theme-warning-300: #a4670a;
+  --theme-warning-400: #d3870c;
+  --theme-warning-500: #f5a623;
+  --theme-warning-600: #f7b94e;
+  --theme-warning-700: #facd7e;
+  --theme-warning-800: #fce0ae;
+  --theme-warning-900: #fef3df;
+
+  --theme-info-50: #001a3a;
+  --theme-info-100: #002d62;
+  --theme-info-200: #004393;
+  --theme-info-300: #005ac4;
+  --theme-info-400: #0070f3;
+  --theme-info-500: #2d8bff;
+  --theme-info-600: #5ba6ff;
+  --theme-info-700: #8cc2ff;
+  --theme-info-800: #bedcff;
+  --theme-info-900: #e9f2ff;
+
+  --theme-destructive-50: #2e0a0c;
+  --theme-destructive-100: #501013;
+  --theme-destructive-200: #7a181c;
+  --theme-destructive-300: #a51f24;
+  --theme-destructive-400: #cf2b30;
+  --theme-destructive-500: #e5484d;
+  --theme-destructive-600: #ec7175;
+  --theme-destructive-700: #f29b9e;
+  --theme-destructive-800: #f7c4c6;
+  --theme-destructive-900: #fce8e9;
+
+  --theme-teal-50: #042f2e;
+  --theme-teal-100: #134e4a;
+  --theme-teal-200: #115e59;
+  --theme-teal-300: #0f766e;
+  --theme-teal-400: #0d9488;
+  --theme-teal-500: #14b8a6;
+  --theme-teal-600: #2dd4bf;
+  --theme-teal-700: #5eead4;
+  --theme-teal-800: #99f6e4;
+  --theme-teal-900: #ccfbf1;
+
+  --theme-pink-50: #3b0a22;
+  --theme-pink-100: #5c0f37;
+  --theme-pink-200: #7d1449;
+  --theme-pink-300: #a51e5e;
+  --theme-pink-400: #c8316f;
+  --theme-pink-500: #ec4899;
+  --theme-pink-600: #f06fae;
+  --theme-pink-700: #f595c4;
+  --theme-pink-800: #f9bdda;
+  --theme-pink-900: #fce7f3;
+
+  --theme-orange-50: #2a1207;
+  --theme-orange-100: #7c2d12;
+  --theme-orange-200: #9a3412;
+  --theme-orange-300: #c2410c;
+  --theme-orange-400: #ea580c;
+  --theme-orange-500: #f97316;
+  --theme-orange-600: #fb923c;
+  --theme-orange-700: #fdba74;
+  --theme-orange-800: #fed7aa;
+  --theme-orange-900: #ffedd5;
+}
+
+/* Within the dashboard scope only, re-point the shared shadcn base vars at the
+   --theme-* tokens, so codescope's existing radix components + any bg-primary /
+   text-foreground / border-border utilities pick up the dashboard theme. Present
+   ONLY under [data-theme], so the public site's :root values stay intact. */
+[data-theme] {
+  --background: var(--theme-background);
+  --foreground: var(--theme-foreground);
+  --card: var(--theme-card);
+  --card-foreground: var(--theme-card-foreground);
+  --popover: var(--theme-overlay);
+  --popover-foreground: var(--theme-foreground);
+  --primary: var(--theme-primary);
+  --primary-foreground: var(--theme-primary-foreground);
+  --secondary: var(--theme-secondary);
+  --secondary-foreground: var(--theme-secondary-foreground);
+  --muted: var(--theme-muted);
+  --muted-foreground: var(--theme-muted-foreground);
+  --accent: var(--theme-muted);
+  --accent-foreground: var(--theme-foreground);
+  --border: var(--theme-border);
+  --input: var(--theme-border);
+  --ring: var(--theme-ring);
+  --destructive: var(--theme-destructive-500);
+
+  background-color: var(--theme-canvas);
+  color: var(--theme-foreground);
+}
+
+/* ── Dashboard surface / motion utilities (from whitelabel-console) ────────── */
+
+/* Flat primary tint — solid wash at low opacity. */
+.bg-tint-primary {
+  background: color-mix(in oklab, var(--theme-primary) 6%, transparent);
+}
+
+/* Hairline divider that respects theme. */
+.divider-hairline {
+  background: var(--theme-border);
+  height: 1px;
+}
+
+/* Surface — Geist: near-flat, separation from borders not drop shadow. */
+.surface-raised {
+  background: var(--theme-overlay);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--theme-foreground) 4%, transparent);
+}
+
+/* Refined focus ring across interactive elements, scoped to the dashboard. */
+[data-theme]
+  :where(button, a, [role="button"], input, textarea, select):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--theme-background),
+    0 0 0 4px color-mix(in oklab, var(--theme-ring) 55%, transparent);
+}
+
+/* Thin scrollbar variant for sidebar / popovers / scroll panes. */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--theme-neutral-300) 60%, transparent);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--theme-neutral-400) 80%, transparent);
+}
+
+/* Keyboard hint chip. */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--theme-neutral-500);
+  background: color-mix(in oklab, var(--theme-neutral-200) 60%, transparent);
+  border: 1px solid var(--theme-border);
+  border-radius: 5px;
+}
+
+/* Subtle staggered fade-in used on first sidebar paint. */
+@keyframes nav-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-nav-rise {
+  animation: nav-rise 0.35s ease-out both;
+}
+
+/* Per-route page entrance — opacity only (keeps sticky toolbars' containing block). */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-page-in {
+  animation: page-fade-in 0.3s ease-out both;
+}
+
+/* Reveal-on-mount primitive. */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.motion-reveal--in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-page-in,
+  .animate-nav-rise {
+    animation: none;
+  }
+}
+
+/* Hide number-input spinners inside the dashboard (Geist convention). */
+[data-theme] input[type="number"]::-webkit-outer-spin-button,
+[data-theme] input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+[data-theme] input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Clicking an interactive control must never begin a text selection. Without
+   this, a click on a button / clickable row that re-renders its list (finance
+   tabs, expandable payroll sheets, row-click modals) drags the selection anchor
+   and highlights "everything". Table data cells have no cursor-pointer, so
+   their figures stay selectable for copy. */
+[data-theme] :is(button, [role="button"], a, label, summary),
+[data-theme] .cursor-pointer {
+  -webkit-user-select: none;
+  user-select: none;
 }

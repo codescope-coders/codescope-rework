@@ -1,4 +1,30 @@
 {
+  "auth": {
+    "login_title": "Sign in",
+    "login_subtitle": "Enter your email and we'll send you a sign-in code.",
+    "email_label": "Email",
+    "email_placeholder": "name@codescope.dev",
+    "continue": "Continue",
+    "logging_in": "Signing in…",
+    "verify_title": "Enter your code",
+    "otp_sent": "We sent a 6-digit code to",
+    "verify": "Verify",
+    "invalid_otp": "That code isn't right. Please try again.",
+    "resend": "Resend code",
+    "otp_expires_in": "Code expires in",
+    "back": "Back",
+    "copyright": "© Codescope. All rights reserved.",
+    "panel_tagline": "One console for everything Codescope ships.",
+    "value_prop_apps": "Tailored applications, engineered to grow.",
+    "value_prop_web": "Innovative websites, built to convert.",
+    "value_prop_delivery": "From first concept to final deployment.",
+    "otp_group_label": "One-time passcode",
+    "otp_digit_label": "Digit {index} of {total}",
+    "email_invalid": "Enter a valid email address.",
+    "no_access": "This email doesn't have console access.",
+    "rate_limited": "Please wait a moment before requesting another code.",
+    "too_many_attempts": "Too many attempts. Request a new code."
+  },
   "home": {
     "hero": {
       "tagline": "Codescope",
@@ -479,5 +505,51 @@
     "video-error": "Your browser does not support video playback.",
     "days": "days",
     "optional": "Optional"
+  },
+  "dash": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "pipeline": "Sales Pipeline",
+      "projects": "Delivery",
+      "servers": "Servers",
+      "reports": "Reports",
+      "support": "Support",
+      "leaves": "Leaves",
+      "finance": "Finance",
+      "finance_ledger": "Ledger",
+      "finance_requests": "Spend Requests",
+      "finance_payroll": "Payroll",
+      "finance_subs": "Subscriptions",
+      "finance_invoices": "Invoices",
+      "finance_archive": "Monthly Archive",
+      "partners": "Partners",
+      "careers": "Careers",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "common": {
+      "search": "Quick search",
+      "command_placeholder": "Search for a page...",
+      "no_results": "No results",
+      "notifications": "Notifications",
+      "no_notifications": "No notifications yet",
+      "logout": "Log out",
+      "collapse_menu": "Collapse menu",
+      "expand": "Expand menu",
+      "home": "Home",
+      "close": "Close"
+    },
+    "roles": {
+      "ADMIN": "Admin",
+      "ACCOUNTANT": "Accountant",
+      "EMPLOYEE": "Sales & Support",
+      "DEVELOPER": "Developer",
+      "DESIGNER": "UX Designer",
+      "SYSADMIN": "Sysadmin"
+    },
+    "dashboard": {
+      "title": "Overview",
+      "subtitle": "A quick look at sales, the team, and finances"
+    }
   }
 }

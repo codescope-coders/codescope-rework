@@ -2,7 +2,7 @@
 import {
   educationLevelLabel,
   expectedSalaryLabel,
-} from "@/app/[locale]/(admin)/dashboard/applications/components/Application";
+} from "@/lib/careers-labels";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";

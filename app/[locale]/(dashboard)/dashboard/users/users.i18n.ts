@@ -1,0 +1,48 @@
+export const usersDict = {
+  en: {
+    subtitle:
+      "Console users and their roles. A role decides which pages and actions each person can reach.",
+    newUser: "New user",
+    empty: "No users yet.",
+    otpNote:
+      "Sign-in is by a one-time code sent to the user's email — there are no passwords to set or reset.",
+    thName: "Name",
+    thRole: "Role",
+    thEmail: "Email",
+    thActions: "Actions",
+    you: "(you)",
+    lastAdmin: "You can't delete the only admin account.",
+    editUser: "Edit user",
+    fName: "Full name",
+    fEmail: "Email",
+    fRole: "Role",
+    fActive: "Active",
+    namePh: "e.g. Sara Ahmad",
+    emailPh: "name@company.com",
+    emailHint: "Used for the one-time sign-in code.",
+    activeHint: "Turn off to suspend access without deleting the account.",
+  },
+  ar: {
+    subtitle:
+      "مستخدمو لوحة التحكم وأدوارهم. الدور يحدّد الصفحات والصلاحيات المتاحة لكل شخص.",
+    newUser: "مستخدم جديد",
+    empty: "لا يوجد مستخدمون بعد.",
+    otpNote:
+      "تسجيل الدخول يتم عبر رمز مؤقت يُرسل إلى بريد المستخدم — لا توجد كلمات مرور تُضبط أو تُعاد.",
+    thName: "الاسم",
+    thRole: "الدور",
+    thEmail: "البريد الإلكتروني",
+    thActions: "إجراءات",
+    you: "(أنت)",
+    lastAdmin: "لا يمكن حذف حساب الإدارة الوحيد.",
+    editUser: "تعديل المستخدم",
+    fName: "الاسم الكامل",
+    fEmail: "البريد الإلكتروني",
+    fRole: "الدور",
+    fActive: "نشط",
+    namePh: "مثال: سارة أحمد",
+    emailPh: "name@company.com",
+    emailHint: "يُستخدم لإرسال رمز الدخول المؤقت.",
+    activeHint: "أطفئه لإيقاف الوصول مؤقتاً دون حذف الحساب.",
+  },
+};

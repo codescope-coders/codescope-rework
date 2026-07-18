@@ -8,6 +8,20 @@
       "when": 1769943141795,
       "tag": "0000_premium_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784378499608,
+      "tag": "0001_right_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784381040281,
+      "tag": "0002_opposite_shotgun",
+      "breakpoints": true
     }
   ]
 }

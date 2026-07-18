@@ -23,15 +23,15 @@ export default async function middleware(request: NextRequest) {
     routing.locales,
   );
 
-  if (!token && pathnameWithoutLocale.startsWith("/dashboard")) {
+  // The Follow-up dashboard (/dashboard) — including Careers, now a module at
+  // /dashboard/careers — requires a valid session.
+  const isProtected = pathnameWithoutLocale.startsWith("/dashboard");
+
+  if (!token && isProtected) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (
-    token &&
-    (pathnameWithoutLocale.startsWith("/dashboard") ||
-      pathnameWithoutLocale === "/login")
-  ) {
+  if (token && (isProtected || pathnameWithoutLocale === "/login")) {
     const url = new URL("/api/auth/checkAuth", "http://127.0.0.1:3000");
 
     const response = await fetch(url.toString(), {
