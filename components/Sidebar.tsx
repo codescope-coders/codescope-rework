@@ -24,6 +24,10 @@ const links = [
     name: "tourscope",
     path: "/tourscope",
   },
+  {
+    name: "login",
+    path: "/login",
+  },
 ];
 
 interface SidebarProps {

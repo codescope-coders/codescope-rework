@@ -103,6 +103,9 @@ export const Header = () => {
             <Button variant={"secondary"} onClick={showContactUs}>
               {t("links.contact")}
             </Button>
+            <Button variant={"secondary"}>
+              <Link href="/login">{t("links.login")}</Link>
+            </Button>
           </div>
         </Container>
       </header>
