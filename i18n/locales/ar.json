@@ -304,7 +304,8 @@
       "services": "خدماتنا",
       "tourscope": "تورسكوب",
       "contact": "تواصل معنا",
-      "jobs": "الوظائف"
+      "jobs": "الوظائف",
+      "login": "تسجيل الدخول"
     }
   },
   "contactUsDialog": {
