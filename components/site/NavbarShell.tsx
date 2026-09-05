@@ -13,11 +13,12 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 type NavItem = { href: string; label: string };
 
 interface Props {
+  loginLabel: string;
   navItems: NavItem[];
   ctaLabel: string;
 }
 
-export function NavbarShell({ navItems, ctaLabel }: Props) {
+export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -109,6 +110,16 @@ export function NavbarShell({ navItems, ctaLabel }: Props) {
         {/* Right controls */}
         <div className="flex items-center gap-3 shrink-0">
           <LanguageSwitcher />
+          {/* Login — ported from a teammate's concurrent change to the OLD
+              header ("Login button added", merged 2026-09-05): the door to the
+              Follow-up console. A quiet text link, deliberately junior to the
+              demo CTA — the header carries one filled button only. */}
+          <Link
+            href="/login"
+            className="hidden md:inline-flex items-center px-2 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
+          >
+            {loginLabel}
+          </Link>
           {/* "Request a demo" is a demo request, so it goes to the flow built
               for one. The nav's own Contact link still points at /contact. */}
           <Link
@@ -117,7 +128,7 @@ export function NavbarShell({ navItems, ctaLabel }: Props) {
           >
             {ctaLabel}
           </Link>
-          <MobileMenu items={navItems} ctaLabel={ctaLabel} />
+          <MobileMenu items={navItems} ctaLabel={ctaLabel} loginLabel={loginLabel} />
         </div>
       </nav>
     </header>

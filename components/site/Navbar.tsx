@@ -20,5 +20,5 @@ export default async function Navbar() {
     { href: "/contact" as const, label: t("contact") },
   ];
 
-  return <NavbarShell navItems={navItems} ctaLabel={t("cta")} />;
+  return <NavbarShell navItems={navItems} ctaLabel={t("cta")} loginLabel={t("login")} />;
 }

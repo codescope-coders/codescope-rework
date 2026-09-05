@@ -40,7 +40,7 @@ const item = {
   exit: { opacity: 0, y: 8 },
 };
 
-export default function MobileMenu({ items, ctaLabel }: { items: NavItem[]; ctaLabel: string }) {
+export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: NavItem[]; ctaLabel: string; loginLabel: string }) {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotionSafe();
   const t = useTranslations("Nav");
@@ -153,6 +153,18 @@ export default function MobileMenu({ items, ctaLabel }: { items: NavItem[]; ctaL
     </Link>
   );
 
+  // Login — same port as the desktop link (see NavbarShell): quiet, under the
+  // CTA, closing the menu on tap like every other item.
+  const loginCta = (
+    <Link
+      href="/login"
+      onClick={() => setOpen(false)}
+      className="w-full text-center py-3 px-6 text-sm font-medium text-zinc-400 hover:text-white transition-colors block"
+    >
+      {loginLabel}
+    </Link>
+  );
+
   const panelBody = (
     <nav className="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-1">
       {reduced
@@ -163,10 +175,11 @@ export default function MobileMenu({ items, ctaLabel }: { items: NavItem[]; ctaL
             </motion.div>
           ))}
       {reduced ? (
-        <div className="mt-6">{cta}</div>
+        <div className="mt-6">{cta}{loginCta}</div>
       ) : (
         <motion.div variants={item} className="mt-6">
           {cta}
+          {loginCta}
         </motion.div>
       )}
     </nav>
