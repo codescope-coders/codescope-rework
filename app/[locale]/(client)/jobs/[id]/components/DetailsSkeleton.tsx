@@ -1,181 +1,69 @@
-import Container from "@/components/Container";
-import React from "react";
-
-const Skeleton = ({ className = "", ...props }) => {
-  return (
-    <div
-      className={`animate-pulse rounded-md bg-gray-500 ${className}`}
-      {...props}
-    />
-  );
-};
+/**
+ * The role page's loading placeholder — reskinned to match the real page (P3).
+ *
+ * It was a near-line-by-line tracing of the application form's every field, in
+ * `bg-gray-500` slabs, which on this ground was a page of bright grey blocks
+ * pretending to be content. A placeholder only has to hold the SHAPE of what is
+ * coming: a title band, a paragraph, two panels, and one form block. Anything
+ * more detailed is a second copy of the form's layout that silently goes stale
+ * the moment a field moves.
+ *
+ * `white/6` bars, same weight as the site's hairlines. `animate-pulse` is CSS,
+ * so the public tree's reduced-motion net already neutralises it.
+ */
+function Bar({ className = "" }: { className?: string }) {
+  return <div className={`animate-pulse rounded-md bg-white/6 ${className}`} />;
+}
 
 const DetailsSkeleton = () => {
   return (
-    <div className="w-full text-white">
-      <Container className="px-6 py-8">
-        <div className="mb-8 title-desc">
-          <div className="flex title items-start justify-between mb-4 flex-col gap-2 md:flex-row md:items-center">
-            <div className="flex items-center gap-3">
-              <Skeleton className="w-2 h-2 rounded-full" />
-              <Skeleton className="h-8 w-48" />
-            </div>
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-16 rounded-sm" />
-              <Skeleton className="h-6 w-20 rounded-sm" />
-            </div>
+    <div className="w-full" aria-hidden>
+      <div className="px-6 pb-12 pt-40">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-5 flex items-center gap-3">
+            <Bar className="size-3 rounded-full" />
+            <Bar className="h-9 w-72 max-w-[70%]" />
           </div>
-          <div className="space-y-2 mb-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
+          <div className="space-y-2.5">
+            <Bar className="h-4 w-full" />
+            <Bar className="h-4 w-4/5" />
           </div>
-
-          <div className="flex gap-6 text-sm items-center flex-wrap">
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4" />
-              <Skeleton className="h-4 w-16" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4" />
-              <Skeleton className="h-4 w-20" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4" />
-              <Skeleton className="h-4 w-16" />
-            </div>
+          <div className="mt-6 flex gap-5">
+            <Bar className="h-3.5 w-24" />
+            <Bar className="h-3.5 w-28" />
           </div>
         </div>
+      </div>
 
-        {/* Requirements Section */}
-        <div className="mb-8">
-          <Skeleton className="h-6 w-32 mb-4" />
-          <div className="space-y-2">
-            <div className="flex items-start gap-2">
-              <Skeleton className="w-1 h-1 rounded-full mt-2 flex-shrink-0" />
-              <Skeleton className="h-4 w-full" />
+      <div className="px-6 pb-16">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
+          {[0, 1].map((i) => (
+            <div key={i} className="glass-card rounded-2xl p-6">
+              <Bar className="mb-5 h-5 w-32" />
+              <div className="space-y-3">
+                <Bar className="h-3.5 w-full" />
+                <Bar className="h-3.5 w-5/6" />
+                <Bar className="h-3.5 w-4/6" />
+              </div>
             </div>
-            <div className="flex items-start gap-2">
-              <Skeleton className="w-1 h-1 rounded-full mt-2 flex-shrink-0" />
-              <Skeleton className="h-4 w-5/6" />
-            </div>
-            <div className="flex items-start gap-2">
-              <Skeleton className="w-1 h-1 rounded-full mt-2 flex-shrink-0" />
-              <Skeleton className="h-4 w-4/5" />
-            </div>
-            <div className="flex items-start gap-2">
-              <Skeleton className="w-1 h-1 rounded-full mt-2 flex-shrink-0" />
-              <Skeleton className="h-4 w-full" />
-            </div>
-            <div className="flex items-start gap-2">
-              <Skeleton className="w-1 h-1 rounded-full mt-2 flex-shrink-0" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
 
-        {/* Contact Info Section */}
-        <div className="mb-8">
-          <Skeleton className="h-6 w-28 mb-4" />
-          <div className="flex-col md:grid grid-cols-2 gap-4 mb-4">
-            <div className="flex-col gap-4 mb-2">
-              <Skeleton className="h-4 w-16 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-12 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
+      <div className="px-6 pb-24">
+        <div className="mx-auto max-w-4xl">
+          <Bar className="mb-6 h-6 w-44" />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Bar className="h-3.5 w-24" />
+                <Bar className="h-12 w-full rounded-xl" />
+              </div>
+            ))}
           </div>
-          <div className="flex-col md:grid grid-cols-2 gap-4 mb-4">
-            <div className="flex-col gap-4 mb-2">
-              <Skeleton className="h-4 w-20 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-24 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-          </div>
-          <div className="flex-col md:grid grid-cols-2 gap-4">
-            <div className="flex-col gap-4 mb-2">
-              <Skeleton className="h-4 w-20 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-18 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-          </div>
+          <Bar className="mt-8 h-14 w-full rounded-xl" />
         </div>
-
-        {/* Position & Availability Section */}
-        <div className="mb-8">
-          <Skeleton className="h-6 w-44 mb-4" />
-          <div className="flex-col md:grid grid-cols-2 gap-4">
-            <div className="flex-col gap-4 mb-2">
-              <Skeleton className="h-4 w-28 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-32 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-          </div>
-        </div>
-
-        {/* Professional Background Section */}
-        <div className="mb-8">
-          <Skeleton className="h-6 w-44 mb-4" />
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div>
-              <Skeleton className="h-4 w-32 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-20 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-32 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-          </div>
-
-          {/* Links Section */}
-          <div className="mb-4">
-            <Skeleton className="h-4 w-12 mb-2" />
-            <div className="flex gap-2 items-center">
-              <Skeleton className="h-10 flex-1 rounded-sm" />
-              <Skeleton className="h-8 w-28 rounded-sm" />
-            </div>
-          </div>
-
-          {/* CV Upload */}
-          <Skeleton className="h-12 w-full rounded-sm" />
-        </div>
-
-        {/* Education Section */}
-        <div className="mb-8">
-          <Skeleton className="h-6 w-20 mb-4" />
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Skeleton className="h-4 w-36 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-24 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-            <div>
-              <Skeleton className="h-4 w-32 mb-2" />
-              <Skeleton className="h-10 w-full rounded-sm" />
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <Skeleton className="h-12 w-full rounded-sm bg-teal-500" />
-      </Container>
+      </div>
     </div>
   );
 };

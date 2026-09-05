@@ -3,7 +3,6 @@ import {
   educationLevelLabel,
   expectedSalaryLabel,
 } from "@/lib/careers-labels";
-import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -274,13 +273,24 @@ export const ApplicationForm = () => {
   };
 
   return (
-    <Container>
-      <form onSubmit={handleSubmit} dir="rtl">
-        <h2 className="font-semibold text-4xl pb-4">معلومات التواصل</h2>
+    <section className="px-6 pb-28">
+      <div className="mx-auto max-w-4xl">
+        <form
+          onSubmit={handleSubmit}
+          dir="rtl"
+          /* `site-form` is the hook for the scoped control styling in
+             globals.css — see the block under "Careers application form".
+             The shadcn primitives in here read the LIGHT shadcn tokens off
+             `:root`, which is correct for the dashboard and wrong on this
+             ground; restyling them in CSS keeps 780 lines of validation and
+             submission logic untouched. */
+          className="site-form"
+        >
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">معلومات التواصل</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
-              الاسم الكامل <span className="text-destructive">*</span>
+            <Label className="text-sm font-medium text-zinc-300">
+              الاسم الكامل <span className="text-red-400">*</span>
             </Label>
             <Input
               placeholder="أدخل اسمك الكامل"
@@ -291,14 +301,14 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.fullName && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.fullName}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
-              البريد الإلكتروني <span className="text-destructive">*</span>
+            <Label className="text-sm font-medium text-zinc-300">
+              البريد الإلكتروني <span className="text-red-400">*</span>
             </Label>
             <Input
               name="email"
@@ -310,14 +320,14 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.email && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.email}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
-              المدينة الحالية <span className="text-destructive">*</span>
+            <Label className="text-sm font-medium text-zinc-300">
+              المدينة الحالية <span className="text-red-400">*</span>
             </Label>
             <Input
               name="currentCity"
@@ -328,15 +338,15 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.currentCity && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.currentCity}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               رقم الهاتف{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -349,14 +359,14 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.phoneNumber && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.phoneNumber}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
-              تاريخ الميلاد <span className="text-destructive">*</span>
+            <Label className="text-sm font-medium text-zinc-300">
+              تاريخ الميلاد <span className="text-red-400">*</span>
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -364,7 +374,7 @@ export const ApplicationForm = () => {
                   type="button"
                   variant={"outline"}
                   className={clsx(
-                    "bg-transparent border-input border h-12 justify-start text-muted-foreground hover:bg-transparent",
+                    "h-12 w-full justify-start rounded-xl border border-white/8 bg-zinc-900 font-normal text-zinc-400 hover:bg-zinc-900 hover:text-white",
                     {
                       "border-destructive focus-visible:ring-destructive":
                         fieldErrors.dateOfBirth,
@@ -379,7 +389,12 @@ export const ApplicationForm = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              {/* `site-popover` is the dark token map for this subtree. Radix
+                  portals the content into `document.body`, so it lands OUTSIDE
+                  `[data-site="public"] .site-form` and would otherwise read the
+                  light `:root` shadcn values — a white calendar over a
+                  near-black page. See `globals.css`. */}
+              <PopoverContent className="site-popover w-auto p-0">
                 <Calendar
                   mode="single"
                   selected={dateOfBirth}
@@ -394,14 +409,14 @@ export const ApplicationForm = () => {
               </PopoverContent>
             </Popover>
             {fieldErrors.dateOfBirth && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.dateOfBirth}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
-              الجنسية <span className="text-destructive">*</span>
+            <Label className="text-sm font-medium text-zinc-300">
+              الجنسية <span className="text-red-400">*</span>
             </Label>
             <Input
               name="nationality"
@@ -412,19 +427,19 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.nationality && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.nationality}
               </p>
             )}
           </div>
         </div>
-        <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">المنصب والتوفر</h2>
+        <hr className="my-10 border-0 border-t border-white/8" />
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">المنصب والتوفر</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               الراتب المتوقع{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -446,15 +461,15 @@ export const ApplicationForm = () => {
               </SelectContent>
             </Select>
             {fieldErrors.expectedSalary && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.expectedSalary}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               تاريخ الاستعداد للبدء{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري، فوري بشكل افتراضي)
               </span>
             </Label>
@@ -464,7 +479,7 @@ export const ApplicationForm = () => {
                   type="button"
                   variant={"outline"}
                   className={clsx(
-                    "bg-transparent font-normal border-input border h-10 justify-start text-muted-foreground hover:bg-transparent",
+                    "h-12 w-full justify-start rounded-xl border border-white/8 bg-zinc-900 font-normal text-zinc-400 hover:bg-zinc-900 hover:text-white",
                     {
                       "border-destructive focus-visible:ring-destructive":
                         fieldErrors.availabilityDate,
@@ -479,7 +494,12 @@ export const ApplicationForm = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              {/* `site-popover` is the dark token map for this subtree. Radix
+                  portals the content into `document.body`, so it lands OUTSIDE
+                  `[data-site="public"] .site-form` and would otherwise read the
+                  light `:root` shadcn values — a white calendar over a
+                  near-black page. See `globals.css`. */}
+              <PopoverContent className="site-popover w-auto p-0">
                 <Calendar
                   mode="single"
                   selected={availabilityDate}
@@ -503,19 +523,19 @@ export const ApplicationForm = () => {
               </PopoverContent>
             </Popover>
             {fieldErrors.availabilityDate && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.availabilityDate}
               </p>
             )}
           </div>
         </div>
-        <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">الخلفية المهنية</h2>
+        <hr className="my-10 border-0 border-t border-white/8" />
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">الخلفية المهنية</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               سنوات الخبرة{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -530,15 +550,15 @@ export const ApplicationForm = () => {
               min="0"
             />
             {fieldErrors.yearsOfExperience && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.yearsOfExperience}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               المسمى الوظيفي الأخير{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -551,15 +571,15 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.lastJobTitle && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.lastJobTitle}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               اسم آخر شركة{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -572,7 +592,7 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.lastCompanyName && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.lastCompanyName}
               </p>
             )}
@@ -580,9 +600,9 @@ export const ApplicationForm = () => {
         </div>
 
         <div className="grid gap-4 mt-4">
-          <Label className="text-base font-semibold">
+          <Label className="text-sm font-medium text-zinc-300">
             الروابط{" "}
-            <span className="text-muted-foreground text-sm font-normal">
+            <span className="text-xs font-normal text-zinc-500">
               (اختياري - معرض الأعمال، GitHub، LinkedIn، إلخ)
             </span>
           </Label>
@@ -603,7 +623,7 @@ export const ApplicationForm = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => removeLink(index)}
-                  className="shrink-0"
+                  className="size-12 shrink-0 rounded-xl border-white/10 bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -613,7 +633,7 @@ export const ApplicationForm = () => {
                   type="button"
                   variant="outline"
                   onClick={addLink}
-                  className="whitespace-nowrap"
+                  className="h-12 whitespace-nowrap rounded-xl border-white/10 bg-transparent text-zinc-300 hover:bg-white/5 hover:text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   أضف رابطاً آخر
@@ -622,21 +642,21 @@ export const ApplicationForm = () => {
             </div>
           ))}
           {fieldErrors.links && (
-            <p className="text-sm text-destructive mt-1">{fieldErrors.links}</p>
+            <p className="mt-1 text-sm text-red-400">{fieldErrors.links}</p>
           )}
         </div>
 
         <div className="grid gap-2 mt-4">
-          <Label className="text-base font-semibold">
-            ارفع سيرتك الذاتية <span className="text-destructive">*</span>
+          <Label className="text-sm font-medium text-zinc-300">
+            ارفع سيرتك الذاتية <span className="text-red-400">*</span>
           </Label>
 
           {!cvFile ? (
             <div
               className={clsx(
-                "border-2 border-dashed border-input rounded-lg p-8 text-center hover:border-muted-foreground transition-colors cursor-pointer",
+                "cursor-pointer rounded-2xl border border-dashed border-white/12 bg-white/2 p-8 text-center transition-colors hover:border-cs-teal/40 hover:bg-cs-teal/5",
                 {
-                  "border-destructive": fieldErrors.cv,
+                  "border-red-400/60": fieldErrors.cv,
                 },
               )}
             >
@@ -650,7 +670,7 @@ export const ApplicationForm = () => {
               />
               <label
                 htmlFor="cv-upload"
-                className="cursor-pointer flex flex-col items-center justify-center gap-2 text-muted-foreground"
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 text-zinc-400"
               >
                 <Upload className="h-8 w-8" />
                 <span className="font-medium">انقر لرفع سيرتك الذاتية</span>
@@ -660,15 +680,15 @@ export const ApplicationForm = () => {
               </label>
             </div>
           ) : (
-            <div className="border-2 border-input rounded-lg p-4 bg-accent/50">
+            <div className="rounded-2xl border border-white/8 bg-white/3 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 p-2 rounded-md">
-                    <FileText className="h-6 w-6 text-primary" />
+                  <div className="rounded-lg border border-cs-teal/20 bg-cs-teal/10 p-2">
+                    <FileText className="h-6 w-6 text-cs-teal" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">{cvFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm font-medium text-white">{cvFile.name}</p>
+                    <p className="text-xs text-zinc-500">
                       {(cvFile.size / 1024).toFixed(2)} كيلوبايت
                     </p>
                   </div>
@@ -678,7 +698,7 @@ export const ApplicationForm = () => {
                   variant="ghost"
                   size="icon"
                   onClick={removeFile}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="text-zinc-500 hover:bg-red-400/10 hover:text-red-400"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -686,17 +706,17 @@ export const ApplicationForm = () => {
             </div>
           )}
           {fieldErrors.cv && (
-            <p className="text-sm text-destructive mt-1">{fieldErrors.cv}</p>
+            <p className="mt-1 text-sm text-red-400">{fieldErrors.cv}</p>
           )}
         </div>
 
-        <hr className="mt-8 pb-8 border-input" />
-        <h2 className="font-semibold text-4xl pb-4">التعليم</h2>
+        <hr className="my-10 border-0 border-t border-white/8" />
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">التعليم</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               أعلى مستوى تعليمي{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -718,15 +738,15 @@ export const ApplicationForm = () => {
               </SelectContent>
             </Select>
             {fieldErrors.highestEducationLevel && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.highestEducationLevel}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               التخصص الدراسي{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -739,15 +759,15 @@ export const ApplicationForm = () => {
               })}
             />
             {fieldErrors.fieldOfStudy && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.fieldOfStudy}
               </p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label className="text-base font-semibold">
+            <Label className="text-sm font-medium text-zinc-300">
               سنة التخرج{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-xs font-normal text-zinc-500">
                 (اختياري)
               </span>
             </Label>
@@ -763,7 +783,7 @@ export const ApplicationForm = () => {
               max={new Date().getFullYear() + 10}
             />
             {fieldErrors.graduationYear && (
-              <p className="text-sm text-destructive mt-1">
+              <p className="mt-1 text-sm text-red-400">
                 {fieldErrors.graduationYear}
               </p>
             )}
@@ -773,7 +793,7 @@ export const ApplicationForm = () => {
         <Button
           type="submit"
           disabled={isPending || isUploadingFile}
-          className="w-full mt-8 h-14 text-base font-semibold sticky bottom-5 left-0 opacity-100"
+          className="sticky bottom-5 left-0 mt-10 h-14 w-full rounded-xl bg-cs-teal text-base font-semibold text-white opacity-100 shadow-none hover:bg-cs-teal-hover"
         >
           {isUploadingFile
             ? "جارٍ رفع السيرة الذاتية..."
@@ -781,7 +801,8 @@ export const ApplicationForm = () => {
               ? "جارٍ إرسال الطلب..."
               : "إرسال الطلب"}
         </Button>
-      </form>
-    </Container>
+        </form>
+      </div>
+    </section>
   );
 };

@@ -25,296 +25,6 @@
     "rate_limited": "Please wait a moment before requesting another code.",
     "too_many_attempts": "Too many attempts. Request a new code."
   },
-  "home": {
-    "hero": {
-      "tagline": "Codescope",
-      "headline": "Your Trusted Partner in",
-      "subheadline": "Digital Transformation",
-      "caption": "From custom applications to web solutions, we help businesses and travel agencies grow and thrive.",
-      "cta-button": "Discover Our Services"
-    },
-    "about": {
-      "title": "Who Are We?",
-      "caption": "Codescope was founded to drive business growth in Iraq by delivering precisely crafted applications and innovative websites. From the first idea to the final launch, we are committed to building products that combine thoughtful design, robust development, and the highest quality standards.",
-      "mainCard": {
-        "label": "Ready for the Future",
-        "title": "Build seamless booking experiences through custom systems that help you grow.",
-        "button": "Contact Us Today"
-      },
-      "get-started-card": {
-        "title": "Get Started Now!",
-        "caption": "Stand out online with a secure and user-friendly e-commerce platform."
-      },
-      "lets-talk-card": {
-        "title": "Let's Talk",
-        "caption": "Impress your clients with an elegant, professional website that builds trust."
-      },
-      "get-started-now-card": {
-        "title": "Get Started Now!",
-        "caption": "Stand out online with a secure and user-friendly e-commerce platform."
-      }
-    },
-    "our-expertises": {
-      "title": "Our Expertise, Your Advantage",
-      "subtitle": "Your Partner in Innovative Solutions",
-      "caption": "At Codescope, we specialize in delivering high-quality, responsive digital solutions that help businesses grow and succeed. Our team strives for excellence across several key areas:",
-      "services": {
-        "app-development": {
-          "title": "App <br></br> Development",
-          "desc": "Whether you need a mobile app or a custom enterprise solution, we build applications designed for seamless performance, ease of use, and high reliability. Every product is carefully developed to fit your unique business needs."
-        },
-        "web-development": {
-          "title": "Web <br></br> Development",
-          "desc": "Whether you need a brochure site or a fully integrated platform, we build modern websites focused on performance, smooth experience, and high quality that meets your business goals."
-        },
-        "management-systems": {
-          "title": "Management <br></br> Systems",
-          "desc": "We develop custom management systems that help you organize your business efficiently, improve operations, and make better decisions through reliable, scalable solutions."
-        }
-      }
-    },
-    "featured-project": {
-      "label": "Featured Project",
-      "title": "<i><strong>Fly4all,</strong></i> a Full-Featured Travel Booking Platform",
-      "caption": "We built Fly4All from scratch — starting with visual identity design, through an intuitive user interface, down to every line of code. It's an integrated platform for flights, hotels, travel packages, and visa services — all in one place. If you're looking for a similar experience, we can build it for you.",
-      "button": "Let's Start Building Your Platform Today"
-    },
-    "tourscope": {
-      "title": "<strong>Tourscope</strong> <br></br> Travel Made Easier",
-      "caption": "Tourscope is a flagship product by Codescope designed specifically for travel agencies to deliver a seamless booking experience to their clients. It features an intuitive design and blazing-fast performance that makes browsing flights, hotels, packages, and visa services effortless — giving travelers everything they need quickly and easily.",
-      "button": "Contact Us"
-    }
-  },
-  "tourscope": {
-    "hero": {
-      "title": "Packages &amp; <br></br> Pricing Proposal",
-      "tagline": "Price Proposal · 2026",
-      "caption": "The complete infrastructure for managing and growing your travel business — under your brand, under your full control.",
-      "qualificationDays": "Additional Onboarding Days",
-      "extraUnits": "Extra Units",
-      "platformCapabilities": "Platform Capabilities",
-      "basicPackages": "Core Packages",
-      "validity": "Validity",
-      "issueDate": "Issue Date"
-    },
-    "whyTourscope": {
-      "tagline": "01 · Why Tourscope",
-      "title": "Why Tourscope",
-      "caption": "Nine pillars that set Tourscope apart from traditional solutions in the travel sector. Each pillar is designed to give your agency deeper control, higher efficiency, and real scalability.",
-      "cards": {
-        "01": {
-          "title": "Full Brand Ownership",
-          "body": "The platform is delivered under your brand: your domain, your identity, your interface. Your clients see a complete digital platform bearing your name — not a third-party tool."
-        },
-        "02": {
-          "title": "Centralized Booking System",
-          "body": "A complete lifecycle from zero to confirmation: search ← pricing ← payment ← confirmation ← follow-up. An end to fragmentation and manual processing."
-        },
-        "03": {
-          "title": "Advanced Pricing Control",
-          "body": "Define pricing logic by season, demand, service type, or customer segment. Real-time inventory and dynamic profit margins."
-        },
-        "04": {
-          "title": "Integrated Travel Services",
-          "body": "Flights, hotels, visas, tours, insurance, and eSIMs — in one experience with a consistent workflow."
-        },
-        "05": {
-          "title": "Multi-Level Control Architecture",
-          "bullets": {
-            "0": "White-label control panel",
-            "1": "Sub-agency management",
-            "2": "Staff roles and permissions"
-          }
-        },
-        "06": {
-          "title": "Conversion-Optimized Experience",
-          "bullets": {
-            "0": "Real-time search with live results",
-            "1": "Structured booking flows",
-            "2": "Optimized for mobile and desktop"
-          }
-        },
-        "07": {
-          "title": "Fully Automated Workflows",
-          "body": "From booking confirmation to visa follow-ups and supplier coordination — automated notifications reduce operational overhead."
-        },
-        "08": {
-          "title": "Scalable Business Architecture",
-          "body": "Add services, sub-agencies, or new suppliers — and multiply your booking volume without rebuilding the system."
-        },
-        "09": {
-          "title": "Financial Control Layer",
-          "bullets": {
-            "0": "Integrated client wallet",
-            "1": "Flexible payment gateways",
-            "2": "Profit and commission tracking",
-            "3": "Supplier balance management"
-          }
-        }
-      },
-      "flow": {
-        "book": "Book",
-        "pay": "Pay",
-        "confirm": "Confirm",
-        "doc": "Document",
-        "follow": "Follow Up"
-      },
-      "metrics": {
-        "monthlyRevenue": "Monthly Revenue",
-        "walletBalance": "Wallet Balance",
-        "commissions": "Earned Commissions"
-      },
-      "quote": {
-        "body": "Most solutions give you tools. <strong>Tourscope gives you infrastructure</strong> — a complete ecosystem for managing and scaling travel operations from end to end.",
-        "attribution": "Tourscope · Positioning Statement"
-      }
-    },
-    "pricingPlans": {
-      "tagline": "02 · Pricing",
-      "title": "Packages & Pricing",
-      "caption": "Three packages covering the full spectrum of travel agencies — from the specialist operator to the multi-market aggregator.",
-      "yearly": "Annually",
-      "monthly": "Monthly · Billed Annually",
-      "quarterly": "Quarterly",
-      "twoYears": "Two Years",
-      "perMonth": "/month",
-      "setupFees": "Setup Fees",
-      "setupFeesBadge": "One-time payment",
-      "mostPopular": "Recommended · Most Popular",
-      "footnote": "Includes hosting · servers · updates · support",
-      "notes": {
-        "qualification": {
-          "title": "Two Additional Onboarding Weeks",
-          "description": "The subscription and setup fees are paid upon signing, but the subscription period does not begin until two weeks dedicated to training and data preparation have been completed."
-        },
-        "minimum": {
-          "title": "Three-Month Minimum",
-          "description": "Single monthly billing is not available. Annual is the default, and two years represents maximum long-term savings."
-        }
-      },
-      "plans": {
-        "charter": {
-          "title": "Charter",
-          "type": "Charter",
-          "details": "For operators of chartered flights to Iran.",
-          "features": {
-            "0": "Iraq–Iran routes and domestic flights",
-            "1": "5 team seats",
-            "2": "Branded control panel",
-            "3": "Multi-currency support",
-            "4": "Email support"
-          }
-        },
-        "standard": {
-          "title": "Standard",
-          "type": "Standard",
-          "details": "For full-service travel agencies in regional and global markets.",
-          "features": {
-            "0": "Flights · Hotels · Tours · Visas",
-            "1": "Global airlines + Iran routes",
-            "2": "15 team seats",
-            "3": "Full white-label",
-            "4": "Priority support"
-          }
-        },
-        "advanced": {
-          "title": "Advanced",
-          "type": "Advanced",
-          "details": "For multi-market operators and agency network owners.",
-          "features": {
-            "0": "All Standard plan services",
-            "1": "iOS & Android apps (included)",
-            "2": "Built-in travel insurance",
-            "3": "eSIM",
-            "4": "50 team seats + custom domain",
-            "5": "Top-priority support"
-          }
-        }
-      }
-    },
-    "addons-and-decision": {
-      "tagline": "03 · Add-ons & Decision",
-      "title": "Add-ons & Decision",
-      "subtitle": "Optional Modules",
-      "tag": "OPTIONAL MODULES",
-      "additions": {
-        "ios_app": "iOS App",
-        "android_app": "Android App",
-        "ios_android_bundle": "iOS + Android Bundle",
-        "starter_module": "Charter Module",
-        "starter_module_subtext": "For non-charter packages",
-        "travel_insurance": "Travel Insurance",
-        "esim": "eSIM",
-        "extra_users": "+10 Staff Accounts"
-      },
-      "apis": {
-        "title": "APIs",
-        "tag": "API MODULES",
-        "names": {
-          "flight_api": "Flight API",
-          "hotels_api": "Hotels API",
-          "visas_api": "Visas API",
-          "insurance_api": "Insurance API",
-          "group_tours_api": "Group Tours API",
-          "esim_api": "eSIM API",
-          "charter_api": "Charter API"
-        }
-      },
-      "gateways": {
-        "title": "Payment Gateways",
-        "tag": "PAYMENT GATEWAYS",
-        "column": "Gateway",
-        "groups": {
-          "direct_integration": "DIRECT INTEGRATION",
-          "direct_integration_sub": "Connect the gateway directly under your brand",
-          "tourpay": "TOURPAY",
-          "tourpay_sub": "No registration documents required with the payment provider"
-        },
-        "names": {
-          "qicard_gateway": "QiCard",
-          "zaincash_gateway": "ZainCash",
-          "fastpay_gateway": "FastPay",
-          "fib_gateway": "FIB",
-          "switch_gateway": "Switch",
-          "amwal_gateway": "Amwal",
-          "tourqi": "TourQi",
-          "tourzaincash": "TourZainCash",
-          "tourfastpay": "TourFastPay",
-          "tourfib": "TourFIB",
-          "tourswitch": "TourSwitch",
-          "touramwal": "TourAmwal"
-        }
-      },
-      "setup": {
-        "title": "Setup Fees Include",
-        "tag": "One-time · Non-recurring",
-        "items": {
-          "branding": "Visual identity design (Branding) and integration across the entire platform",
-          "domain": "Custom domain deployment and security certificate binding",
-          "gds": "Supplier credential configuration and distribution system (GDS) setup",
-          "training": "Initial team training and database preparation"
-        },
-        "footnote": "Setup fees are <strong>not repeated</strong> at renewal, and are not charged for additional units created later within the same subscription (apps and APIs are excluded)."
-      }
-    }
-  },
-  "header": {
-    "links": {
-      "about": "About Us",
-      "services": "Our Services",
-      "tourscope": "Tourscope",
-      "contact": "Contact Us",
-      "jobs": "Careers"
-    }
-  },
-  "contactUsDialog": {
-    "title": "Contact Us",
-    "locations": {
-      "baghdad": "Iraq - Baghdad - Mansour - Yarmouk",
-      "karbala": "Iraq - Karbala - Al-Makhazin Street",
-      "aman": "Amman - Muscat"
-    }
-  },
   "table": {
     "columns": {
       "addition": "Add-on",
@@ -354,7 +64,7 @@
       },
       "c3": {
         "q": "Why an annual subscription and not monthly?",
-        "a": "Three reasons: (1) Annual gives you a significantly better price. (2) It provides operational stability — no monthly renewals to worry about. (3) The platform powers fixed infrastructure (servers, GDS integrations, supplier licenses); monthly billing would be expensive and impractical for both sides."
+        "a": "Three reasons: (1) Annual gives you a significantly better price. (2) It provides operational stability — no monthly renewals to worry about. (3) The platform powers fixed infrastructure (servers, supplier integrations, licensing); monthly billing would be expensive and impractical for both sides."
       },
       "c4": {
         "q": "What is the price difference between the three cycles?",
@@ -408,7 +118,7 @@
     "technical": {
       "t1": {
         "q": "Which airline suppliers do you integrate with?",
-        "a": "Currently Amadeus, Sabre, and Travelport (Galileo and Worldspan) — the world's largest GDS systems. This gives you access to hundreds of airlines worldwide."
+        "a": "Through your own supplier accounts. Setup configures the credentials you already hold across your booking channels, so the commercial relationship stays yours — we keep the integrations running. Which channels are available depends on your market, and we go through them with you before you sign."
       },
       "t2": {
         "q": "Is the platform hosted by you or do we host it ourselves?",
@@ -479,11 +189,11 @@
     "hardSales": {
       "h1": {
         "q": "What stops me from buying a cheaper system?",
-        "a": "You can. But compare: does the cheaper system offer real GDS integration, complex group tours, full visa workflows, insurance, eSIM, multi-currency and multi-language support, hosting and updates, and a prepaid wallet system with automatic financial distribution? And is its interface built to a standard worthy of your brand — or just generic templates that all look the same? Usually not. The cheaper price costs you missing services, manual operations, and a user experience that drives your clients away."
+        "a": "You can. But compare: does the cheaper system offer real supplier integrations, complex group tours, full visa workflows, insurance, eSIM, multi-currency and multi-language support, hosting and updates, and a prepaid wallet system with automatic financial distribution? And is its interface built to a standard worthy of your brand — or just generic templates that all look the same? Usually not. The cheaper price costs you missing services, manual operations, and a user experience that drives your clients away."
       },
       "h2": {
         "q": "Why not use WordPress + Plugin?",
-        "a": "WordPress + Plugin = a display product, not an operating system. It doesn't manage sub-agencies, doesn't run a real GDS, doesn't manage supplier budgets, doesn't calculate partial refunds, and doesn't support automatic ticketing. It works for a travel blog, not a travel company."
+        "a": "WordPress + Plugin = a display product, not an operating system. It doesn't manage sub-agencies, doesn't run real supplier integrations, doesn't manage supplier budgets, doesn't calculate partial refunds, and doesn't support automatic ticketing. It works for a travel blog, not a travel company."
       }
     },
     "afterSales": {
@@ -510,6 +220,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "pipeline": "Sales Pipeline",
+      "website_requests": "Website requests",
       "projects": "Delivery",
       "servers": "Servers",
       "reports": "Reports",
@@ -550,6 +261,727 @@
     "dashboard": {
       "title": "Overview",
       "subtitle": "A quick look at sales, the team, and finances"
+    }
+  },
+  "Meta": {
+    "title": "CodeScope — The company building Tourscope",
+    "description": "CodeScope builds Tourscope — a white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 15+ supplier integrations, live in production.",
+    "ogDescription": "A white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 15+ supplier integrations, live in production.",
+    "keywords": "white-label travel platform, B2B travel booking software, travel agency software, multi-tenant travel marketplace, Tourscope, CodeScope"
+  },
+  "Nav": {
+    "home": "Home",
+    "services": "Engineering",
+    "about": "About",
+    "tourscope": "TourScope",
+    "contact": "Contact",
+    "cta": "Request a demo",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menuLabel": "Site menu",
+    "jobs": "Careers",
+    "pricing": "Pricing"
+  },
+  "Footer": {
+    "tagline": "The company behind Tourscope.",
+    "subtagline": "A product-engineering company in Karbala, Iraq, building travel-commerce infrastructure for agencies worldwide.",
+    "links": "Links",
+    "contact": "Contact",
+    "email": "info@codescope.dev",
+    "copyright": "© 2026 Codescope. All rights reserved.",
+    "home": "Home",
+    "services": "Engineering",
+    "about": "About",
+    "tourscope": "TourScope",
+    "pricing": "Pricing",
+    "careers": "Careers"
+  },
+  "Home": {
+    "hero": {
+      "eyebrow": "Building from Karbala",
+      "headline": "Travel agencies deserved better.",
+      "headlineAccent": "So we built it.",
+      "tagline": "Travel agencies deserved better. So we built it.",
+      "subhead": "Codescope builds one thing: Tourscope — the white-label platform that runs a travel agency end to end. Your travelers book on it. Your team runs everything from it. Live in production today.",
+      "ctaPrimary": "See Tourscope",
+      "ctaSecondary": "Read our story",
+      "stat1": "6",
+      "stat1Label": "Booking verticals, one checkout",
+      "stat2": "15+",
+      "stat2Label": "Live supplier integrations",
+      "stat3": "6",
+      "stat3Label": "Languages, full RTL",
+      "foundedNote": "Founded February 2025 — based in Karbala, Iraq.",
+      "preview": {
+        "live": "Live",
+        "bookingRef": "FL-8241",
+        "bookingAmount": "$284",
+        "fromCode": "BGW",
+        "toCode": "IST",
+        "consoleTitle": "Live bookings",
+        "consoleCount": "12",
+        "colBooking": "Booking",
+        "colStatus": "Status",
+        "q1Status": "Confirmed",
+        "q2Name": "Marsa Garden",
+        "q2Ref": "HT-5102",
+        "q2City": "Dubai",
+        "q2Amount": "$96",
+        "q2Status": "Awaiting payment",
+        "q3Name": "Bahrain",
+        "q3Ref": "VS-2210",
+        "q3Type": "Tourist",
+        "q3Amount": "$36",
+        "q3Status": "Action required",
+        "q4Name": "Amman",
+        "q4Ref": "FL-8250",
+        "q4Amount": "$412",
+        "q4Status": "Ticketed",
+        "finTitle": "Financials",
+        "finLabel1": "Cleared today",
+        "finValue1": "$4,180",
+        "finLabel2": "Pending",
+        "finValue2": "$612",
+        "finLabel3": "Payouts due",
+        "finValue3": "$1,940",
+        "poolNote": "Shared inventory across agencies",
+        "poolBadge": "Tourscope Pool",
+        "currency": "USD",
+        "language": "EN",
+        "tripMeta": "Mar 12 – 19 · 2 adults",
+        "resultsLabel": "Results",
+        "searching": "Searching · 3 suppliers",
+        "available": "Available",
+        "r1Airline": "IF",
+        "r1Depart": "08:15",
+        "r1Arrive": "11:00",
+        "r1Meta": "2h 45m · Direct",
+        "toastTitle": "Booking confirmed",
+        "ledgerLabel": "Ledger",
+        "ledgerRef": "booking"
+      },
+      "scrollCue": "Scroll"
+    },
+    "manifesto": {
+      "eyebrow": "WHY WE BUILT TOURSCOPE",
+      "text": "Years inside travel agencies. Broken systems, fragmented suppliers, software that fought the people using it. So we stopped patching other people's tools — and built the one we wished we'd had.",
+      "highlights": [
+        "broken systems",
+        "fragmented suppliers",
+        "fought",
+        "built the one we wished we'd had"
+      ]
+    },
+    "platform": {
+      "headline": "Two products in one.",
+      "body": "Tourscope is the consumer marketplace travelers book on, and the command center agencies run the business from — bookings, suppliers, pricing, payments, and content, with every money movement on a real ledger.",
+      "devicesAlt": "The Tourscope traveler storefront running on a laptop and a tablet, beside the Tourscope mobile app on a phone.",
+      "b2cTag": "For travelers",
+      "b2cTitle": "A storefront they actually finish booking on.",
+      "b2cBody": "One fast search across flights, hotels, and tours — streaming results, maps, branded fares, instant insurance and eSIM checkout — in their language and currency.",
+      "b2bTag": "For agencies",
+      "b2bTitle": "A command center for the whole operation.",
+      "b2bBody": "Run every booking, supplier, and payment from one dashboard. Set markups and commissions, manage inventory, brand the storefront, and control who can do what.",
+      "verticalsLabel": "Six verticals, one checkout",
+      "v1": "Flights",
+      "v2": "Hotels",
+      "v3": "Group Tours",
+      "v4": "Visas",
+      "v5": "Insurance",
+      "v6": "eSIMs",
+      "cta": "Explore the platform"
+    },
+    "production": {
+      "headline": "Running in production.",
+      "sub": "The platform as it stands today, not a roadmap.",
+      "r1Term": "Supplier integrations",
+      "r1Value": "15+ live, across flights, hotels, insurance, and eSIM",
+      "r2Term": "Payments",
+      "r2Value": "Hosted, PCI-DSS-compliant regional gateways — card data never touches the platform",
+      "r3Term": "Languages",
+      "r3Value": "Six, with full right-to-left — English, Arabic, Farsi, Turkish, Sorani, Kurmanji",
+      "r4Term": "Accounting",
+      "r4Value": "Multi-currency end to end; every money movement is a ledger entry, and statements reconcile",
+      "r5Term": "Tenancy",
+      "r5Value": "Multi-tenant with strict isolation — one agency can never reach another's data",
+      "r6Term": "Deployment",
+      "r6Value": "Live with travel agencies across the region"
+    },
+    "partners": {
+      "headline": "Running real agencies, under their own names.",
+      "sub": "Every brand here is a travel agency operating on Tourscope today — their storefront, their console, their customers."
+    },
+    "about": {
+      "eyebrow": "The company",
+      "headline": "A young company, fifteen years deep.",
+      "body": "Codescope was founded in February 2025 by a team of 18 with deep backgrounds in engineering, design, and product. We spent over a decade shipping software inside other organizations — much of it inside travel. Now we build independently, from Karbala, Iraq, for agencies anywhere in the world.",
+      "fact1": "Founded February 2025",
+      "fact2": "18 people",
+      "fact3": "Karbala, Iraq",
+      "cta": "Read our story"
+    },
+    "cta": {
+      "headline": "See Tourscope running on your brand.",
+      "subhead": "Tell us about your agency. We'll set up a live walkthrough and reply within 24 hours.",
+      "button": "Request a demo"
+    }
+  },
+  "Services": {
+    "hero": {
+      "heading": "The standard behind",
+      "headlineAccent": "Tourscope.",
+      "subheading": "Tourscope wasn't outsourced or templated. It was engineered in-house to one standard — the same standard we hold every line of code to."
+    },
+    "pillar1": {
+      "title": "Engineering Quality",
+      "description": "We write code that ages well. Clean architecture, disciplined testing, and an obsession with maintainability are why a platform this large stays fast and changeable instead of becoming a liability.",
+      "tag1": "Clean Architecture",
+      "tag2": "Test Coverage",
+      "tag3": "Code Reviews",
+      "tag4": "Technical Docs"
+    },
+    "pillar2": {
+      "title": "Modern UX/UI Systems",
+      "description": "Interfaces that feel intentional. A component-based design system keeps Tourscope consistent across a consumer storefront and a dense operations dashboard — from the first screen to the last.",
+      "tag1": "Design Systems",
+      "tag2": "Component Libraries",
+      "tag3": "Accessibility",
+      "tag4": "Figma-to-Code"
+    },
+    "pillar3": {
+      "title": "Flow-first Thinking",
+      "description": "Complexity is the enemy of adoption. We map every journey — traveler and agent alike — find the friction, and cut steps until booking and back-office work feel effortless.",
+      "tag1": "User Flows",
+      "tag2": "Journey Mapping",
+      "tag3": "Rapid Prototyping",
+      "tag4": "Metrics-driven"
+    },
+    "builds": {
+      "heading": "What that standard ships",
+      "b1Title": "Complex Booking Systems",
+      "b1Desc": "Multi-step, multi-role, multi-currency. Built to handle real operational complexity.",
+      "b2Title": "Multi-role Platforms",
+      "b2Desc": "Distinct portals for admins, agents, and travelers — all in one coherent system.",
+      "b3Title": "Operations Dashboards",
+      "b3Desc": "Operations-critical interfaces with real-time data and clear decision support.",
+      "b4Title": "Scalable Web Applications",
+      "b4Desc": "Multi-tenant, internationalized, and engineered for longevity — not just launch."
+    },
+    "cta": {
+      "heading": "Want this engineering standard on your own product?",
+      "button": "Let's talk"
+    }
+  },
+  "About": {
+    "hero": {
+      "heading": "We are Codescope.",
+      "headlineAccent": "The company behind Tourscope.",
+      "subheading": "Disciplined engineering and intentional design, in one team — and a platform in production to prove it."
+    },
+    "story": {
+      "heading": "How we got here",
+      "body": "We spent years inside travel agencies, watching capable teams fight broken systems and fragmented suppliers. Most software shops would have built another feature. We built the platform we wished existed — and turned it into Tourscope. Codescope is the company we wanted to work with: technically rigorous, design-conscious, and product-driven.",
+      "highlights": [
+        "capable teams",
+        "built another feature",
+        "the platform we wished existed",
+        "Tourscope"
+      ]
+    },
+    "positioning": {
+      "label": "Where we sit",
+      "left": "Software House",
+      "center": "Codescope",
+      "right": "UX Agency",
+      "statement": "Between a software house and a UX agency, you find a product engineering company.",
+      "detail": "We don't just execute specs — we challenge them. Every technical decision is a product decision. Every design decision is an engineering decision. We treat them with equal rigour."
+    },
+    "team": {
+      "heading": "Eighteen people. One product.",
+      "body": "Codescope is a team of 18 — engineers, designers, and product people who spent over a decade shipping software inside other organizations before building independently from Karbala, Iraq.",
+      "d1": "Engineering",
+      "d1Desc": "Architecture, backend, and front-end across a consumer marketplace and a multi-tenant dashboard.",
+      "d2": "Design & UX",
+      "d2Desc": "A single design system spanning light and dark, six languages, and full right-to-left.",
+      "d3": "Product",
+      "d3Desc": "Mapping agency and traveler journeys, then cutting them down to the essential steps.",
+      "d4": "Travel operations",
+      "d4Desc": "Years on the agency floor — the reason the product fits how the work actually happens."
+    },
+    "values": {
+      "heading": "What drives us",
+      "v1Title": "Quality over velocity",
+      "v1Desc": "We'd rather ship fewer features correctly than many features roughly.",
+      "v2Title": "Design as engineering",
+      "v2Desc": "UX decisions are engineering decisions. We treat them with the same rigour.",
+      "v3Title": "Long-term partnerships",
+      "v3Desc": "Partners stay because the work lasts. The people who built it are still the ones maintaining it."
+    },
+    "cta": {
+      "heading": "Let's talk about your agency.",
+      "subheading": "We work closely with a small number of partners at a time — quality over volume.",
+      "button": "Request a demo"
+    }
+  },
+  "TourScope": {
+    "meta": {
+      "title": "Tourscope — White-label travel platform & B2B booking software",
+      "description": "Tourscope is a multi-tenant, white-label travel-commerce platform: a consumer marketplace and a B2B agency dashboard. Flights, hotels, tours, visas, insurance, and eSIMs — 15+ supplier integrations, six languages, live in production."
+    },
+    "hero": {
+      "label": "Flagship product · Live in production",
+      "headline": "The white-label travel platform agencies actually run on.",
+      "desc": "Tourscope is a complete travel-commerce platform: a marketplace your travelers book on, and a command center your team runs the business from. Six verticals, 15+ supplier integrations, six languages — multi-tenant from the ground up.",
+      "cta": "Request a demo",
+      "ctaSecondary": "See what's inside",
+      "chip1": "6 verticals",
+      "chip2": "Multi-tenant white-label",
+      "chip3": "15+ supplier integrations",
+      "chip4": "6 languages · RTL"
+    },
+    "twoSides": {
+      "eyebrow": "Both sides of the counter",
+      "headline": "The storefront travelers book on. The command center you run on.",
+      "b2cTag": "B2C · Marketplace",
+      "b2cTitle": "Search, compare, and book a whole trip in one place.",
+      "b2cBody": "Flights, hotels, group tours, visas, insurance, and a local eSIM — one fast, beautiful checkout, in the traveler's language and currency.",
+      "b2cB1": "Unified, streaming search",
+      "b2cB2": "Interactive hotel maps",
+      "b2cB3": "Branded fares, seats & baggage",
+      "b2cB4": "My Bookings + in-app wallet",
+      "b2bTag": "B2B · Dashboard",
+      "b2bTitle": "Run the entire business from one screen.",
+      "b2bBody": "Bookings, suppliers, pricing, payments, and content — managed in a single dashboard, with role-based control over every action.",
+      "b2bB1": "Unified booking management",
+      "b2bB2": "Pricing & commission engine",
+      "b2bB3": "Financial console & statements",
+      "b2bB4": "Storefront CMS & branding"
+    },
+    "marketTour": {
+      "headline": "Inside the marketplace.",
+      "sub": "Drawn from the running product — the same fields, the same badges, the same rules.",
+      "i1Title": "One search bar, six products behind it.",
+      "i1Body": "The storefront opens on a single search across flights, hotels, tours, visas, insurance, and eSIMs — in the traveler's language and currency.",
+      "i2Title": "Detail pages that close the sale.",
+      "i2Body": "Prices, processing times, required documents, and the fine print — laid out before the traveler commits, so support doesn't pick up the slack.",
+      "i3Title": "Six languages. Real right-to-left.",
+      "i3Body": "Not a translation layer bolted on — the entire experience mirrors, down to the smallest control."
+    },
+    "verticals": {
+      "headline": "Six verticals. One checkout.",
+      "sub": "Not a tour widget — a full travel-commerce catalog.",
+      "f1Title": "Flights",
+      "f1Desc": "Round-trip, one-way, and multi-city with live streaming results, branded fares, seat, baggage and meal selection — and per-passenger cancellation handling after the sale.",
+      "f2Title": "Hotels",
+      "f2Desc": "Multi-supplier results deduplicated into one catalog, with an interactive price-pin map, rich detail pages, and free-cancellation filters.",
+      "f3Title": "Group Tours",
+      "f3Desc": "Departure dates, day-by-day itineraries, room and bed selection, and document collection per traveler.",
+      "f4Title": "Visas",
+      "f4Desc": "Apply online by passport and destination, upload documents, and track status after booking.",
+      "f5Title": "Travel Insurance",
+      "f5Desc": "Instant quotes, plan comparison, and a PDF policy emailed on purchase.",
+      "f6Title": "eSIMs",
+      "f6Desc": "A local data plan delivered instantly by QR, with an activation guide."
+    },
+    "engine": {
+      "eyebrow": "The business engine",
+      "headline": "Everything an agency runs on, in one dashboard.",
+      "sub": "The back-office most platforms make you buy three separate tools for.",
+      "c1Title": "Operations",
+      "c1Thesis": "Every booking, one queue.",
+      "c1I1": "Unified booking management across all six verticals, with triage queues — action required, awaiting payment, refunds owed — so nothing waits unseen.",
+      "c1I2": "Per-passenger and per-leg flight cancellations, manual-recording flows for out-of-band airline work, and refunds routed back to the original payment method.",
+      "c1I3": "A full support desk: ticket triage, SLA tracking, saved replies, agent performance, and booking-linked threads that update themselves when a booking changes.",
+      "c2Title": "Money",
+      "c2Thesis": "Accounting-grade by construction.",
+      "c2I1": "Every movement is a ledger entry; balances are projections, not editable numbers.",
+      "c2I2": "Deposits, earnings with holdback windows, supplier balances, and payout requests.",
+      "c2I3": "Branded account statements — PDF and Excel — whose closing balance always reconciles.",
+      "c2I4": "Markups, commissions, buyer-group pricing tiers, cancellation penalties, and exchange-rate control.",
+      "c3Title": "Distribution & growth",
+      "c3Thesis": "Sell more than you own.",
+      "c3I1": "A cross-agency inventory pool: share your visas, tours, hotels, and charter seats with partner agencies — or resell theirs — with clean settlement between both sides.",
+      "c3I2": "A charter marketplace — curated routes and seats from regional operators.",
+      "c3I3": "A Partner API so integrators can search and book against your inventory from their own systems.",
+      "c4Title": "Storefront & brand",
+      "c4Thesis": "Your brand, your rules.",
+      "c4I1": "White-label branding: logo, colors, hero galleries, languages, and currencies.",
+      "c4I2": "A block-based CMS: articles in multiple languages, FAQs, city pages, and promotions.",
+      "c4I3": "Role-based access for staff, corporate company accounts with wallets and credit, and per-customer pricing tiers."
+    },
+    "beyond": {
+      "headline": "And the parts you only notice later.",
+      "sub": "The features that don't fit a comparison table — until you run an agency on them.",
+      "b1Title": "Companies, not just customers.",
+      "b1Body": "Give corporate clients their own accounts: staff seats, shared wallets, credit limits, and statements — while you keep control of pricing.",
+      "b2Title": "Different customers, different prices.",
+      "b2Body": "Tier your customers into buyer groups and let the platform price each one automatically — retail, corporate, partner.",
+      "b3Title": "Support that knows the booking.",
+      "b3Body": "Tickets link to bookings, track SLAs, and update themselves when the booking changes — with saved replies and agent performance built in.",
+      "b4Title": "Every email wears your brand.",
+      "b4Body": "Confirmations, vouchers, cancellations, and account statements go out from your identity — in the customer's language.",
+      "b5Title": "Content that speaks six languages.",
+      "b5Body": "Hotel descriptions translate with AI assistance; your own articles and pages publish per language from one editor.",
+      "b6Title": "Numbers you can act on.",
+      "b6Body": "Live booking queues, revenue summaries, and per-vertical performance — the day's state of the business at a glance."
+    },
+    "story": {
+      "headline": "We lived the problem before we built the product.",
+      "body": "Years inside travel agencies taught us what legacy systems never fixed. Tourscope is the system we wished we'd had.",
+      "highlights": [
+        "legacy systems never fixed",
+        "the system we wished we'd had"
+      ],
+      "b1Label": "The problem",
+      "b1Body": "A legacy booking terminal, a spreadsheet, a payment processor, and a website — none of them talking to each other.",
+      "b2Label": "What we built",
+      "b2Body": "One multi-tenant platform: a streaming-search marketplace on the front, a full operations dashboard on the back.",
+      "b3Label": "In production",
+      "b3Body": "Live and white-label, serving agencies across the region — with new agencies onboarding on their own domain in days, not months."
+    },
+    "trust": {
+      "headline": "Integrated, compliant, and global from day one.",
+      "i1": "15+ supplier integrations — flights, hotels, insurance, eSIM",
+      "i2": "Hosted PCI-DSS payment gateways",
+      "i3": "6 languages, full RTL (Arabic, Kurdish, Farsi)",
+      "i4": "Multi-currency, ledger-backed",
+      "i5": "Strict multi-tenant isolation",
+      "i6": "Passwordless sign-in, role-based access, no tracking pixels",
+      "note": "In production with travel agencies across the region."
+    },
+    "appGrid": {
+      "headline": "Their names in the app stores.",
+      "sub": "White-label goes all the way to the store listing — these are agencies' own iOS and Android apps, built and shipped by us."
+    },
+    "cta": {
+      "heading": "See Tourscope on your own brand.",
+      "subheading": "Tell us about your agency. We'll set up a live walkthrough and reply within 24 hours.",
+      "cta": "Request a demo",
+      "ctaSecondary": "Email us"
+    },
+    "preview": {
+      "live": "Live",
+      "search": "Search destinations...",
+      "tabFlights": "Flights",
+      "tabHotels": "Hotels",
+      "tabTours": "Tours",
+      "flightRoute": "Cairo → Dubai",
+      "flightMeta": "4h 20m · Direct",
+      "flightPrice": "$284",
+      "available": "Available",
+      "hotelName": "Marsa Garden Hotel",
+      "hotelMeta": "Dubai · 4.8 ★",
+      "hotelPrice": "$96",
+      "dashTitle": "Bookings",
+      "navBookings": "Bookings",
+      "navPricing": "Pricing",
+      "navFinance": "Finance",
+      "navContent": "Content",
+      "kpiBookings": "Bookings today",
+      "kpiRevenue": "Revenue (MTD)",
+      "kpiSuppliers": "Active suppliers",
+      "rowFlight": "Flight · Cairo → Dubai",
+      "rowHotel": "Hotel · Marsa Garden",
+      "rowVisa": "Visa · UAE Tourist",
+      "statusConfirmed": "Confirmed",
+      "statusPending": "Pending"
+    },
+    "shots": {
+      "homeCaption": "The storefront — one search, six verticals",
+      "homeArCaption": "Full right-to-left, native",
+      "visasCaption": "Visas — apply by passport and destination",
+      "visaDetailCaption": "Requirements and rules, before payment",
+      "consoleCaption": "The command center — the whole agency, one screen",
+      "pricingCaption": "Pricing rules — own and pooled inventory"
+    },
+    "slices": {
+      "live": "Live",
+      "available": "Available",
+      "active": "Active",
+      "poolBadge": "Tourscope Pool",
+      "a": {
+        "region": "Global",
+        "currency": "USD",
+        "language": "EN",
+        "tabOneWay": "One way",
+        "tabRound": "Round trip",
+        "tabMulti": "Multi-city",
+        "tabOpen": "Open return",
+        "fromLabel": "From",
+        "fromValue": "Baghdad",
+        "fromCode": "BGW",
+        "toLabel": "To",
+        "toValue": "Istanbul",
+        "toCode": "IST",
+        "datesLabel": "Departure",
+        "datesValue": "Mar 12 – 19",
+        "travelersLabel": "Travelers",
+        "travelersValue": "2 adults",
+        "cabin": "Economy",
+        "search": "Search",
+        "taxNote": "All prices include taxes & fees",
+        "resultsLabel": "Results",
+        "searching": "Still searching · 3 suppliers",
+        "airline": "IF",
+        "route": "BGW → IST",
+        "routeMeta": "2h 45m · Direct",
+        "price": "$284",
+        "svcTours": "Group Tours",
+        "svcVisas": "Travel Visas",
+        "svcInsurance": "Travel Insurance",
+        "svcEsim": "eSIM"
+      },
+      "b": {
+        "title": "Hotels & properties",
+        "count": "7",
+        "add": "Add listing",
+        "colListing": "Listing",
+        "colLocation": "Location",
+        "colInventory": "Inventory",
+        "colStatus": "Status",
+        "r1Name": "Rotana Hotel",
+        "r1City": "Baghdad",
+        "r1Country": "Iraq",
+        "r1Rooms": "1 room type",
+        "r2Name": "Alnoor",
+        "r2City": "Baghdad",
+        "r2Country": "Iraq",
+        "r2Rooms": "1 room type",
+        "r3Name": "Alshareqa Hotel",
+        "r3City": "Sharjah",
+        "r3Country": "United Arab Emirates",
+        "r3Rooms": "1 room type",
+        "pooled": "Shared to pool · 2 of 7"
+      },
+      "c": {
+        "passport": "Iraqi passport holders",
+        "countries": "15 countries available",
+        "badge": "Tourist",
+        "typeCount": "1 type",
+        "typesLabel": "Types",
+        "fastestLabel": "Fastest",
+        "stayLabel": "Max stay",
+        "fromLabel": "From",
+        "apply": "Apply",
+        "c1Name": "Bahrain",
+        "c1Type": "Tourist Standard",
+        "c1Types": "1",
+        "c1Fastest": "5 days",
+        "c1Stay": "14 days",
+        "c1Price": "36",
+        "c2Name": "China",
+        "c2Type": "Tourist Standard",
+        "c2Types": "1",
+        "c2Fastest": "40 days",
+        "c2Stay": "1 month",
+        "c2Price": "1,250"
+      },
+      "d": {
+        "name": "Bahrain",
+        "selectType": "Select visa type",
+        "type": "Tourist Standard",
+        "badge": "Tourist",
+        "price": "36",
+        "maxStayLabel": "Max stay",
+        "maxStay": "14 days",
+        "processingLabel": "Processing",
+        "processing": "5 days",
+        "entriesLabel": "Entries",
+        "entries": "Single",
+        "availableFor": "Available for",
+        "nationality": "Iraqi",
+        "toggle": "Hide requirements & rules",
+        "docsLabel": "Required documents",
+        "doc1": "Passport copy",
+        "doc2": "Personal photo",
+        "doc3": "GCC residence",
+        "rulesLabel": "Application rules",
+        "rule1": "Processing time 5 working days · visa validity 90 days",
+        "rule2": "In case of rejection, the fee is non-refundable",
+        "apply": "Apply now"
+      },
+      "e": {
+        "live": "مباشر",
+        "region": "عالمي",
+        "currency": "USD",
+        "language": "AR",
+        "tabOneWay": "ذهاب فقط",
+        "tabRound": "ذهاب وعودة",
+        "tabMulti": "مدن متعددة",
+        "tabOpen": "عودة مفتوحة",
+        "fromLabel": "من",
+        "fromValue": "بغداد",
+        "fromCode": "BGW",
+        "toLabel": "إلى",
+        "toValue": "إسطنبول",
+        "toCode": "IST",
+        "datesLabel": "المغادرة",
+        "datesValue": "١٢ – ١٩ آذار",
+        "travelersLabel": "الركاب",
+        "travelersValue": "بالغان",
+        "cabin": "الاقتصادية",
+        "search": "بحث",
+        "taxNote": "جميع الأسعار شاملة الضرائب والرسوم",
+        "resultsLabel": "النتائج",
+        "searching": "البحث جارٍ لدى ٣ موردين",
+        "airline": "IF",
+        "route": "بغداد ← إسطنبول",
+        "routeMeta": "٢س ٤٥د · مباشر",
+        "price": "$284",
+        "available": "متاح"
+      },
+      "f": {
+        "title": "Visa markups",
+        "count": "52",
+        "tabProducts": "Visa products",
+        "tabProductsCount": "35",
+        "tabSellers": "Visa sellers",
+        "tabSellersCount": "17",
+        "colProduct": "Visa product",
+        "colRoute": "Route",
+        "colSource": "Source",
+        "colCurrency": "Markup currency",
+        "colTiers": "Tiers marked up",
+        "tiers": "{count} tiers",
+        "colStatus": "Status",
+        "tier": "Tourist",
+        "currency": "USD",
+        "nationality": "Nationality Iraq",
+        "sourceShared": "Shared · Tourscope Pool",
+        "sourceOwn": "Own inventory",
+        "r1Product": "Tourist · AE (IQ)",
+        "r1Dest": "United Arab Emirates",
+        "r2Product": "Tourist · BH (IQ)",
+        "r2Dest": "Bahrain",
+        "r3Product": "Tourist · CN (IQ)",
+        "r3Dest": "China",
+        "r4Product": "Tourist · GE (IQ)",
+        "r4Dest": "Georgia"
+      }
+    }
+  },
+  "Contact": {
+    "hero": {
+      "heading": "Let's build",
+      "headlineAccent": "something real.",
+      "subheading": "Tell us about your agency or your project. We reply to every inquiry within 24 hours."
+    },
+    "email": {
+      "label": "Or email us directly",
+      "value": "info@codescope.dev"
+    },
+    "form": {
+      "name": "Your name",
+      "namePlaceholder": "Khalid Al-Rashid",
+      "email": "Work email",
+      "emailPlaceholder": "khalid@yourcompany.com",
+      "message": "About your project",
+      "messagePlaceholder": "We run a travel agency and want to see Tourscope on our own brand...",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "success": "Message received. We'll be in touch within 24 hours.",
+      "error": "Something went wrong. Try emailing us directly at info@codescope.dev"
+    }
+  },
+  "Pricing": {
+    "meta": {
+      "title": "Pricing — Tourscope by Codescope",
+      "description": "Three packages, one platform. Every Tourscope package includes hosting, servers, updates, and support — priced for the size of your operation."
+    },
+    "hero": {
+      "heading": "One platform.",
+      "headingAccent": "Three ways in.",
+      "subheading": "Every package is the full Tourscope core — hosting, servers, updates, and support included. What changes is the breadth of services and the size of the team it carries."
+    },
+    "packages": {
+      "heading": "Pick the package that matches your operation",
+      "perMonth": "per month",
+      "perYear": "per year",
+      "colBilled": "Billed",
+      "setup": "Setup",
+      "setupOnce": "one-time",
+      "includes": "What you get",
+      "cta": "Talk to us",
+      "ctaFeatured": "Start with Standard",
+      "billingHeading": "Other terms",
+      "bestValueBadge": "Best value",
+      "bestValueLine": "The apps, travel insurance, and eSIMs are {sum}/year as add-ons — here they're included."
+    },
+    "notes": {
+      "heading": "Two terms worth reading before you sign"
+    },
+    "addons": {
+      "heading": "Extend it when you're ready",
+      "subheading": "Every add-on plugs into the platform you already run — no rebuild, no migration.",
+      "colAddon": "Add-on",
+      "colSetup": "Setup",
+      "colQuarterly": "Quarterly",
+      "colAnnual": "Annual",
+      "colBiannual": "Two years",
+      "tableLabel": "Add-on pricing"
+    },
+    "setup": {
+      "heading": "What setup buys"
+    },
+    "faq": {
+      "heading": "Questions we get asked before signing"
+    },
+    "cta": {
+      "heading": "Not sure which fits?",
+      "body": "Tell us how you operate — routes, volume, team size — and we'll tell you plainly which package earns its price.",
+      "button": "Talk to us"
+    }
+  },
+  "Jobs": {
+    "emptyTitle": "No open roles right now",
+    "emptyBody": "Check back, or write to us.",
+    "emptyCta": "info@codescope.dev"
+  },
+  "GetStarted": {
+    "meta": {
+      "title": "Get started — Tourscope by Codescope",
+      "description": "Tell us who you are and which package you're leaning toward — we reply within 24 hours."
+    },
+    "hero": {
+      "heading": "Let's get you set up.",
+      "subheading": "Tell us who you are and which package you're leaning toward — we reply within 24 hours."
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Khalid Al-Rashid",
+      "agency": "Agency (optional)",
+      "agencyPlaceholder": "Golden Trips Co.",
+      "email": "Email",
+      "emailPlaceholder": "khalid@yourcompany.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+964 7xx xxx xxxx",
+      "package": "Package",
+      "message": "Message",
+      "submit": "Send request",
+      "sending": "Sending..."
+    },
+    "packages": {
+      "charter": "Charter",
+      "standard": "Standard",
+      "advanced": "Advanced",
+      "notSure": "Not sure yet"
+    },
+    "messages": {
+      "charter": "Hello — we operate charter flights and we're interested in the Charter package. We'd like a walkthrough of Tourscope and the next steps to get set up.",
+      "standard": "Hello — we run a travel agency and we're interested in the Standard package. We'd like a walkthrough of Tourscope and the next steps to get set up.",
+      "advanced": "Hello — we're a multi-market operation and we're interested in the Advanced package, including the mobile apps. We'd like a walkthrough of Tourscope and the next steps to get set up.",
+      "notSure": "Hello — we run a travel agency and we're exploring Tourscope. We'd like a walkthrough and help choosing the right package."
+    },
+    "success": {
+      "heading": "Request received.",
+      "body": "We'll reply within 24 hours at the email or phone you left."
+    },
+    "error": "Something went wrong on our side. Email us directly at info@codescope.dev.",
+    "validation": {
+      "name": "Enter your name.",
+      "email": "Enter a valid email address.",
+      "phone": "Enter a valid phone number.",
+      "message": "Write a short message."
     }
   }
 }

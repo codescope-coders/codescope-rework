@@ -125,60 +125,12 @@ html {
   color: white;
 }
 
-.font-inter {
-  font-family: var(--font-inter);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-  }
-}
-
-.about-grid {
-  display: grid;
-  gap: 1.75rem;
-  grid-template-columns: auto auto 285px 285px;
-  grid-template-rows: 240px 240px;
-  grid-template-areas:
-    "main main getStarted  getStartedNow"
-    "main main letsTalk  getStartedNow";
-}
-
-@media (max-width: 1280px) {
-  .about-grid {
-    grid-template-columns: 300px 200px 200px;
-  }
-}
-
-@media (max-width: 1080px) {
-  .about-grid {
-    grid-template-columns: 300px auto auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "main main getStarted letsTalk"
-      "main main getStartedNow getStartedNow";
-  }
-}
-
-@media (max-width: 1024px) {
-  .about-grid {
-    grid-template-columns: calc(50% - 0.875rem) calc(50% - 0.875rem);
-    grid-template-rows: 369px auto auto;
-    grid-template-areas:
-      "main main"
-      "getStarted letsTalk"
-      "getStartedNow getStartedNow";
-  }
-}
-
-@media (max-width: 640px) {
-  .about-grid {
-    display: flex;
-    flex-direction: column;
   }
 }
 
@@ -201,6 +153,557 @@ html {
     to {
       height: 0;
     }
+  }
+}
+
+/* ============================================================================
+   PUBLIC MARKETING SITE — DESIGN SYSTEM
+   Ported from the approved codescope-website build. Everything element-level
+   here is SCOPED under `[data-site="public"]` — the attribute lives on the
+   (client) layout's root element — because the dashboard shares this
+   stylesheet and is Arabic-first, so a bare `body` / `::selection` /
+   `:focus-visible` / reduced-motion rule would repaint it. Only the token
+   definitions (`@theme`, `:root`) and the @font-face declarations are global,
+   and every one of those names is new: nothing above or below is overridden.
+   ============================================================================ */
+
+/* ── Local fonts ─────────────────────────────────────────────────────────── */
+/* Inert until something asks for the family by name, so declaring these
+   globally cannot affect the dashboard. */
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Brand colors ─────────────────────────────────────────────────────────── */
+/* `--font-sans` / `--font-mono` are NOT re-declared here: the target's own
+   `@theme inline` at the top of this file already points them at
+   `--font-geist-sans` / `--font-geist-mono`. Those two variables are defined
+   ONLY on the public root element (see the (client) layout), so the dashboard
+   continues to resolve them exactly as it did before this block existed. */
+@theme inline {
+  /* CodeScope — teal */
+  --color-cs-teal: #00a79d;
+  --color-cs-teal-hover: #00c4b8;
+  --color-cs-teal-dark: #007f77;
+
+  /* The brighter "animation teal": glows, reticle strokes, scroll reveals.
+     Single source of truth for the value — JS that needs it as a string
+     (SVG paint, interpolated colors) mirrors it in `lib/colors.ts`. */
+  --color-cs-teal-glow: #08baa8;
+
+  /* TourScope — purple */
+  --color-ts-purple: #6f00ff;
+  --color-ts-purple-hover: #8b33ff;
+
+  /* Purple for TEXT. `--color-ts-purple-hover` is 3.80:1 on the page ground,
+     which clears AA only for large (≥24px) display type — so eyebrows, tags,
+     numerals and labels use this lighter tint (5.4:1) instead. Icons and
+     display-size type keep `-hover`. */
+  --color-ts-purple-text: #a76bff;
+
+  /* Surfaces. These are page grounds, not accents: the body ink, the near-black
+     panel the ledger blocks sit on, and the manifesto's blue-black. Each was
+     re-typed as a bracket hex in two or three files. */
+  --color-cs-ink: #09090b;
+  --color-cs-panel: #0a0711;
+  --color-cs-manifesto: #0a0e1a;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+/* The page ground is set on `body` as well as on the wrapper so the overscroll
+   gutter matches the site instead of flashing the dashboard's light `--background`.
+   `:has()` keeps it exactly as narrow as the wrapper itself, and being UNLAYERED
+   it beats the `@layer base { body { @apply bg-background … } }` rule above
+   without needing a specificity fight. */
+body:has([data-site="public"]) {
+  background: #09090b;
+  color: #a1a1aa;
+}
+
+/* `--font-geist-sans`, NOT `--font-sans`.
+   `--font-sans` is declared on `:root` (top of this file) as
+   `var(--font-geist-sans)`, and a custom property substitutes against the
+   element it is DECLARED on — so at `:root`, where `--font-geist-sans` is
+   deliberately undefined (it is scoped to the public wrapper so the dashboard's
+   type cannot move), `--font-sans` resolves to the guaranteed-invalid value and
+   inherits down as invalid. The whole `font-family` declaration was then
+   dropped and the public site silently rendered in the dashboard's Urbanist /
+   Dahab. Naming the Geist variable directly moves substitution onto the wrapper,
+   where it is defined. */
+/* NO `background` here, deliberately — it belongs on `body` above and nowhere
+   else. `GridHighlight` is `fixed inset-0 -z-10`, i.e. a negative-z descendant
+   of this wrapper, and CSS paints those BEFORE the backgrounds of non-positioned
+   block descendants: an opaque ground on the wrapper covers the ambient grid
+   completely, which is exactly what happened. A `body` background instead
+   propagates to the canvas and paints first, so the grid shows through — the
+   same arrangement the design source uses (`bg-cs-ink` on its `<body>`). */
+[data-site="public"] {
+  color: #a1a1aa;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+[dir="rtl"] [data-site="public"] {
+  font-family: "IBM Plex Sans Arabic", var(--font-geist-sans), sans-serif;
+}
+
+/* Arabic headings need more leading than Latin ones — this is a property of
+   the SCRIPT, not of any one heading, which is why it lives here as a single
+   rule rather than as a `leading-*` utility sprinkled per call site.
+
+   Latin gets away with a 1.0 ratio at display sizes because it stacks nothing
+   above the cap or below the baseline. Arabic does both: a tanween or shadda
+   rides above the letter, a kasra sits under it, and IBM Plex Sans Arabic
+   draws them well outside the em box. At the `text-5xl` default (ratio 1.0)
+   six display headings on this site had the INK of consecutive lines merged
+   into a single band — measured by rasterising each heading and looking for
+   blank pixel rows between lines, there were none. Words were touching.
+
+   1.3 is the measured floor plus margin: at 1.15 four of the six still
+   collided, at 1.25 every one separated, and past 1.35 the extra space buys
+   no further separation (what grows is the gap between a diacritic and its
+   own letter, not between lines). The brief's suggested value and the
+   measurement agree.
+
+   Scoped to h1/h2 because those are the only elements that reach display
+   sizes here — every h3 already sits at `leading-snug` (1.375) or looser, and
+   including them would TIGHTEN every one of them. The two h2s below 30px
+   (the manifesto eyebrow at 12px, the short section headings at 24px) shift by
+   under a pixel, and 1.3 is far above the collision threshold at any size, so
+   the floor is safe for them too.
+
+   Unlayered on purpose: Tailwind's font-size utilities set `line-height`
+   alongside `font-size` from inside `@layer utilities`, so a layered rule —
+   however specific — would lose to `text-5xl` and never apply. LTR is
+   untouched. `dir` sits on `<html>` and `[data-site="public"]` on the client
+   layout's root, so the public scope is the DESCENDANT half of the selector. */
+[dir="rtl"] [data-site="public"] :is(h1, h2) {
+  line-height: 1.3;
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────────── */
+/* Class-scoped, so these need no `[data-site]` guard — nothing outside the
+   ported tree references any of these four names (verified by grep). */
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: border-color 300ms ease, box-shadow 300ms ease;
+  }
+
+  /* ── Pricing package cards: three grounds, three registers ───────────────
+     Charter is plain, Standard is the seller, Advanced is the value argument.
+     Each carries its own resting state AND its own hover, because the hover
+     has to brighten whatever hairline that card already has.
+
+     Why these are CSS classes and not Tailwind strings on the page: the card
+     ground sets `border` and `box-shadow` as SHORTHANDS, and `.glass-card`
+     (their sibling above) does the same from inside `@layer utilities` — the
+     very layer Tailwind's own `border-*` / `shadow-*` utilities land in. An
+     override written as a utility is then settled by emit order rather than by
+     intent, which means a card's hairline could change colour on a build that
+     touched neither the card nor the class. Keeping ground and hover together
+     in one rule removes the question.
+
+     The hover half is inside `@media (hover: hover)` so a tap on a phone
+     cannot leave a card stuck in its hover state — `:hover` persists after
+     touch on most mobile browsers until something else is tapped. */
+  /* The house EASE (0.21,0.47,0.32,0.98) at 300ms — the same pair the lift in
+     `SpotlightCard` uses, so a card rises and brightens as one gesture instead
+     of two that nearly agree. ⚠️ Deliberately NOT the slow-start out-curve
+     `(0.32,0,0.16,1)` this shipped with: zero initial velocity made the hover
+     visibly hesitate, which the founder read as "not smooth". */
+  /* ⚠️ `translate` is IN this shorthand on purpose. This rule is UNLAYERED, so
+     it outranks every layered Tailwind utility on the same element — which is
+     exactly how the lift shipped broken twice: SpotlightCard's
+     `transition-transform` utility was silently dead here and the 4px rise
+     SNAPPED with no transition at all. The one transition authority for these
+     cards is THIS rule; do not reintroduce a Tailwind transition utility on
+     them. */
+  .pkg-ground,
+  .pkg-ground-featured,
+  .pkg-ground-value {
+    transition:
+      border-color 300ms cubic-bezier(0.21, 0.47, 0.32, 0.98),
+      box-shadow 300ms cubic-bezier(0.21, 0.47, 0.32, 0.98),
+      translate 300ms cubic-bezier(0.21, 0.47, 0.32, 0.98);
+    will-change: translate;
+  }
+
+  /* ⚠️ No backdrop-filter on the package grounds, on purpose. They had
+     `blur(12px)`, and animating a transform on a backdrop-filtered element
+     forces the browser to re-sample and re-blur the backdrop EVERY FRAME of
+     the lift — the jank the founder felt on hover. It also bought nothing
+     here: the cursor grid is masked out of this section, so the backdrop is a
+     flat near-black and blurring it is invisible. `.glass-card` keeps its
+     blur — it sits over textured grounds elsewhere and does not lift. */
+  .pkg-ground {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .pkg-ground-featured {
+    background: linear-gradient(150deg, #0b0716 0%, #120c26 60%, #0c0918 100%);
+    border: 1px solid color-mix(in srgb, var(--color-ts-purple) 30%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-ts-purple) 10%, transparent),
+      0 24px 60px -24px color-mix(in srgb, var(--color-ts-purple) 45%, transparent);
+  }
+
+  /* One property changed against `.pkg-ground` — the hairline. The featured
+     card changes four (ground, hairline, ring, drop shadow), so the two
+     highlights read as different in KIND rather than as two attempts at the
+     same rung. */
+  .pkg-ground-value {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid color-mix(in srgb, var(--color-cs-teal) 34%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  /* ⚠️ Hover is sensed on `.lift-scope` — SpotlightCard's STATIC wrapper —
+     never on the card itself. The card RISES on hover, so its own `:hover`
+     region rises with it: a cursor in the bottom few pixels would then sit
+     outside the lifted card, hover would end, the card would drop back onto
+     the cursor, and the state would flap forever — a vibrating card, felt by
+     the founder as "not smooth". The wrapper doesn't move, so the state can't
+     flap. The bare `:hover` fallbacks keep the brightening alive anywhere a
+     ground is used without the lift wrapper (reduced-motion renders unwrapped). */
+  @media (hover: hover) {
+    .lift-scope:hover :is(.pkg-ground, .pkg-ground-featured, .pkg-ground-value) {
+      translate: 0 -4px;
+    }
+
+    .lift-scope:hover .pkg-ground,
+    .pkg-ground:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 18px 44px -24px rgba(0, 0, 0, 0.7);
+    }
+
+    .lift-scope:hover .pkg-ground-featured,
+    .pkg-ground-featured:hover {
+      border-color: color-mix(in srgb, var(--color-ts-purple) 52%, transparent);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-ts-purple) 18%, transparent),
+        0 30px 72px -26px color-mix(in srgb, var(--color-ts-purple) 58%, transparent);
+    }
+
+    .lift-scope:hover .pkg-ground-value,
+    .pkg-ground-value:hover {
+      border-color: color-mix(in srgb, var(--color-cs-teal) 58%, transparent);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 18px 44px -24px color-mix(in srgb, var(--color-cs-teal) 30%, transparent);
+    }
+  }
+
+  /* The cursor-follow grid glow (see `GridHighlight`).
+     It is a full-viewport masked layer repainted on every pointer frame, mounted
+     on every route — and on a device with no hovering pointer it can never be
+     seen at all, so it is off there. `lg` because it is desktop ambience, not
+     something to spend a phone's compositor on. The static base grid underneath
+     stays everywhere: that layer is texture, not motion.
+     Written as one rule rather than stacked arbitrary variants so the media
+     query is legible and can't be mis-composed at the call site. */
+  .cursor-glow-layer {
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) and (width >= 64rem) {
+    .cursor-glow-layer {
+      display: block;
+    }
+  }
+
+  /* The TourScope card ground: a deep purple-black wash used by the B2B card on
+     both pages. It shipped twice with different stops, so the same card was
+     two slightly different colors depending on which page you were on. */
+  .card-ts-gradient {
+    background: linear-gradient(150deg, #0b0716 0%, #120c26 60%, #0c0918 100%);
+  }
+
+  .grid-bg {
+    background-image: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+}
+
+/* ── Careers application form ─────────────────────────────────────────────── */
+/* The job-application form is built from the SHARED shadcn primitives
+   (`components/ui/{input,select,button}`), which read `--input`, `--background`
+   and `--muted-foreground` off `:root`. Those are the LIGHT values — correct for
+   the dashboard, and on this near-black ground they produced near-white borders
+   and transparent fields. Restyling them here rather than at ~40 call sites
+   keeps that file's 780 lines of validation and submission logic byte-identical
+   in behaviour, which is the whole point of the P3 reskin.
+
+   Deliberately inside `@layer base`: Tailwind's utilities layer outranks it, so
+   the per-field error classes the form already applies (`border-destructive`,
+   and the red variants it was ported to) still win over these defaults. An
+   unlayered rule would have silently swallowed every invalid-field border.
+   Scoped under `[data-site="public"] .site-form` on both halves — the dashboard
+   shares this stylesheet and has its own control vocabulary. */
+@layer base {
+  [data-site="public"] .site-form input,
+  [data-site="public"] .site-form textarea,
+  [data-site="public"] .site-form [data-slot="select-trigger"] {
+    background-color: #18181b;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-radius: 0.75rem;
+  }
+
+  /* `zinc-500`, matching `ContactForm`: the placeholder is the only guidance
+     about what a field wants, and the shadcn `--muted-foreground` grey sits at
+     roughly 2.2:1 here — legible as a shape, not as words. */
+  [data-site="public"] .site-form input::placeholder,
+  [data-site="public"] .site-form textarea::placeholder {
+    color: #71717a;
+  }
+
+  [data-site="public"] .site-form input:focus-visible,
+  [data-site="public"] .site-form textarea:focus-visible,
+  [data-site="public"] .site-form [data-slot="select-trigger"]:focus-visible {
+    border-color: rgba(0, 167, 157, 0.5);
+  }
+
+  /* The file input is `hidden` and driven by its own label; giving it a ground
+     would paint a 48px band under the dropzone. */
+  [data-site="public"] .site-form input[type="file"] {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}
+
+/* ── Portaled surfaces (the date-picker popover) ──────────────────────────── */
+/* `.site-form` above cannot reach this one. Radix renders `PopoverContent`
+   through a PORTAL into `document.body`, so the calendar is a sibling of the
+   app root rather than a descendant of `[data-site="public"]` — it never
+   matches the block above, and it reads `--popover` / `--background` /
+   `--accent` straight off `:root`, which are the LIGHT values. The result was a
+   bright white calendar hanging over a near-black page.
+
+   So the hook is a CLASS the call site puts on the popover itself, and what it
+   does is re-point the token slots for that subtree rather than restyle any
+   part. Nothing in `components/ui/` is touched: those primitives are shared
+   with the dashboard and the login page, and a change there would follow them.
+
+   Re-pointing VARIABLES rather than writing `.site-popover .rdp-day { … }`
+   rules is what makes this survive: the calendar's internals are
+   `bg-accent` / `bg-primary` / `text-muted-foreground` utilities, so every part
+   — including ones added by a later shadcn update — resolves against these
+   automatically, with no selector to keep in sync.
+
+   Unlayered on purpose, mirroring the `@layer base` reasoning above inverted:
+   these are custom-property declarations, not competing utilities, so there is
+   nothing for Tailwind's layers to outrank.
+
+   Class-scoped rather than `[data-site]`-scoped for the same reason
+   `.glass-card` is — the whole point is that the element is NOT under
+   `[data-site="public"]`, and no dashboard surface carries this name. */
+.site-popover {
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --background: #18181b;
+  --foreground: #fafafa;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  /* zinc-500 — the same call the form's placeholders make. The shadcn grey
+     sits near 2.2:1 on this ground, which is legible as a shape, not as a
+     weekday. */
+  --muted-foreground: #a1a1aa;
+  --accent: rgba(255, 255, 255, 0.07);
+  --accent-foreground: #ffffff;
+  /* The selected day. `--accent` on `:root` is the TourScope purple, which is
+     a product colour and does not belong on a careers form. */
+  --primary: #00a79d;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.07);
+  --secondary-foreground: #fafafa;
+  --ring: rgba(0, 167, 157, 0.8);
+  color: var(--popover-foreground);
+}
+
+/* The one thing the token map above cannot reach. `components/ui/button.tsx`
+   declares its `ghost` variant as `hover:bg-white hover:text-black` — LITERALS,
+   not token slots — and every day cell plus the two month-nav arrows is a ghost
+   Button. So each of them flashed a pure-white chip on hover inside an
+   otherwise-dark calendar.
+
+   Fixing it in `button.tsx` is out of the question: that variant is shared with
+   the dashboard and the login page. Passing `classNames` does not work either —
+   `components/ui/calendar.tsx` destructures the prop and then builds its
+   `classNames` object without ever spreading it, so a caller's value is
+   silently discarded. A scoped rule is what is left, and it is the same move
+   `.site-form` above already makes against these primitives.
+
+   The selected day is exempt so it keeps `--primary`; `today` shares the hover
+   value by design, so the two never disagree. */
+.site-popover button:hover:not([data-selected-single="true"]) {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+
+/* ── Global polish ────────────────────────────────────────────────────────── */
+/* Both scoped: the dashboard keeps the teal `::selection` and the shadcn
+   `--ring` focus treatment declared in the public half above. */
+[data-site="public"] ::selection {
+  background: rgba(0, 167, 157, 0.28);
+  color: #fff;
+}
+
+[data-site="public"] :focus-visible {
+  /* 0.8, not 0.6: at 0.6 the ring computes to exactly 3.0:1 on #09090b —
+     passing SC 1.4.11 with zero margin and failing over any lighter surface. */
+  outline: 2px solid rgba(0, 167, 157, 0.8);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+/* Components handle this properly in JS (see `lib/useReducedMotionSafe.ts`) —
+   they render final state rather than a fast version of the animation. This is
+   the safety net underneath: it catches CSS keyframes, `transition-*` utilities
+   and third-party styles nobody audited. Durations are 0.01ms rather than 0 so
+   `transitionend` / `animationend` listeners still fire.
+
+   Scoped to the public tree. The dashboard has its own motion vocabulary that
+   nobody has audited against this reset, and §0 forbids changing it — so the
+   net is cast over the site it was written for and no further. */
+@media (prefers-reduced-motion: reduce) {
+  [data-site="public"],
+  [data-site="public"] *,
+  [data-site="public"] *::before,
+  [data-site="public"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Client brand wall ────────────────────────────────────────────────────── */
+/* Drives `components/site/TenantBrandsMarquee.tsx`. Everything except the
+   keyframe itself is scoped to the public tree — a bare `.brand-track` rule
+   would be a global class the dashboard could collide with by accident.
+
+   `@keyframes` cannot be scoped by a selector, so the name carries the prefix
+   instead; it is unique in this file (`nav-rise`, `page-fade-in`,
+   `accordion-*` are the others) and a keyframe only applies where an
+   `animation-name` references it. */
+/* Mark geometry is emitted in px by the component and multiplied by this. The
+   marks take their width from the artwork — 95px to 250px — and carry a 72px
+   gap, so an unscaled row shows barely two of them at 390px. Stepping the scale
+   keeps the loop exact (both copies scale together) where a media query per
+   dimension could not. */
+[data-site="public"] .brand-wall,
+[data-site="public"] .brand-grid {
+  --brand-scale: 0.78;
+}
+
+@media (min-width: 640px) {
+  [data-site="public"] .brand-wall,
+  [data-site="public"] .brand-grid {
+    --brand-scale: 0.9;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-site="public"] .brand-wall,
+  [data-site="public"] .brand-grid {
+    --brand-scale: 1;
+  }
+}
+
+[data-site="public"] .brand-wall {
+  /* Symmetric, so it needs no RTL counterpart even though the track inside is
+     pinned to LTR. Both prefixes: Safari still wants the `-webkit-` one. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 7%,
+    #000 93%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 7%,
+    #000 93%,
+    transparent
+  );
+}
+
+[data-site="public"] .brand-track {
+  animation-name: brand-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* Duration is set inline per row, derived from that row's own width so both
+     rows drift at one velocity rather than one duration. */
+}
+
+[data-site="public"] .brand-track-reverse {
+  animation-direction: reverse;
+}
+
+/* Hover pauses the row under the cursor, not its sibling: a wall that stops
+   dead in both rows reads as a bug rather than an invitation to look. */
+[data-site="public"] .brand-wall:hover .brand-track {
+  animation-play-state: paused;
+}
+
+@keyframes brand-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Exactly one copy, including its trailing gap — see the `copyW` note in
+       the component for why the gap is a margin and not a flex `gap`. */
+    transform: translateX(-50%);
+  }
+}
+
+/* The global reduced-motion net above collapses every animation to 0.01ms,
+   which would SNAP this track to -50% and park the wall mid-tile. The component
+   swaps to a static grid once it has hydrated; this keeps the pre-hydration
+   frame still rather than jumped. */
+@media (prefers-reduced-motion: reduce) {
+  [data-site="public"] .brand-track {
+    animation: none !important;
   }
 }
 

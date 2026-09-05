@@ -1,12 +1,28 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { timeAgo } from "@/helpers/date";
 import { useGetJobs } from "@/hooks/useJobs";
+import { FadeIn } from "@/components/site/FadeIn";
 import clsx from "clsx";
 import { BriefcaseIcon, MapPinIcon, TimerIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import JobCardSkeleton from "./JobSkeleton";
+
+/**
+ * The careers list — reskinned into the public design system (P3).
+ *
+ * ⚠️ Every piece of DATA WIRING here is unchanged: the `useGetJobs` query, the
+ * six-at-a-time pagination, the IntersectionObserver that loads the next page,
+ * and the CLOSED-role pointer lock. Only the surface moved — `glass-card`
+ * instead of the `#34333b` slab, hairline dividers instead of `#4d4b57`, the
+ * zinc text ramp, and a teal CTA.
+ *
+ * Copy stays hardcoded Arabic (see the page's note). The ONE exception is the
+ * empty state, which is now translated in both locales — it is the state a
+ * visitor lands in whenever nothing is open, so a page that is Arabic-only in
+ * that moment says nothing at all to an English reader.
+ */
 
 const ITEMS_PER_PAGE = 6;
 export const JOB_TYPE_AR: Record<string, string> = {
@@ -18,7 +34,11 @@ export const JOB_TYPE_AR: Record<string, string> = {
   TEMPORARY: "مؤقت",
 };
 
+const GRID =
+  "grid gap-4 grid-cols-[repeat(auto-fill,minmax(100%,1fr))] md:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]";
+
 export const Content = () => {
+  const t = useTranslations("Jobs");
   const { data, isPending } = useGetJobs();
   const observerTarget = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,100 +77,123 @@ export const Content = () => {
   }, [loadMore]);
 
   // ── Empty state ──
+  // Deliberate rather than apologetic: an icon plate in the site's teal, the
+  // two sentences, and a real way to reach us anyway. "No roles" is the most
+  // common state a careers page is in, so it gets designed, not defaulted.
   if (!isPending && totalJobs === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#34333b]">
-          <BriefcaseIcon className="text-gray-400" width={28} />
+      <FadeIn>
+        <div className="glass-card mx-auto flex max-w-xl flex-col items-center gap-4 rounded-2xl px-6 py-14 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-cs-teal/20 bg-cs-teal/10">
+            <BriefcaseIcon className="text-cs-teal" width={24} />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <h2 className="text-lg font-semibold text-white">
+              {t("emptyTitle")}
+            </h2>
+            <p className="max-w-[38ch] text-sm leading-relaxed text-zinc-400">
+              {t("emptyBody")}
+            </p>
+          </div>
+          <a
+            href={`mailto:${t("emptyCta")}`}
+            className="mt-2 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:border-cs-teal/40 hover:bg-cs-teal/10"
+          >
+            {t("emptyCta")}
+          </a>
         </div>
-        <div className="flex flex-col gap-1">
-          <h3 className="text-lg font-bold text-white">لا توجد وظائف متاحة</h3>{" "}
-          <p className="text-sm text-gray-400 max-w-xs">
-            لا توجد مناصب مفتوحة حالياً. تحقق لاحقاً.
-          </p>
-        </div>
-      </div>
+      </FadeIn>
     );
   }
 
   return (
     <>
-      <div
-        className={clsx(
-          "grid gap-3 transition duration-200 md:grid-cols-[repeat(auto-fill,minmax(420px,1fr))] grid-cols-[repeat(auto-fill,minmax(100%,1fr))]",
-        )}
-      >
+      <ul className={GRID} dir="rtl">
         {isPending &&
           currentPage === 1 &&
           Array.from({ length: 3 }).map((_, i: number) => {
             return <JobCardSkeleton key={i} />;
           })}
         {displayedJobs?.map((job, i) => (
-          <div
-            className={clsx(
-              "job p-4 bg-[#34333b] rounded-md transition duration-200 flex flex-col",
-              {
-                "pointer-events-none opacity-70": job.status == "CLOSED",
-              },
-            )}
+          <FadeIn
+            as="li"
             key={i}
+            delay={(i % ITEMS_PER_PAGE) * 0.06}
+            className={clsx("h-full", {
+              "pointer-events-none opacity-60": job.status == "CLOSED",
+            })}
           >
-            <div className="header pb-4 border-b mb-4 border-b-[#4d4b57] items-satrt flex flex-col">
-              <div className="title flex gap-2 items-start justify-between">
-                <h2 className="mt-1 font-bold text-lg">{job?.position}</h2>
-                <div
-                  className={clsx(
-                    "size-3 rounded-full shadow-xs border group-hover:-translate-y-1 duration-150 ease-out",
-                    {
-                      "shadow-success bg-success/30 border-success":
-                        job?.status == "AVAILABLE",
-                      "shadow-invalid-color bg-invalid-color/30 border-invalid-color":
-                        job?.status == "CLOSED",
-                    },
-                  )}
-                ></div>
-              </div>
-              <div className="w-fit py-1 px-2 bg-[#42414b] rounded-sm font-bold text-sm capitalize">
-                <span>{JOB_TYPE_AR[job?.type]}</span>
-              </div>
-            </div>
-            <p className="grow">{job?.description}</p>
-            <div className="footer mt-4 flex flex-col gap-4">
-              <div className="flex gap-3">
-                <div className="time flex items-center gap-1 text-gray-300">
-                  <TimerIcon width={20} />
-                  <span>{timeAgo(job?.createdAt, 'ar')}</span>
+            <article className="glass-card group flex h-full flex-col rounded-2xl p-6 transition-colors duration-300 hover:border-cs-teal/25">
+              <div className="mb-4 flex flex-col items-start gap-3 border-b border-white/8 pb-4">
+                <div className="flex w-full items-start justify-between gap-3">
+                  <h2 className="text-lg font-semibold leading-snug text-white">
+                    {job?.position}
+                  </h2>
+                  {/* The status dot, repainted into the site's palette. It
+                      carries no label because this phase does not author copy
+                      — and it never had one. Closed roles are additionally
+                      dimmed and made unclickable by the wrapper, so the colour
+                      is not the only signal. */}
+                  <span
+                    aria-hidden
+                    className={clsx(
+                      "mt-2 size-2.5 shrink-0 rounded-full border",
+                      {
+                        "border-cs-teal/50 bg-cs-teal/40":
+                          job?.status == "AVAILABLE",
+                        "border-white/15 bg-white/8": job?.status == "CLOSED",
+                      },
+                    )}
+                  />
                 </div>
-                <div className="time flex items-center gap-1 text-gray-300">
-                  <MapPinIcon width={20} />
-                  <span>{job?.location}</span>
-                </div>
+                <span className="rounded-full border border-white/8 bg-white/3 px-3 py-1 text-xs font-medium text-zinc-400">
+                  {JOB_TYPE_AR[job?.type]}
+                </span>
               </div>
-              <Link href={`/jobs/${job.id}`}>
-                <Button className="flex w-full h-10 rounded-sm hover:bg-primary bg-secondary transition duration-200 text-white font-bold text-lg no-underline shadow-lg hover:shadow-xl">
+
+              <p className="grow text-sm leading-relaxed text-zinc-400">
+                {job?.description}
+              </p>
+
+              <div className="mt-6 flex flex-col gap-4">
+                <div className="flex flex-wrap gap-4 text-xs text-zinc-500">
+                  <span className="flex items-center gap-1.5">
+                    <TimerIcon width={14} />
+                    {timeAgo(job?.createdAt, "ar")}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPinIcon width={14} />
+                    {job?.location}
+                  </span>
+                </div>
+                <Link
+                  href={`/jobs/${job.id}`}
+                  className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-cs-teal text-sm font-semibold text-white transition-colors duration-200 hover:bg-cs-teal-hover active:scale-[0.99]"
+                >
                   تقدّم الآن
-                </Button>
-              </Link>
-            </div>
-          </div>
+                </Link>
+              </div>
+            </article>
+          </FadeIn>
         ))}
-      </div>
+      </ul>
 
       {hasMore && !isPending && (
         <div
           ref={observerTarget}
-          className="h-20 flex items-center justify-center mt-4"
+          className="mt-6 flex h-20 items-center justify-center"
+          dir="rtl"
         >
-          <div className="text-sm text-gray-400">جارٍ تحميل المزيد...</div>
+          <div className="text-sm text-zinc-500">جارٍ تحميل المزيد...</div>
         </div>
       )}
 
       {isPending && currentPage > 1 && (
-        <div className="grid gap-3 mt-3 md:grid-cols-[repeat(auto-fill,minmax(420px,1fr))] grid-cols-[repeat(auto-fill,minmax(100%,1fr))]">
+        <ul className={`${GRID} mt-4`} dir="rtl">
           {Array.from({ length: 3 }).map((_, i: number) => (
             <JobCardSkeleton key={i} />
           ))}
-        </div>
+        </ul>
       )}
     </>
   );
