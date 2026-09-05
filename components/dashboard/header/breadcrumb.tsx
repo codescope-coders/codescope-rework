@@ -8,6 +8,7 @@ import { Link, usePathname } from "@/i18n/routing";
 /** Path segment → `dash.nav.*` key, so a crumb reads the same as the sidebar. */
 const SEG_KEY: Record<string, string> = {
   pipeline: "nav.pipeline",
+  "website-requests": "nav.website_requests",
   projects: "nav.projects",
   servers: "nav.servers",
   reports: "nav.reports",

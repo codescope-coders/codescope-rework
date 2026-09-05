@@ -9,6 +9,7 @@ import {
   GitBranch,
   HandCoins,
   Handshake,
+  Inbox,
   LayoutDashboard,
   LifeBuoy,
   PackageCheck,
@@ -44,6 +45,14 @@ export const NAV_GROUPS: SidebarGroup[] = [
         icon: GitBranch,
         href: "/dashboard/pipeline",
         permission: P.VIEW_PIPELINE,
+      },
+      {
+        id: "website-requests",
+        title: "Website requests",
+        i18nKey: "nav.website_requests",
+        icon: Inbox,
+        href: "/dashboard/website-requests",
+        permission: P.VIEW_WEBSITE_REQUESTS,
       },
       {
         id: "projects",

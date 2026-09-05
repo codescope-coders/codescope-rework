@@ -41,6 +41,12 @@ export const PERMISSIONS = {
   VIEW_REPORTS_ALL: "VIEW_REPORTS_ALL",
   MANAGE_REPORTS: "MANAGE_REPORTS",
 
+  // Website requests — the public site's get-started + contact submissions.
+  // No VIEW_..._ALL sibling: a request belongs to nobody until someone picks it
+  // up, so the queue is shared by everyone who can see it.
+  VIEW_WEBSITE_REQUESTS: "VIEW_WEBSITE_REQUESTS",
+  MANAGE_WEBSITE_REQUESTS: "MANAGE_WEBSITE_REQUESTS",
+
   // Support tickets — VIEW = assigned to me, VIEW_ALL = every ticket.
   VIEW_SUPPORT: "VIEW_SUPPORT",
   VIEW_SUPPORT_ALL: "VIEW_SUPPORT_ALL",
@@ -113,6 +119,10 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     P.VIEW_DASHBOARD,
     P.VIEW_PIPELINE,
     P.MANAGE_PIPELINE,
+    // Website requests sit with the pipeline: the same people who work leads
+    // are the ones who answer the site's "request a demo".
+    P.VIEW_WEBSITE_REQUESTS,
+    P.MANAGE_WEBSITE_REQUESTS,
     P.VIEW_PROJECTS,
     P.VIEW_SUPPORT,
     P.MANAGE_SUPPORT,

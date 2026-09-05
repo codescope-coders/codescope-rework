@@ -606,6 +606,59 @@ export const branding = pgTable("branding", {
     .notNull(),
 });
 
+/* ══════════════════════════════════════════════════════════════════════════
+   PUBLIC WEBSITE — package / contact requests
+   ══════════════════════════════════════════════════════════════════════════
+   The marketing site's `/get-started` form and its `/contact` form both land
+   here, so "someone asked us for something" has ONE table and one dashboard
+   module ("Website requests") instead of a lead path that only exists as an
+   email in somebody's inbox.
+
+   Enum VALUES are SCREAMING_CASE like every other enum in this file, not the
+   lowercase the P7 spec wrote them in — a `status` that reads `NEW` beside a
+   ticket's `OPEN` is the only way `lib/dashboard/labels.ts`-style lookups and
+   the existing StatusBadge tone maps stay uniform. `package` reuses the
+   pipeline's `packageTierEnum`: it is the same three tiers the pricing page
+   sells, so a request that later becomes a lead needs no translation. */
+
+export const websiteRequestKindEnum = pgEnum("website_request_kind", [
+  "PACKAGE",
+  "CONTACT",
+]);
+export const websiteRequestStatusEnum = pgEnum("website_request_status", [
+  "NEW",
+  "CONTACTED",
+  "CONVERTED",
+  "CLOSED",
+]);
+
+/* One row per submission from codescope.dev. `package` is nullable on purpose:
+ * null means "not sure yet" on the get-started form, and is always null for a
+ * general contact message. `note` is staff-internal and never leaves the
+ * dashboard. */
+export const packageRequests = pgTable("package_requests", {
+  id: serial("id").primaryKey(),
+  kind: websiteRequestKindEnum("kind").default("PACKAGE").notNull(),
+  package: packageTierEnum("package"),
+  name: varchar("name", { length: 255 }).notNull(),
+  agency: varchar("agency", { length: 255 }),
+  email: varchar("email", { length: 320 }).notNull(),
+  // Nullable in the SCHEMA because a contact message carries no phone; the API
+  // requires it for kind = PACKAGE, where a reachable number is the point.
+  phone: varchar("phone", { length: 60 }),
+  message: text("message").notNull(),
+  // The site language the visitor wrote in — what we must reply in.
+  locale: varchar("locale", { length: 5 }).default("en").notNull(),
+  status: websiteRequestStatusEnum("status").default("NEW").notNull(),
+  note: text("note"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 /* ─────────────────────────────── Relations ────────────────────────────────
  * Only the parent/child collections that the services read with `with:`. User
  * name lookups are done with explicit leftJoins in the services. */
