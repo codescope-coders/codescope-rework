@@ -169,7 +169,7 @@ export const applications = pgTable("applications", {
 
 export const currencyEnum = pgEnum("currency", ["IQD", "USD"]);
 export const billingCycleEnum = pgEnum("billing_cycle", ["MONTHLY", "YEARLY"]);
-// Package tiers: CHARTER=تشارتر · STANDARD=الباقة القياسية · ADVANCED=الباقة المتقدمة
+// Package tiers: CHARTER=چارتر · STANDARD=الباقة القياسية · ADVANCED=الباقة المتقدمة
 export const packageTierEnum = pgEnum("package_tier", [
   "CHARTER",
   "STANDARD",

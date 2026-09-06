@@ -79,11 +79,11 @@ export type Package = {
 export const PACKAGES: Package[] = [
   {
     id: "charter",
-    name: "تشارتر",
+    name: "چارتر",
     nameEn: "Charter",
     icp: "لمشغّلي الرحلات المُستأجَرة إلى إيران.",
     icpEn: "For charter operators flying Iraq–Iran routes.",
-    annual: { price: "1,500", perMonth: "$125" },
+    annual: { price: "900", perMonth: "$75" },
     alts: [
       { term: "ربع سنوي", termEn: "Quarterly", perMonth: "$150", total: "$450" },
       { term: "سنتان", termEn: "Two years", perMonth: "$113", total: "$2,700" },
@@ -91,14 +91,12 @@ export const PACKAGES: Package[] = [
     setup: "$500",
     features: [
       "رحلات العراق - إيران والطيران الداخلي",
-      "5 مقاعد للفريق",
       "لوحة تحكّم بعلامتك التجارية",
       "عملات متعدّدة",
       "دعم عبر البريد الإلكتروني",
     ],
     featuresEn: [
       "Iraq–Iran routes and domestic flights",
-      "5 team seats",
       "A console under your own brand",
       "Multi-currency",
       "Email support",
@@ -126,15 +124,17 @@ export const PACKAGES: Package[] = [
     features: [
       "طيران · فنادق · جولات · تأشيرات",
       "خطوط عالمية + رحلات إيران",
-      "15 مقعداً للفريق",
       "علامة بيضاء كاملة",
+      "التأمين السياحي مُدمج",
+      "الشرائح الإلكترونية (eSIM)",
       "دعم ذو أولوية",
     ],
     featuresEn: [
       "Flights · hotels · tours · visas",
       "Global routes plus Iran flights",
-      "15 team seats",
       "Full white-label",
+      "Travel insurance built in",
+      "eSIMs built in",
       "Priority support",
     ],
     footnote: "يشمل الاستضافة · الخوادم · التحديثات · الدعم",
@@ -156,17 +156,13 @@ export const PACKAGES: Package[] = [
     features: [
       "كلّ خدمات الباقة القياسية",
       "تطبيقا iOS و Android (مُضمَّنان)",
-      "التأمين السياحي مُدمج",
-      "الشرائح الإلكترونية (eSIM)",
-      "50 مقعداً للفريق + نطاق مخصّص",
+      "نطاق مخصّص",
       "دعم ذو أولوية قصوى",
     ],
     featuresEn: [
       "Everything in Standard",
       "iOS and Android apps, included",
-      "Travel insurance built in",
-      "eSIMs built in",
-      "50 team seats + dedicated domain",
+      "Dedicated domain",
       "Top-priority support",
     ],
     footnote: "يشمل الاستضافة · الخوادم · التحديثات · الدعم",
@@ -245,7 +241,7 @@ export const ADDONS: Addon[] = [
     biannual: "$3,600",
   },
   {
-    name: "وحدة تشارتر",
+    name: "وحدة چارتر",
     nameEn: "Charter module",
     sub: "للباقات غير المتخصّصة",
     subEn: "for non-charter packages",
@@ -277,30 +273,30 @@ export const ADDONS: Addon[] = [
     nameEn: "QiCard",
     sub: "بوابة دفع",
     subEn: "payment gateway",
-    setup: "—",
-    quarterly: "$100",
-    annual: "$333",
-    biannual: "$600",
+    setup: "$100",
+    quarterly: "—",
+    annual: "$100",
+    biannual: "$200",
   },
   {
     name: "ZainCash",
     nameEn: "ZainCash",
     sub: "بوابة دفع",
     subEn: "payment gateway",
-    setup: "—",
-    quarterly: "$100",
-    annual: "$333",
-    biannual: "$600",
+    setup: "$100",
+    quarterly: "—",
+    annual: "$100",
+    biannual: "$200",
   },
   {
     name: "FastPay",
     nameEn: "FastPay",
     sub: "بوابة دفع",
     subEn: "payment gateway",
-    setup: "—",
-    quarterly: "$100",
-    annual: "$333",
-    biannual: "$600",
+    setup: "$100",
+    quarterly: "—",
+    annual: "$100",
+    biannual: "$200",
   },
   {
     name: "واجهة برمجية صادرة (API)",
@@ -310,14 +306,6 @@ export const ADDONS: Addon[] = [
     annual: "$2,000",
     biannual: "$3,600",
   },
-  {
-    name: "+10 مقاعد مستخدمين",
-    nameEn: "+10 user seats",
-    setup: "—",
-    quarterly: "$150",
-    annual: "$500",
-    biannual: "$900",
-  },
 ];
 
 /**
@@ -326,7 +314,7 @@ export const ADDONS: Addon[] = [
  * them as separate iOS and Android rows would overstate the saving), travel
  * insurance, and eSIMs.
  */
-const ADVANCED_BUNDLED_ADDON_IDS = ["app-bundle", "travel-insurance", "esim"];
+const ADVANCED_BUNDLED_ADDON_IDS = ["app-bundle"];
 
 /** `"$2,000"` → `2000`. Throws rather than coercing junk to NaN. */
 function parseUsd(amount: string, forId: string): number {

@@ -58,9 +58,9 @@
       },
       "c2": {
         "q": "What is the difference between the three plans?",
-        "charter": "$1,500/year + $500 setup — for Iraq–Iran flight operators. 5 staff accounts in the admin panel.",
-        "standard": "$4,500/year + $2,000 setup — for full-service travel agencies. Flights + hotels + tours + visas. 15 accounts. <strong>Most popular.</strong>",
-        "advanced": "$9,000/year + $3,250 setup — for multi-market operators. Includes iOS and Android apps, insurance, eSIM, 50 accounts, custom domain, and top-priority support."
+        "charter": "$900/year + $500 setup — for Iraq–Iran flight operators.",
+        "standard": "$4,500/year + $2,000 setup — for full-service travel agencies. Flights + hotels + tours + visas + insurance + eSIM. <strong>Most popular.</strong>",
+        "advanced": "$9,000/year + $3,250 setup — for multi-market operators. Includes the iOS and Android apps, a custom domain, and top-priority support."
       },
       "c3": {
         "q": "Why an annual subscription and not monthly?",
@@ -214,7 +214,9 @@
   "common": {
     "video-error": "Your browser does not support video playback.",
     "days": "days",
-    "optional": "Optional"
+    "optional": "Optional",
+    "captchaError": "Verification failed — please try again.",
+    "captchaUnavailable": "Verification could not load. Reload the page if the button stays disabled."
   },
   "dash": {
     "nav": {
@@ -908,7 +910,7 @@
       "ctaFeatured": "Start with Standard",
       "billingHeading": "Other terms",
       "bestValueBadge": "Best value",
-      "bestValueLine": "The apps, travel insurance, and eSIMs are {sum}/year as add-ons — here they're included."
+      "bestValueLine": "The iOS and Android apps alone are {sum}/year as add-ons — here they're included."
     },
     "notes": {
       "heading": "Two terms worth reading before you sign"

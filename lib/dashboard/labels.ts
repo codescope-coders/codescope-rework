@@ -183,7 +183,7 @@ const ar: LabelSet = {
     UNPAID: "غير مدفوعة",
   },
   packageTier: {
-    CHARTER: "تشارتر",
+    CHARTER: "چارتر",
     STANDARD: "الباقة القياسية",
     ADVANCED: "الباقة المتقدمة",
   },
