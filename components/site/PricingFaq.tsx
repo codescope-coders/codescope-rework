@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { Minus, Plus } from "@phosphor-icons/react/dist/ssr";
+import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { FaqDisclosure } from "@/components/site/FaqDisclosure";
 import type { ReactNode } from "react";
 
 /**
@@ -167,27 +168,29 @@ export async function PricingFaq() {
           </h3>
           <div className="divide-y divide-white/5">
             {group.ids.map((id) => (
-              <details key={id} className="group">
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
-                  <h4 className="text-[0.95rem] font-medium leading-relaxed text-zinc-300 transition-colors duration-200 group-open:text-white group-hover:text-white">
-                    {t(`${group.category}.${id}.q`)}
-                  </h4>
-                  <span
-                    aria-hidden
-                    className="mt-0.5 shrink-0 text-zinc-600 transition-colors duration-200 group-open:text-cs-teal group-hover:text-zinc-400"
-                  >
-                    <Plus size={16} weight="bold" className="group-open:hidden" />
-                    <Minus
-                      size={16}
-                      weight="bold"
-                      className="hidden group-open:block"
-                    />
-                  </span>
-                </summary>
-                <div className="flex max-w-[68ch] flex-col gap-3 pb-6 text-sm leading-relaxed text-zinc-400">
-                  {body(group.category, id)}
-                </div>
-              </details>
+              /* FaqDisclosure owns the <details>/<summary> shell and the
+                 open/close height animation (founder: "smooth on open"); this
+                 file stays the copy reader. The marker rotates 45° instead of
+                 swapping Plus↔Minus so the icon TURNS with the motion rather
+                 than blinking at the start of it. */
+              <FaqDisclosure
+                key={id}
+                summary={
+                  <>
+                    <h4 className="text-[0.95rem] font-medium leading-relaxed text-zinc-300 transition-colors duration-200 group-open:text-white group-hover:text-white">
+                      {t(`${group.category}.${id}.q`)}
+                    </h4>
+                    <span
+                      aria-hidden
+                      className="mt-0.5 shrink-0 text-zinc-600 transition-[color,rotate] duration-300 ease-[cubic-bezier(0.21,0.47,0.32,0.98)] group-open:rotate-45 group-open:text-cs-teal group-hover:text-zinc-400"
+                    >
+                      <Plus size={16} weight="bold" />
+                    </span>
+                  </>
+                }
+              >
+                {body(group.category, id)}
+              </FaqDisclosure>
             ))}
           </div>
         </div>
