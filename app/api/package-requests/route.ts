@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import sgMail from "@sendgrid/mail";
 import { db } from "@/lib/db";
 import { packageRequests } from "@/lib/db/schema";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
  * The public `/get-started` form's submission endpoint.
@@ -135,6 +136,19 @@ export async function POST(request: Request) {
   // gave it away and comes back without it.
   if (str(body.company, 200)) {
     return NextResponse.json({ ok: true });
+  }
+
+  // After the honeypot (free, and its fake-200 deception is worth keeping for a
+  // bot that also happens to hold a token) and before everything that costs
+  // something — the insert and the alert mail. Answers `ok: true` untouched
+  // when Turnstile is unconfigured or Cloudflare is unreachable, so this is
+  // inert on a deployment with no keys. See lib/turnstile.ts.
+  const captcha = await verifyTurnstile(body.turnstileToken, request);
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { ok: false, error: "captcha_failed" },
+      { status: 400 },
+    );
   }
 
   const name = str(body.name, 200);

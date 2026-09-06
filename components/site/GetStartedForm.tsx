@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PaperPlaneTilt, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { DURATION, EASE, EASE_OUT } from "@/lib/motion";
+import TurnstileWidget, { turnstileActive } from "@/components/site/TurnstileWidget";
 
 /**
  * The `/get-started` form — the site's real lead path.
@@ -50,6 +51,7 @@ type FieldKey = "name" | "email" | "phone" | "message";
 
 export default function GetStartedForm() {
   const t = useTranslations("GetStarted");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const reduced = useReducedMotionSafe();
   const uid = useId();
@@ -76,6 +78,14 @@ export default function GetStartedForm() {
   });
   const [errors, setErrors] = useState<Partial<Record<FieldKey, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
+  // Null until Turnstile solves, and again on expiry or a server refusal. With
+  // no site key the widget renders nothing and this stays null — hence every
+  // gate below is `turnstileActive &&`.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // A Turnstile token is single-use; bumping this mints a fresh challenge so a
+  // rejected one is never re-submitted.
+  const [captchaNonce, setCaptchaNonce] = useState(0);
+  const [captchaRejected, setCaptchaRejected] = useState(false);
 
   /** True once the textarea holds something that is neither empty nor the
    *  template for the currently-selected package. */
@@ -120,6 +130,7 @@ export default function GetStartedForm() {
     e.preventDefault();
     if (!validate()) return;
     setStatus("sending");
+    setCaptchaRejected(false);
     try {
       const res = await fetch("/api/package-requests", {
         method: "POST",
@@ -135,9 +146,25 @@ export default function GetStartedForm() {
           package: choice === NOT_SURE ? "" : choice.toUpperCase(),
           locale,
           company: form.company,
+          turnstileToken: captchaToken,
         }),
       });
-      if (!res.ok) throw new Error(`get-started ${res.status}`);
+      if (!res.ok) {
+        // A refused challenge is recoverable right here, so it gets its own
+        // copy and a fresh widget rather than the generic "email us instead".
+        const reason = await res
+          .json()
+          .then((body: { error?: string }) => body?.error)
+          .catch(() => undefined);
+        if (reason === "captcha_failed") {
+          setCaptchaRejected(true);
+          setCaptchaToken(null);
+          setCaptchaNonce((n) => n + 1);
+          setStatus("error");
+          return;
+        }
+        throw new Error(`get-started ${res.status}`);
+      }
       setStatus("success");
       // The form is gone, so focus has nowhere to be — move it to the
       // confirmation or a keyboard/screen-reader user is left on a detached
@@ -341,14 +368,20 @@ export default function GetStartedForm() {
             className="flex items-start gap-2 text-sm text-red-400"
           >
             <WarningCircle size={16} className="mt-0.5 shrink-0" />
-            {t("error")}
+            {captchaRejected ? tCommon("captchaError") : t("error")}
           </motion.div>
         )}
       </AnimatePresence>
 
+      <TurnstileWidget onToken={setCaptchaToken} resetSignal={captchaNonce} />
+
       <motion.button
         type="submit"
-        disabled={status === "sending"}
+        // Only gated when a site key is configured: with Turnstile off there is
+        // no token to wait for and the button must behave exactly as before.
+        disabled={
+          status === "sending" || (turnstileActive && captchaToken === null)
+        }
         whileHover={reduced ? undefined : { scale: 1.01 }}
         whileTap={reduced ? undefined : { scale: 0.98 }}
         transition={{ duration: DURATION.instant, ease: EASE_OUT }}

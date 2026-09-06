@@ -6,17 +6,27 @@ import { motion, AnimatePresence } from "motion/react";
 import { PaperPlaneTilt, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { DURATION, EASE, EASE_OUT } from "@/lib/motion";
+import TurnstileWidget, { turnstileActive } from "@/components/site/TurnstileWidget";
 
 type Status = "idle" | "sending" | "success" | "error";
 
 export default function ContactForm() {
   const t = useTranslations("Contact.form");
+  const tCommon = useTranslations("common");
   // Sent with the submission so the dashboard knows which language to reply in
   // — the message itself is not always a reliable signal.
   const locale = useLocale();
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<Status>("idle");
+  // Null until Turnstile solves, and again whenever the token expires or the
+  // server refuses it. With no site key configured the widget renders nothing
+  // and this stays null — which is why every gate below is `turnstileActive &&`.
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Bumped to force a fresh challenge: a Turnstile token is single-use, so
+  // re-submitting the rejected one would fail identically forever.
+  const [captchaNonce, setCaptchaNonce] = useState(0);
+  const [captchaRejected, setCaptchaRejected] = useState(false);
   const reduced = useReducedMotionSafe();
 
   function handleChange(
@@ -28,13 +38,29 @@ export default function ContactForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
+    setCaptchaRejected(false);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...form, locale }),
+        body: JSON.stringify({ ...form, locale, turnstileToken: captchaToken }),
       });
-      if (!res.ok) throw new Error(`contact ${res.status}`);
+      if (!res.ok) {
+        // A refused challenge is recoverable in place, so it gets its own copy
+        // and a fresh widget rather than the generic "email us instead".
+        const reason = await res
+          .json()
+          .then((body: { error?: string }) => body?.error)
+          .catch(() => undefined);
+        if (reason === "captcha_failed") {
+          setCaptchaRejected(true);
+          setCaptchaToken(null);
+          setCaptchaNonce((n) => n + 1);
+          setStatus("error");
+          return;
+        }
+        throw new Error(`contact ${res.status}`);
+      }
       setStatus("success");
     } catch {
       // The error copy already routes the visitor to info@codescope.dev — an
@@ -139,14 +165,20 @@ export default function ContactForm() {
             className="flex items-center gap-2 text-sm text-red-400"
           >
             <WarningCircle size={16} />
-            {t("error")}
+            {captchaRejected ? tCommon("captchaError") : t("error")}
           </motion.div>
         )}
       </AnimatePresence>
 
+      <TurnstileWidget onToken={setCaptchaToken} resetSignal={captchaNonce} />
+
       <motion.button
         type="submit"
-        disabled={status === "sending"}
+        // Only gated when a site key is configured: with Turnstile off there is
+        // no token to wait for and the button must behave exactly as before.
+        disabled={
+          status === "sending" || (turnstileActive && captchaToken === null)
+        }
         // House curve rather than a per-file spring: `stiffness`/`damping`
         // numbers are a second motion vocabulary, and this is a discrete
         // press, not the continuous pointer-tracking a spring exists for.

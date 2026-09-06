@@ -20,8 +20,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Tag Docker Images
+        # NEXT_PUBLIC_* is inlined into the browser bundle at BUILD time, so the
+        # Turnstile site key must ride the image build — a runtime env var can
+        # never reach the client chunk. Until the repo secret exists this passes
+        # "" (the Dockerfile ARG default), which the code treats as unset: no
+        # widget, no enforcement, forms work — safe in either order.
         run: |
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/myapp:codescope2 .
+          docker build -f Dockerfile \
+            --build-arg NEXT_PUBLIC_TURNSTILE_SITE_KEY=${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/myapp:codescope2 .
 
       - name: Push Docker Images to Docker Hub
         run: |

@@ -14,6 +14,19 @@ services:
       # host (its .env next to this compose file).
       - SENDGRID_API_KEY=${SENDGRID_API_KEY}
       - EMAIL_FROM=${EMAIL_FROM}
+      # Cloudflare Turnstile on the two public forms (/contact, /get-started).
+      # Optional: unset, the widget does not render and the routes verify
+      # nothing — exactly the behaviour before Turnstile existed.
+      #
+      # ⚠️ Only the SECRET belongs here. The matching site key is a BUILD-time
+      # value baked into the browser bundle (see the ARG in the Dockerfile) and
+      # setting it here as well is the one combination that can break the forms:
+      # the server would read a site key from this file, conclude Turnstile is
+      # configured, and start demanding a token from a page whose bundle was
+      # built without one — every submission rejected, with no way for a visitor
+      # to clear it. Leaving it out means the server and the browser can only
+      # ever see the same value, the one the image was built with.
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
     depends_on:
       postgres:
         condition: service_healthy

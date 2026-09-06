@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import sgMail from "@sendgrid/mail";
 import { db } from "@/lib/db";
 import { packageRequests } from "@/lib/db/schema";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
  * The contact form's delivery target, in priority order:
@@ -155,11 +156,30 @@ async function deliverByWebhook({ name, email, message }: Submission) {
 }
 
 export async function POST(request: Request) {
-  let body: { name?: string; email?: string; message?: string; locale?: string };
+  let body: {
+    name?: string;
+    email?: string;
+    message?: string;
+    locale?: string;
+    turnstileToken?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  // Before the row, before the mail, before the webhook — a challenge that runs
+  // after any of those has already paid the cost it exists to avoid. Answers
+  // `ok: true` untouched when Turnstile is unconfigured or Cloudflare is
+  // unreachable (see lib/turnstile.ts), so this line is inert on a deployment
+  // that has no keys.
+  const captcha = await verifyTurnstile(body.turnstileToken, request);
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { ok: false, error: "captcha_failed" },
+      { status: 400 },
+    );
   }
 
   const name = (body.name ?? "").toString().trim().slice(0, 200);

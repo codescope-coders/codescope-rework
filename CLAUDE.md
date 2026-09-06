@@ -145,6 +145,40 @@ otp/{send,verify}`). JWT via `jose` (`lib/jwt.ts`); claims carry `{ id, email,
 name, role }`. `middleware.ts` handles locale + dashboard auth. Seed admin:
 `amirtouma1998@gmail.com`.
 
+## CAPTCHA on the public forms
+
+Cloudflare Turnstile guards the two unauthenticated write surfaces —
+`/api/contact` and `/api/package-requests`. Widget:
+`components/site/TurnstileWidget.tsx` (managed mode, explicit render, dark
+theme, `ar-eg` on the Arabic locale). Verification: `lib/turnstile.ts`, called
+at the TOP of both routes, before any insert or mail.
+
+Two env vars, and it is enforced only when **both** are set:
+
+| var | where it is set | why |
+|---|---|---|
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | **image build ARG** (Dockerfile → CI) | Next inlines `NEXT_PUBLIC_*` into the browser bundle at build time. Setting it only at runtime does nothing — measured: the client chunk falls back to a `process` polyfill with an empty `env`. |
+| `TURNSTILE_SECRET_KEY` | runtime (`docker-compose.prod.yml`) | server-only, rotatable without a rebuild |
+
+Get both from the Cloudflare dashboard → Turnstile → Add site (hostnames
+`codescope.dev` and `www.codescope.dev`).
+
+With either missing the widget does not render, no token is sent, the routes
+skip verification, and one `[turnstile] verification DISABLED: …` line names
+which half is absent. That is deliberate: the two values travel by different
+routes (bundle vs container env), so a half-configured deploy has to degrade to
+the pre-Turnstile behaviour rather than demand a token from a page that has no
+widget. The honeypot on `/get-started` is unaffected and still runs first.
+
+⚠️ **Do not add the site key to `docker-compose.prod.yml`.** It is the one
+combination that breaks the forms — see the comment there.
+
+`verifyTurnstile` FAILS OPEN when Cloudflare's siteverify is unreachable or
+slower than 5s (loud warn). A Cloudflare outage should cost spam, never the
+site's only lead path. A token Cloudflare actively *rejects* is still refused,
+as a 400 `captcha_failed`, which the forms render as `common.captchaError` and
+recover from by resetting the widget.
+
 ## Business automations (replicated from the original spec — keep intact)
 
 - Pipeline lead → `SIGNED` creates a `PENDING_ACTIVATION` subscription.
