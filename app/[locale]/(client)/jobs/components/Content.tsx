@@ -4,41 +4,57 @@ import { useGetJobs } from "@/hooks/useJobs";
 import { FadeIn } from "@/components/site/FadeIn";
 import clsx from "clsx";
 import { BriefcaseIcon, MapPinIcon, TimerIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import JobCardSkeleton from "./JobSkeleton";
 
 /**
- * The careers list — reskinned into the public design system (P3).
+ * The careers list — reskinned into the public design system (P3), translated
+ * (P8).
  *
  * ⚠️ Every piece of DATA WIRING here is unchanged: the `useGetJobs` query, the
  * six-at-a-time pagination, the IntersectionObserver that loads the next page,
- * and the CLOSED-role pointer lock. Only the surface moved — `glass-card`
- * instead of the `#34333b` slab, hairline dividers instead of `#4d4b57`, the
- * zinc text ramp, and a teal CTA.
+ * and the CLOSED-role pointer lock. Only the surface and the strings moved.
  *
- * Copy stays hardcoded Arabic (see the page's note). The ONE exception is the
- * empty state, which is now translated in both locales — it is the state a
- * visitor lands in whenever nothing is open, so a page that is Arabic-only in
- * that moment says nothing at all to an English reader.
+ * FURNITURE is translated; job DATA is not. A role's position, description and
+ * location are whatever the operator typed into the careers dashboard, so they
+ * render verbatim with `dir="auto"` — direction travels with the CONTENT, not
+ * with the route, which is what lets an Arabic role title sit correctly on the
+ * English page and an English one on the Arabic page. Nothing here carries a
+ * hardcoded `dir`: the furniture follows the document, and the document is
+ * right in both locales now.
  */
 
 const ITEMS_PER_PAGE = 6;
-export const JOB_TYPE_AR: Record<string, string> = {
-  FULL_TIME: "دوام كامل",
-  PART_TIME: "دوام جزئي",
-  CONTRACT: "عقد",
-  FREELANCE: "عمل حر",
-  INTERNSHIP: "تدريب",
-  TEMPORARY: "مؤقت",
-};
 
 const GRID =
   "grid gap-4 grid-cols-[repeat(auto-fill,minmax(100%,1fr))] md:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]";
 
+/**
+ * Employment type, localized. Shared with the role page (which imports it from
+ * here, as it did the Arabic-only map this replaces).
+ *
+ * `t.has` rather than a bare `t(...)`: the key is built from a database enum
+ * value, and next-intl THROWS on a missing message. The old lookup was a plain
+ * object index that yielded `undefined` and rendered nothing, so a value added
+ * to the `job_type` enum before its translation landed used to be a blank tag —
+ * now it would be a thrown error inside render, i.e. a blank page. Falling back
+ * to the raw enum value keeps the failure the size it was.
+ */
+export function useJobTypeLabel() {
+  const t = useTranslations("Jobs");
+  return (type?: string | null): string => {
+    if (!type) return "";
+    const key = `types.${type}`;
+    return t.has(key) ? t(key) : type;
+  };
+}
+
 export const Content = () => {
   const t = useTranslations("Jobs");
+  const locale = useLocale() as "en" | "ar";
+  const jobTypeLabel = useJobTypeLabel();
   const { data, isPending } = useGetJobs();
   const observerTarget = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -108,7 +124,7 @@ export const Content = () => {
 
   return (
     <>
-      <ul className={GRID} dir="rtl">
+      <ul className={GRID}>
         {isPending &&
           currentPage === 1 &&
           Array.from({ length: 3 }).map((_, i: number) => {
@@ -126,14 +142,23 @@ export const Content = () => {
             <article className="glass-card group flex h-full flex-col rounded-2xl p-6 transition-colors duration-300 hover:border-cs-teal/25">
               <div className="mb-4 flex flex-col items-start gap-3 border-b border-white/8 pb-4">
                 <div className="flex w-full items-start justify-between gap-3">
-                  <h2 className="text-lg font-semibold leading-snug text-white">
+                  <h2
+                    dir="auto"
+                    className="text-lg font-semibold leading-snug text-white"
+                  >
                     {job?.position}
                   </h2>
-                  {/* The status dot, repainted into the site's palette. It
-                      carries no label because this phase does not author copy
-                      — and it never had one. Closed roles are additionally
-                      dimmed and made unclickable by the wrapper, so the colour
-                      is not the only signal. */}
+                  {/* The status is a coloured dot, and a closed card is
+                      additionally dimmed and unclickable — all three are
+                      VISUAL. `sr-only` gives the same fact a name, so a screen
+                      reader reaches a dead card knowing why it is dead instead
+                      of discovering it by trying. `sr-only` is absolutely
+                      positioned, so it adds no third flex item. */}
+                  <span className="sr-only">
+                    {job?.status == "CLOSED"
+                      ? t("statusClosed")
+                      : t("statusAvailable")}
+                  </span>
                   <span
                     aria-hidden
                     className={clsx(
@@ -147,11 +172,14 @@ export const Content = () => {
                   />
                 </div>
                 <span className="rounded-full border border-white/8 bg-white/3 px-3 py-1 text-xs font-medium text-zinc-400">
-                  {JOB_TYPE_AR[job?.type]}
+                  {jobTypeLabel(job?.type)}
                 </span>
               </div>
 
-              <p className="grow text-sm leading-relaxed text-zinc-400">
+              <p
+                dir="auto"
+                className="grow text-sm leading-relaxed text-zinc-400"
+              >
                 {job?.description}
               </p>
 
@@ -159,18 +187,18 @@ export const Content = () => {
                 <div className="flex flex-wrap gap-4 text-xs text-zinc-500">
                   <span className="flex items-center gap-1.5">
                     <TimerIcon width={14} />
-                    {timeAgo(job?.createdAt, "ar")}
+                    {timeAgo(job?.createdAt, locale)}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <MapPinIcon width={14} />
-                    {job?.location}
+                    <span dir="auto">{job?.location}</span>
                   </span>
                 </div>
                 <Link
                   href={`/jobs/${job.id}`}
                   className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-cs-teal text-sm font-semibold text-white transition-colors duration-200 hover:bg-cs-teal-hover active:scale-[0.99]"
                 >
-                  تقدّم الآن
+                  {t("apply")}
                 </Link>
               </div>
             </article>
@@ -182,14 +210,13 @@ export const Content = () => {
         <div
           ref={observerTarget}
           className="mt-6 flex h-20 items-center justify-center"
-          dir="rtl"
         >
-          <div className="text-sm text-zinc-500">جارٍ تحميل المزيد...</div>
+          <div className="text-sm text-zinc-500">{t("loadingMore")}</div>
         </div>
       )}
 
       {isPending && currentPage > 1 && (
-        <ul className={`${GRID} mt-4`} dir="rtl">
+        <ul className={`${GRID} mt-4`}>
           {Array.from({ length: 3 }).map((_, i: number) => (
             <JobCardSkeleton key={i} />
           ))}

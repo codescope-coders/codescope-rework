@@ -33,10 +33,18 @@ export async function generateMetadata({
 
 export default function page() {
   // See the sibling jobs/page.tsx for why this is a <div> with no slab and no
-  // min-height (one <main> per page — the shell owns it), and why the Arabic
-  // copy and its `dir` stay put through the P3 reskin.
+  // min-height — one <main> per page, the shell owns it.
+  //
+  // ⚠️ The `dir="rtl"` that used to sit here is GONE. It was correct only for
+  // as long as the page's furniture was hardcoded Arabic on both routes; now
+  // that every string is locale-resolved it would force the English role page
+  // to render right-to-left. The role's own text — position, description,
+  // requirements, responsibilities — is operator-authored data in whatever
+  // language it was typed, so each of those elements carries `dir="auto"`
+  // inside `Content` and the direction travels with the content rather than
+  // with the route.
   return (
-    <div className="text-white" dir="rtl">
+    <div className="text-white">
       <Content />
     </div>
   );

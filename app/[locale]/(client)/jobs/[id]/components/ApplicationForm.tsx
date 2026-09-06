@@ -1,8 +1,4 @@
 "use client";
-import {
-  educationLevelLabel,
-  expectedSalaryLabel,
-} from "@/lib/careers-labels";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -34,9 +30,27 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
+
+/**
+ * The candidate application form — translated (P8).
+ *
+ * ⚠️ Validation and submission are BEHAVIOURALLY UNCHANGED. The same fields are
+ * required, the same regex checks the email, the same year bounds apply, the
+ * same `FormData` keys are read, the same upload-then-mutate order runs, and
+ * the same optional fields are omitted when blank. What moved is strings and
+ * direction: every label, placeholder, section heading, option label, button,
+ * validation message and toast now comes from the `Jobs` namespace, and the
+ * hardcoded `dir="rtl"` is gone because the copy is no longer Arabic-only.
+ *
+ * The option labels for expected salary and education level used to live in
+ * `lib/careers-labels.ts` as Arabic-only maps. That module existed solely for
+ * this form, so it was retired rather than left half-used — the labels are
+ * messages now, in both locales, keyed by the database enum values.
+ */
 
 type FieldErrors = {
   fullName?: string;
@@ -57,22 +71,8 @@ type FieldErrors = {
   graduationYear?: string;
 };
 
-type FormState = {
-  fullName: string;
-  email: string;
-  currentCity: string;
-  phoneNumber: string;
-  nationality: string;
-  expectedSalary: string;
-  yearsOfExperience: string;
-  lastJobTitle: string;
-  lastCompanyName: string;
-  highestEducationLevel: string;
-  fieldOfStudy: string;
-  graduationYear: string;
-};
-
 export const ApplicationForm = () => {
+  const t = useTranslations("Jobs");
   const [dateOfBirth, setDateOfBirth] = React.useState<Date>();
   const [availabilityDate, setAvailabilityDate] = React.useState<Date>();
   const [links, setLinks] = React.useState<string[]>([""]);
@@ -83,27 +83,46 @@ export const ApplicationForm = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const {
-    mutateAsync: uploadFile,
-    isPending: isUploadingFile,
-    error: errorUploadingFile,
-  } = useUpload();
+  /**
+   * Option labels are keyed by a DATABASE enum value, and next-intl throws on a
+   * missing message — so a value added to `expected_salary` / `education_level`
+   * before its translation lands would take down the whole form rather than
+   * render one odd-looking row. Falling back to the raw value keeps the blast
+   * radius the size the old plain-object lookup had.
+   */
+  const optionLabel = (group: "salary" | "education", value: string): string => {
+    const key = `${group}.${value}`;
+    return t.has(key) ? t(key) : value;
+  };
 
-  const { mutate, isPending, error } = useCreateApplication(
+  const { mutateAsync: uploadFile, isPending: isUploadingFile } = useUpload();
+
+  /**
+   * ⚠️ PRE-EXISTING, NOT INTRODUCED HERE: the second argument is DEAD. Its
+   * parameter is named `p0` in `hooks/useApplications.ts` and that hook wires
+   * only `onSuccess` — there is no `onError`, so nothing has ever invoked this
+   * callback and a server-side rejection currently surfaces as nothing at all.
+   * It is left in place (translated, so it is correct if it is ever called)
+   * rather than deleted, because the fix belongs in the hook.
+   *
+   * Client-side validation is unaffected: `validateForm` runs in `handleSubmit`
+   * below and paints the inline field errors itself.
+   */
+  const { mutate, isPending } = useCreateApplication(
     () => {
       showMessage();
       setTimeout(() => {
         router.push("/");
       }, 500);
     },
-    (error: any) => {
+    (error) => {
       if (error?.fieldErrors) {
         setFieldErrors(error.fieldErrors);
-        toast.error("يرجى تصحيح الأخطاء في النموذج");
+        toast.error(t("form.toast.fixErrors"));
       } else if (error?.message) {
         toast.error(error.message);
       } else {
-        toast.error("فشل إرسال الطلب. يرجى المحاولة مجدداً.");
+        toast.error(t("form.toast.submitFailed"));
       }
     },
   );
@@ -161,38 +180,38 @@ export const ApplicationForm = () => {
     const form = new FormData(e.currentTarget);
 
     if (!form.get("fullName")) {
-      errors.fullName = "الاسم الكامل مطلوب";
+      errors.fullName = t("form.validation.fullName");
     }
 
     if (!form.get("email")) {
-      errors.email = "البريد الإلكتروني مطلوب";
+      errors.email = t("form.validation.emailRequired");
     } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.get("email") as string)
     ) {
-      errors.email = "يرجى إدخال بريد إلكتروني صحيح";
+      errors.email = t("form.validation.emailInvalid");
     }
 
     if (!form.get("currentCity")) {
-      errors.currentCity = "المدينة الحالية مطلوبة";
+      errors.currentCity = t("form.validation.currentCity");
     }
 
     if (!form.get("nationality")) {
-      errors.nationality = "الجنسية مطلوبة";
+      errors.nationality = t("form.validation.nationality");
     }
 
     if (!dateOfBirth) {
-      errors.dateOfBirth = "تاريخ الميلاد مطلوب";
+      errors.dateOfBirth = t("form.validation.dateOfBirth");
     }
 
     if (!cvFile) {
-      errors.cv = "السيرة الذاتية مطلوبة";
+      errors.cv = t("form.validation.cv");
     }
 
     if (
       form.get("yearsOfExperience") &&
       Number(form.get("yearsOfExperience")) < 0
     ) {
-      errors.yearsOfExperience = "يجب أن تكون سنوات الخبرة عدداً موجباً";
+      errors.yearsOfExperience = t("form.validation.yearsOfExperience");
     }
 
     if (
@@ -200,7 +219,7 @@ export const ApplicationForm = () => {
       (Number(form.get("graduationYear")) < 1950 ||
         Number(form.get("graduationYear")) > new Date().getFullYear() + 10)
     ) {
-      errors.graduationYear = "يرجى إدخال سنة تخرج صحيحة";
+      errors.graduationYear = t("form.validation.graduationYear");
     }
 
     setFieldErrors(errors);
@@ -212,7 +231,7 @@ export const ApplicationForm = () => {
     setFieldErrors({});
 
     if (!validateForm(e)) {
-      toast.error("يرجى ملء جميع الحقول المطلوبة");
+      toast.error(t("form.toast.requiredFields"));
       return;
     }
 
@@ -222,7 +241,6 @@ export const ApplicationForm = () => {
       const cvFormData = new FormData();
       cvFormData.append("cv", cvFile!);
       const uploadResponse = await uploadFile(cvFormData);
-      console.log(availabilityDate);
       mutate({
         jobId: id,
         fullName: (form.get("fullName") as string)?.trim(),
@@ -267,7 +285,7 @@ export const ApplicationForm = () => {
           : {}),
       });
     } catch (err) {
-      toast.error("فشل رفع السيرة الذاتية. يرجى المحاولة مجدداً.");
+      toast.error(t("form.toast.uploadFailed"));
       console.error("Upload error:", err);
     }
   };
@@ -277,23 +295,25 @@ export const ApplicationForm = () => {
       <div className="mx-auto max-w-4xl">
         <form
           onSubmit={handleSubmit}
-          dir="rtl"
           /* `site-form` is the hook for the scoped control styling in
              globals.css — see the block under "Careers application form".
              The shadcn primitives in here read the LIGHT shadcn tokens off
              `:root`, which is correct for the dashboard and wrong on this
-             ground; restyling them in CSS keeps 780 lines of validation and
-             submission logic untouched. */
+             ground; restyling them in CSS keeps the validation and submission
+             logic untouched.
+
+             No `dir` — every string is locale-resolved now, so the form
+             follows the document like the rest of the site. */
           className="site-form"
         >
-        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">معلومات التواصل</h2>
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">{t("form.sections.contact")}</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              الاسم الكامل <span className="text-red-400">*</span>
+              {t("form.fullName")} <span className="text-red-400">*</span>
             </Label>
             <Input
-              placeholder="أدخل اسمك الكامل"
+              placeholder={t("form.fullNamePlaceholder")}
               name="fullName"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
@@ -308,11 +328,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              البريد الإلكتروني <span className="text-red-400">*</span>
+              {t("form.email")} <span className="text-red-400">*</span>
             </Label>
             <Input
               name="email"
-              placeholder="أدخل بريدك الإلكتروني"
+              placeholder={t("form.emailPlaceholder")}
               type="email"
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
@@ -327,11 +347,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              المدينة الحالية <span className="text-red-400">*</span>
+              {t("form.currentCity")} <span className="text-red-400">*</span>
             </Label>
             <Input
               name="currentCity"
-              placeholder="أدخل مدينتك الحالية"
+              placeholder={t("form.currentCityPlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.currentCity,
@@ -345,14 +365,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              رقم الهاتف{" "}
+              {t("form.phone")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="phoneNumber"
-              placeholder="أدخل رقم هاتفك"
+              placeholder={t("form.phonePlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.phoneNumber,
@@ -366,7 +386,7 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              تاريخ الميلاد <span className="text-red-400">*</span>
+              {t("form.dateOfBirth")} <span className="text-red-400">*</span>
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -385,7 +405,7 @@ export const ApplicationForm = () => {
                   {dateOfBirth ? (
                     format(dateOfBirth, "PPP")
                   ) : (
-                    <span>اختر تاريخاً</span>
+                    <span>{t("form.datePlaceholder")}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -416,11 +436,11 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              الجنسية <span className="text-red-400">*</span>
+              {t("form.nationality")} <span className="text-red-400">*</span>
             </Label>
             <Input
               name="nationality"
-              placeholder="أدخل جنسيتك"
+              placeholder={t("form.nationalityPlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.nationality,
@@ -434,13 +454,13 @@ export const ApplicationForm = () => {
           </div>
         </div>
         <hr className="my-10 border-0 border-t border-white/8" />
-        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">المنصب والتوفر</h2>
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">{t("form.sections.role")}</h2>
         <div className="grid lg:grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              الراتب المتوقع{" "}
+              {t("form.expectedSalary")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Select name="expectedSalary">
@@ -450,12 +470,12 @@ export const ApplicationForm = () => {
                     fieldErrors.expectedSalary,
                 })}
               >
-                <SelectValue placeholder="اختر الراتب المتوقع" />
+                <SelectValue placeholder={t("form.expectedSalaryPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {expectedSalaryEnum?.enumValues.map((v, i) => (
                   <SelectItem key={i} value={v}>
-                    {expectedSalaryLabel[v]}
+                    {optionLabel("salary", v)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -468,9 +488,9 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              تاريخ الاستعداد للبدء{" "}
+              {t("form.availability")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري، فوري بشكل افتراضي)
+                {t("form.optionalImmediate")}
               </span>
             </Label>
             <Popover>
@@ -490,7 +510,7 @@ export const ApplicationForm = () => {
                   {availabilityDate ? (
                     format(availabilityDate, "PPP")
                   ) : (
-                    <span>اختر تاريخاً</span>
+                    <span>{t("form.datePlaceholder")}</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -530,18 +550,18 @@ export const ApplicationForm = () => {
           </div>
         </div>
         <hr className="my-10 border-0 border-t border-white/8" />
-        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">الخلفية المهنية</h2>
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">{t("form.sections.experience")}</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              سنوات الخبرة{" "}
+              {t("form.yearsOfExperience")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="yearsOfExperience"
-              placeholder="أدخل سنوات خبرتك"
+              placeholder={t("form.yearsOfExperiencePlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.yearsOfExperience,
@@ -557,14 +577,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              المسمى الوظيفي الأخير{" "}
+              {t("form.lastJobTitle")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="lastJobTitle"
-              placeholder="أدخل مسماك الوظيفي الأخير"
+              placeholder={t("form.lastJobTitlePlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.lastJobTitle,
@@ -578,14 +598,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              اسم آخر شركة{" "}
+              {t("form.lastCompanyName")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="lastCompanyName"
-              placeholder="أدخل اسم آخر شركة عملت بها"
+              placeholder={t("form.lastCompanyNamePlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.lastCompanyName,
@@ -601,9 +621,9 @@ export const ApplicationForm = () => {
 
         <div className="grid gap-4 mt-4">
           <Label className="text-sm font-medium text-zinc-300">
-            الروابط{" "}
+            {t("form.links")}{" "}
             <span className="text-xs font-normal text-zinc-500">
-              (اختياري - معرض الأعمال، GitHub، LinkedIn، إلخ)
+              {t("form.linksHint")}
             </span>
           </Label>
           {links.map((link, index) => (
@@ -611,7 +631,7 @@ export const ApplicationForm = () => {
               <Input
                 value={link}
                 onChange={(e) => handleLinkChange(index, e.target.value)}
-                placeholder="موقع معرض الأعمال / Behance / GitHub"
+                placeholder={t("form.linkPlaceholder")}
                 className={clsx("text-white flex-1", {
                   "border-destructive focus-visible:ring-destructive":
                     fieldErrors.links,
@@ -623,6 +643,9 @@ export const ApplicationForm = () => {
                   variant="outline"
                   size="icon"
                   onClick={() => removeLink(index)}
+                  /* Icon-only, so it had no accessible name at all — a screen
+                     reader announced it as an unlabelled button. */
+                  aria-label={t("form.removeLink")}
                   className="size-12 shrink-0 rounded-xl border-white/10 bg-transparent text-zinc-400 hover:bg-white/5 hover:text-white"
                 >
                   <X className="h-4 w-4" />
@@ -636,7 +659,7 @@ export const ApplicationForm = () => {
                   className="h-12 whitespace-nowrap rounded-xl border-white/10 bg-transparent text-zinc-300 hover:bg-white/5 hover:text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  أضف رابطاً آخر
+                  {t("form.addLink")}
                 </Button>
               )}
             </div>
@@ -648,7 +671,7 @@ export const ApplicationForm = () => {
 
         <div className="grid gap-2 mt-4">
           <Label className="text-sm font-medium text-zinc-300">
-            ارفع سيرتك الذاتية <span className="text-red-400">*</span>
+            {t("form.cv")} <span className="text-red-400">*</span>
           </Label>
 
           {!cvFile ? (
@@ -673,10 +696,8 @@ export const ApplicationForm = () => {
                 className="flex cursor-pointer flex-col items-center justify-center gap-2 text-zinc-400"
               >
                 <Upload className="h-8 w-8" />
-                <span className="font-medium">انقر لرفع سيرتك الذاتية</span>
-                <span className="text-sm">
-                  PDF أو DOC أو DOCX (حجم أقصى 5 ميغابايت)
-                </span>
+                <span className="font-medium">{t("form.cvDropzoneTitle")}</span>
+                <span className="text-sm">{t("form.cvDropzoneHint")}</span>
               </label>
             </div>
           ) : (
@@ -687,9 +708,13 @@ export const ApplicationForm = () => {
                     <FileText className="h-6 w-6 text-cs-teal" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">{cvFile.name}</p>
+                    {/* The candidate's own filename — `dir="auto"` for the same
+                        reason the role data has it. */}
+                    <p dir="auto" className="text-sm font-medium text-white">
+                      {cvFile.name}
+                    </p>
                     <p className="text-xs text-zinc-500">
-                      {(cvFile.size / 1024).toFixed(2)} كيلوبايت
+                      {(cvFile.size / 1024).toFixed(2)} {t("form.kilobytes")}
                     </p>
                   </div>
                 </div>
@@ -698,6 +723,7 @@ export const ApplicationForm = () => {
                   variant="ghost"
                   size="icon"
                   onClick={removeFile}
+                  aria-label={t("form.removeFile")}
                   className="text-zinc-500 hover:bg-red-400/10 hover:text-red-400"
                 >
                   <X className="h-4 w-4" />
@@ -711,13 +737,13 @@ export const ApplicationForm = () => {
         </div>
 
         <hr className="my-10 border-0 border-t border-white/8" />
-        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">التعليم</h2>
+        <h2 className="mb-5 text-xl font-semibold tracking-tight text-white">{t("form.sections.education")}</h2>
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              أعلى مستوى تعليمي{" "}
+              {t("form.educationLevel")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Select name="highestEducationLevel">
@@ -727,12 +753,12 @@ export const ApplicationForm = () => {
                     fieldErrors.highestEducationLevel,
                 })}
               >
-                <SelectValue placeholder="اختر أعلى مستوى تعليمي" />
+                <SelectValue placeholder={t("form.educationLevelPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {educationLevelEnum?.enumValues.map((v, i) => (
                   <SelectItem key={i} value={v}>
-                    {educationLevelLabel[v]}
+                    {optionLabel("education", v)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -745,14 +771,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              التخصص الدراسي{" "}
+              {t("form.fieldOfStudy")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="fieldOfStudy"
-              placeholder="أدخل تخصصك الدراسي"
+              placeholder={t("form.fieldOfStudyPlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.fieldOfStudy,
@@ -766,14 +792,14 @@ export const ApplicationForm = () => {
           </div>
           <div className="grid gap-2">
             <Label className="text-sm font-medium text-zinc-300">
-              سنة التخرج{" "}
+              {t("form.graduationYear")}{" "}
               <span className="text-xs font-normal text-zinc-500">
-                (اختياري)
+                {t("form.optional")}
               </span>
             </Label>
             <Input
               name="graduationYear"
-              placeholder="أدخل سنة التخرج"
+              placeholder={t("form.graduationYearPlaceholder")}
               className={clsx("text-white", {
                 "border-destructive focus-visible:ring-destructive":
                   fieldErrors.graduationYear,
@@ -796,10 +822,10 @@ export const ApplicationForm = () => {
           className="sticky bottom-5 left-0 mt-10 h-14 w-full rounded-xl bg-cs-teal text-base font-semibold text-white opacity-100 shadow-none hover:bg-cs-teal-hover"
         >
           {isUploadingFile
-            ? "جارٍ رفع السيرة الذاتية..."
+            ? t("form.uploadingCv")
             : isPending
-              ? "جارٍ إرسال الطلب..."
-              : "إرسال الطلب"}
+              ? t("form.submitting")
+              : t("form.submit")}
         </Button>
         </form>
       </div>

@@ -6,25 +6,16 @@ import { localizedPageMetadata } from "@/lib/site-meta";
 import { Content } from "./components/Content";
 
 /**
- * The page's own heading, hoisted so the metadata below can reuse it rather
- * than keep a second copy of the same Arabic sentence — two literals that must
- * agree is a drift waiting to happen.
- */
-const AR_HEADING = "اكتشف خطوتك المهنية التالية";
-
-/**
  * Careers had NO metadata of its own, so both locales served the HOME page's
  * title and description — a browser tab and a search result claiming to be the
  * company's front page.
  *
- * What it is allowed to say is the same rule `lib/site-meta.ts` states: nothing
- * new. The titles are the nav label this page is reached by; the Arabic
- * description is this page's own heading, already approved and already on
- * screen. The ENGLISH description is deliberately the site-wide one — the page
- * itself is Arabic (see the note below), so there is no English page copy to
- * describe, and inventing some to fill a meta tag would be authoring prose that
- * nobody reviewed. It stays the honest, approved company sentence until the
- * careers surface is genuinely translated.
+ * The titles are the nav label this page is reached by, and BOTH descriptions
+ * are now this page's own heading. That symmetry is new: while the page was
+ * hardcoded Arabic there was no English page copy to describe, so the English
+ * description borrowed the site-wide company sentence rather than have someone
+ * invent prose for a meta tag. The careers surface is translated now, so the
+ * description says what the page says, in the language the page is in.
  */
 export async function generateMetadata({
   params,
@@ -33,56 +24,52 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const nav = await getTranslations({ locale, namespace: "Nav" });
-  const meta = await getTranslations({ locale, namespace: "Meta" });
+  const t = await getTranslations({ locale, namespace: "Jobs" });
 
   return localizedPageMetadata({
     locale,
     enTitle: nav("jobs"),
-    enDescription: meta("description"),
+    enDescription: t("heading"),
     arTitleLabel: nav("jobs"),
-    arDescription: AR_HEADING,
+    arDescription: t("heading"),
   });
 }
 
 /**
- * Careers — reskinned into the public design system (P3).
+ * Careers — reskinned into the public design system (P3), translated (P8).
  *
  * Not a `<main>`: the public shell already renders one, and two `main`
  * landmarks on a page is the semantic twin of a double header.
  *
- * ⚠️ `dir="rtl"` is kept, and the copy is kept HARDCODED IN ARABIC — including
- * on the English route. Both are pre-existing and deliberately out of scope
- * here: this phase restyles the page, it does not author or translate its
- * content. The direction attribute travels with the copy; dropping it would
- * left-align Arabic paragraphs under an English shell, which is worse than the
- * mixed alignment it produces today. The real fix is a translated careers
- * surface, which is a content decision, not a styling one.
+ * ⚠️ There is NO `dir` attribute anywhere on this page any more. It used to
+ * carry `dir="rtl"` because the furniture was hardcoded Arabic even on the
+ * English route, so the direction had to travel with the copy rather than with
+ * the document. Every string here is now locale-resolved, so the document's own
+ * direction is correct by construction and a hardcoded one could only ever be
+ * wrong — it would right-align the English page. Job DATA is the part that is
+ * still whatever language the operator typed, and that carries `dir="auto"`
+ * per-element inside `Content`.
  *
  * The teal accents, hairline borders and zinc ramp are the site's, not the
  * dashboard's — `ts-purple` belongs to Tourscope product surfaces and appears
  * nowhere here, because Careers is a Codescope page.
  */
-export default function page() {
+export default async function page() {
+  const t = await getTranslations("Jobs");
+
   return (
     <div className="text-white">
       <section className="relative overflow-hidden px-6 pb-14 pt-40">
         <HeroBackground />
-        <div className="relative mx-auto max-w-7xl" dir="rtl">
+        <div className="relative mx-auto max-w-7xl">
           <FadeIn>
             <h1 className="text-4xl font-bold leading-[1.15] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {AR_HEADING}
+              {t("heading")}
             </h1>
           </FadeIn>
         </div>
       </section>
 
-      {/* No `dir="rtl"` on this wrapper. It used to sit here, and it forced
-          right-to-left onto the ONE part of this page that is properly
-          translated — the empty state — which rendered "Check back, or write to
-          us." with its full stop moved to the front of the line. Direction now
-          travels with the copy: the Arabic heading above and the Arabic job
-          cards inside carry their own, and anything locale-aware inherits the
-          document's. */}
       <section className="px-6 pb-28">
         <div className="mx-auto max-w-7xl">
           <Content />
