@@ -31,7 +31,7 @@ export async function generateMetadata({
     locale,
     enTitle: "About",
     enDescription:
-      "Codescope is the product-engineering company behind Tourscope — a team of 18 engineers, designers, and product people building independently from Karbala, Iraq.",
+      "Codescope is the product-engineering company behind Tourscope — a team of 18 engineers, designers, and product people building independently from Iraq.",
     arTitleLabel: nav("about"),
     arDescription: t("hero.subheading"),
   });

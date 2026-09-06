@@ -199,6 +199,67 @@ html {
   font-display: swap;
 }
 
+/* The SAME four files under a second family name, restricted by
+   `unicode-range` to the Arabic blocks. This exists so the LTR public stack
+   below can name an Arabic face without that face also claiming Latin.
+
+   Why a second family instead of reordering the one above: on the English
+   route the stack was `var(--font-geist-sans), Arial, Helvetica, sans-serif`,
+   which contains NO Arabic face at all, so every Arabic glyph on an LTR page —
+   a job title, a role description, anything an operator typed in Arabic — was
+   rasterised by the system Arial. (Measured with CDP
+   `CSS.getPlatformFontsForNode`: the careers heading came back `Arial (24)`.)
+
+   The obvious fix, appending `"IBM Plex Sans Arabic"` to that list, does NOT
+   work: `--font-geist-sans` expands to `Geist, "Geist Fallback"`, and next/font's
+   metric-adjusted `Geist Fallback` is backed by a local face that DOES cover
+   Arabic, so it claims those glyphs before anything listed after it ever gets
+   a turn. Measured: appending Plex changed nothing, `Arial (24)` either way.
+
+   Putting the existing family FIRST would work, and would also hand it every
+   Latin run on the page — which is what the `[dir="rtl"]` rule below already
+   does on Arabic routes. That is the approved look there and must not change,
+   so adding `unicode-range` to those four faces was not an option either: it
+   would have moved Latin on EVERY Arabic page from Plex to Geist, a site-wide
+   restyle nobody asked for. A separate, Arabic-only family changes exactly one
+   thing and nothing else. */
+@font-face {
+  font-family: "IBM Plex Sans Arabic Fallback";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+FB50-FDFF,
+    U+FE70-FEFF;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic Fallback";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+FB50-FDFF,
+    U+FE70-FEFF;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic Fallback";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+FB50-FDFF,
+    U+FE70-FEFF;
+}
+@font-face {
+  font-family: "IBM Plex Sans Arabic Fallback";
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+FB50-FDFF,
+    U+FE70-FEFF;
+}
+
 /* ── Brand colors ─────────────────────────────────────────────────────────── */
 /* `--font-sans` / `--font-mono` are NOT re-declared here: the target's own
    `@theme inline` at the top of this file already points them at
@@ -262,9 +323,19 @@ body:has([data-site="public"]) {
    completely, which is exactly what happened. A `body` background instead
    propagates to the canvas and paints first, so the grid shows through — the
    same arrangement the design source uses (`bg-cs-ink` on its `<body>`). */
+/* `"IBM Plex Sans Arabic Fallback"` sits FIRST and is the Arabic-only twin
+   declared above — it is invisible to Latin because its `unicode-range` does
+   not cover it, so Latin still resolves to Geist exactly as before. Without it
+   an Arabic string on an LTR route fell all the way to the system Arial, which
+   is what made the careers page (Arabic content, English route) render in a
+   font that is not ours. Job titles, role descriptions and any other
+   operator-authored Arabic on an English page are the general case; careers was
+   just the loudest instance. */
 [data-site="public"] {
   color: #a1a1aa;
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family:
+    "IBM Plex Sans Arabic Fallback", var(--font-geist-sans), Arial, Helvetica,
+    sans-serif;
 }
 
 [dir="rtl"] [data-site="public"] {

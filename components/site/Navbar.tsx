@@ -16,7 +16,8 @@ export default async function Navbar() {
     { href: "/about" as const, label: t("about") },
     { href: "/tourscope" as const, label: t("tourscope") },
     { href: "/pricing" as const, label: t("pricing") },
-    { href: "/jobs" as const, label: t("jobs") },
+    // Careers lives in the FOOTER only (founder, 2026-09-06) — the header
+    // sells; hiring is company information. /jobs stays routable.
     { href: "/contact" as const, label: t("contact") },
   ];
 

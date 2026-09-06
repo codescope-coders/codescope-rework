@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePathname } from "@/i18n/routing";
 import { Link } from "@/i18n/routing";
 import { CodeScopeLogo } from "@/components/site/CodeScopeLogo";
+import Image from "next/image";
 import LanguageSwitcher from "@/components/site/LanguageSwitcher";
 import MobileMenu from "@/components/site/MobileMenu";
 import { PRODUCT_NAV_HREF, productPillClass } from "@/lib/nav-product-pill";
@@ -70,9 +71,20 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
                   <Link
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
-                    className={productPillClass(isActive, "desktop")}
+                    className={`group/pill ${productPillClass(isActive, "desktop")}`}
                   >
-                    {item.label}
+                    {/* The wordmark, not the word (founder, 2026-09-06) — the
+                        pill frames the product's own mark. `alt` carries the
+                        name so the link still announces as "TourScope"; height
+                        pinned to the neighbours' cap height so the nav rhythm
+                        doesn't move. */}
+                    <Image
+                      src="/Branding/tourscope.svg"
+                      alt={item.label}
+                      width={507}
+                      height={54}
+                      className="h-[11px] w-auto brightness-0 invert transition-[filter] duration-300 group-hover/pill:brightness-100 group-hover/pill:invert-0"
+                    />
                   </Link>
                 </li>
               );

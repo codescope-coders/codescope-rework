@@ -265,8 +265,8 @@
   },
   "Meta": {
     "title": "CodeScope — The company building Tourscope",
-    "description": "CodeScope builds Tourscope — a white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 15+ supplier integrations, live in production.",
-    "ogDescription": "A white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 15+ supplier integrations, live in production.",
+    "description": "CodeScope builds Tourscope — a white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 80+ supplier integrations, live in production.",
+    "ogDescription": "A white-label B2B travel platform and consumer marketplace. Six verticals, multi-tenant, 80+ supplier integrations, live in production.",
     "keywords": "white-label travel platform, B2B travel booking software, travel agency software, multi-tenant travel marketplace, Tourscope, CodeScope"
   },
   "Nav": {
@@ -285,7 +285,7 @@
   },
   "Footer": {
     "tagline": "The company behind Tourscope.",
-    "subtagline": "A product-engineering company in Karbala, Iraq, building travel-commerce infrastructure for agencies worldwide.",
+    "subtagline": "A product-engineering company in Iraq, building travel-commerce infrastructure for agencies worldwide.",
     "links": "Links",
     "contact": "Contact",
     "email": "info@codescope.dev",
@@ -299,7 +299,7 @@
   },
   "Home": {
     "hero": {
-      "eyebrow": "Building from Karbala",
+      "eyebrow": "Building from Iraq",
       "headline": "Travel agencies deserved better.",
       "headlineAccent": "So we built it.",
       "tagline": "Travel agencies deserved better. So we built it.",
@@ -308,11 +308,13 @@
       "ctaSecondary": "Read our story",
       "stat1": "6",
       "stat1Label": "Booking verticals, one checkout",
-      "stat2": "15+",
-      "stat2Label": "Live supplier integrations",
-      "stat3": "6",
-      "stat3Label": "Languages, full RTL",
-      "foundedNote": "Founded February 2025 — based in Karbala, Iraq.",
+      "stat2": "700+",
+      "stat2Label": "Airlines on your platform",
+      "stat3": "1.5M+",
+      "stat3Label": "Hotels worldwide",
+      "stat4": "6",
+      "stat4Label": "Languages, full RTL",
+      "foundedNote": "Founded February 2025 — based in Iraq.",
       "preview": {
         "live": "Live",
         "bookingRef": "FL-8241",
@@ -396,7 +398,7 @@
       "headline": "Running in production.",
       "sub": "The platform as it stands today, not a roadmap.",
       "r1Term": "Supplier integrations",
-      "r1Value": "15+ live, across flights, hotels, insurance, and eSIM",
+      "r1Value": "80+ live — 700+ airlines, 1.5M+ hotels, insurance, and eSIM",
       "r2Term": "Payments",
       "r2Value": "Hosted, PCI-DSS-compliant regional gateways — card data never touches the platform",
       "r3Term": "Languages",
@@ -415,10 +417,10 @@
     "about": {
       "eyebrow": "The company",
       "headline": "A young company, fifteen years deep.",
-      "body": "Codescope was founded in February 2025 by a team of 18 with deep backgrounds in engineering, design, and product. We spent over a decade shipping software inside other organizations — much of it inside travel. Now we build independently, from Karbala, Iraq, for agencies anywhere in the world.",
+      "body": "Codescope was founded in February 2025 by a team of 18 with deep backgrounds in engineering, design, and product. We spent over a decade shipping software inside other organizations — much of it inside travel. Now we build independently, from Iraq, for agencies anywhere in the world.",
       "fact1": "Founded February 2025",
       "fact2": "18 people",
-      "fact3": "Karbala, Iraq",
+      "fact3": "Iraq",
       "cta": "Read our story"
     },
     "cta": {
@@ -499,7 +501,7 @@
     },
     "team": {
       "heading": "Eighteen people. One product.",
-      "body": "Codescope is a team of 18 — engineers, designers, and product people who spent over a decade shipping software inside other organizations before building independently from Karbala, Iraq.",
+      "body": "Codescope is a team of 18 — engineers, designers, and product people who spent over a decade shipping software inside other organizations before building independently from Iraq.",
       "d1": "Engineering",
       "d1Desc": "Architecture, backend, and front-end across a consumer marketplace and a multi-tenant dashboard.",
       "d2": "Design & UX",
@@ -527,17 +529,17 @@
   "TourScope": {
     "meta": {
       "title": "Tourscope — White-label travel platform & B2B booking software",
-      "description": "Tourscope is a multi-tenant, white-label travel-commerce platform: a consumer marketplace and a B2B agency dashboard. Flights, hotels, tours, visas, insurance, and eSIMs — 15+ supplier integrations, six languages, live in production."
+      "description": "Tourscope is a multi-tenant, white-label travel-commerce platform: a consumer marketplace and a B2B agency dashboard. Flights, hotels, tours, visas, insurance, and eSIMs — 80+ supplier integrations, six languages, live in production."
     },
     "hero": {
       "label": "Flagship product · Live in production",
       "headline": "The white-label travel platform agencies actually run on.",
-      "desc": "Tourscope is a complete travel-commerce platform: a marketplace your travelers book on, and a command center your team runs the business from. Six verticals, 15+ supplier integrations, six languages — multi-tenant from the ground up.",
+      "desc": "Tourscope is a complete travel-commerce platform: a marketplace your travelers book on, and a command center your team runs the business from. Six verticals, 80+ supplier integrations, six languages — multi-tenant from the ground up.",
       "cta": "Request a demo",
       "ctaSecondary": "See what's inside",
       "chip1": "6 verticals",
       "chip2": "Multi-tenant white-label",
-      "chip3": "15+ supplier integrations",
+      "chip3": "700+ airlines · 1.5M+ hotels",
       "chip4": "6 languages · RTL"
     },
     "twoSides": {
@@ -642,7 +644,7 @@
     },
     "trust": {
       "headline": "Integrated, compliant, and global from day one.",
-      "i1": "15+ supplier integrations — flights, hotels, insurance, eSIM",
+      "i1": "80+ supplier integrations — 700+ airlines, 1.5M+ hotels, insurance, eSIM",
       "i2": "Hosted PCI-DSS payment gateways",
       "i3": "6 languages, full RTL (Arabic, Kurdish, Farsi)",
       "i4": "Multi-currency, ledger-backed",
@@ -934,9 +936,115 @@
     }
   },
   "Jobs": {
+    "heading": "Discover your next career step",
+    "apply": "Apply now",
+    "loadingMore": "Loading more...",
+    "statusAvailable": "Open",
+    "statusClosed": "Closed",
     "emptyTitle": "No open roles right now",
     "emptyBody": "Check back, or write to us.",
-    "emptyCta": "info@codescope.dev"
+    "emptyCta": "info@codescope.dev",
+    "requirements": "Requirements",
+    "responsibilities": "Responsibilities",
+    "types": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "CONTRACT": "Contract",
+      "FREELANCE": "Freelance",
+      "INTERNSHIP": "Internship",
+      "TEMPORARY": "Temporary"
+    },
+    "salary": {
+      "RANGE_400_600": "400–600k IQD",
+      "RANGE_700_900": "700–900k IQD",
+      "RANGE_1000_1500": "1–1.5m IQD",
+      "RANGE_1500_2000": "1.5–2m IQD",
+      "OTHER": "Negotiable"
+    },
+    "education": {
+      "NO_FORMAL_EDUCATION": "No formal education",
+      "PRIMARY": "Primary school",
+      "INTERMEDIATE": "Intermediate school",
+      "SECONDARY": "Secondary / preparatory school",
+      "DIPLOMA": "Diploma",
+      "BACHELORS": "Bachelor's degree",
+      "MASTERS": "Master's degree",
+      "DOCTORATE": "Doctorate (PhD)",
+      "POSTDOCTORATE": "Post-doctorate",
+      "CERTIFICATE": "Certificate",
+      "PROFESSIONAL_CERTIFICATION": "Professional certification"
+    },
+    "sent": {
+      "title": "Your application has been submitted successfully.",
+      "body": "Our team will review it and contact you if you're shortlisted. Thank you for applying and good luck!"
+    },
+    "form": {
+      "sections": {
+        "contact": "Contact details",
+        "role": "Role and availability",
+        "experience": "Professional background",
+        "education": "Education"
+      },
+      "optional": "(optional)",
+      "optionalImmediate": "(optional — immediate by default)",
+      "linksHint": "(optional — portfolio, GitHub, LinkedIn, etc.)",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email address",
+      "currentCity": "Current city",
+      "currentCityPlaceholder": "Enter your current city",
+      "phone": "Phone",
+      "phonePlaceholder": "Enter your phone number",
+      "dateOfBirth": "Date of birth",
+      "datePlaceholder": "Pick a date",
+      "nationality": "Nationality",
+      "nationalityPlaceholder": "Enter your nationality",
+      "expectedSalary": "Expected salary",
+      "expectedSalaryPlaceholder": "Select an expected salary",
+      "availability": "Available to start",
+      "yearsOfExperience": "Years of experience",
+      "yearsOfExperiencePlaceholder": "Enter your years of experience",
+      "lastJobTitle": "Most recent job title",
+      "lastJobTitlePlaceholder": "Enter your most recent job title",
+      "lastCompanyName": "Most recent company",
+      "lastCompanyNamePlaceholder": "Enter the last company you worked for",
+      "links": "Links",
+      "linkPlaceholder": "Portfolio site / Behance / GitHub",
+      "addLink": "Add another link",
+      "removeLink": "Remove link",
+      "cv": "Upload your CV",
+      "cvDropzoneTitle": "Click to upload your CV",
+      "cvDropzoneHint": "PDF, DOC or DOCX (5 MB max)",
+      "kilobytes": "KB",
+      "removeFile": "Remove file",
+      "educationLevel": "Highest education level",
+      "educationLevelPlaceholder": "Select your highest education level",
+      "fieldOfStudy": "Field of study",
+      "fieldOfStudyPlaceholder": "Enter your field of study",
+      "graduationYear": "Graduation year",
+      "graduationYearPlaceholder": "Enter your graduation year",
+      "submit": "Send application",
+      "submitting": "Sending application...",
+      "uploadingCv": "Uploading CV...",
+      "validation": {
+        "fullName": "Enter your full name.",
+        "emailRequired": "Enter your email address.",
+        "emailInvalid": "Enter a valid email address.",
+        "currentCity": "Enter your current city.",
+        "nationality": "Enter your nationality.",
+        "dateOfBirth": "Select your date of birth.",
+        "cv": "Upload your CV.",
+        "yearsOfExperience": "Years of experience must be a positive number.",
+        "graduationYear": "Enter a valid graduation year."
+      },
+      "toast": {
+        "fixErrors": "Please correct the errors in the form.",
+        "requiredFields": "Please fill in all required fields.",
+        "submitFailed": "Could not send your application. Please try again.",
+        "uploadFailed": "Could not upload your CV. Please try again."
+      }
+    }
   },
   "GetStarted": {
     "meta": {

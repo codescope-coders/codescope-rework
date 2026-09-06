@@ -99,12 +99,15 @@ export default async function HomePage() {
             </FadeIn>
 
             <FadeIn delay={0.18}>
-              <div className="grid grid-cols-3 gap-6 border-t border-white/5 pt-8">
+              <div className="grid grid-cols-2 gap-6 border-t border-white/5 pt-8 sm:grid-cols-4">
                 {[
-                  // Counting up to 6 reads weak — only the 15+ earns the animation.
+                  // Counting up to 6 reads weak — only the big inventory
+                  // figures (700+ airlines) earn the animation. "1.5M+" is a
+                  // formatted string CountUp can't parse, so it stays static.
                   { value: t("hero.stat1"), label: t("hero.stat1Label"), count: false },
                   { value: t("hero.stat2"), label: t("hero.stat2Label"), count: true },
                   { value: t("hero.stat3"), label: t("hero.stat3Label"), count: false },
+                  { value: t("hero.stat4"), label: t("hero.stat4Label"), count: false },
                 ].map((stat) => (
                   <div key={stat.label}>
                     <p className="text-2xl font-bold text-white tabular-nums">

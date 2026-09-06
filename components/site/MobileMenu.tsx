@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { List, X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
+import Image from "next/image";
 import { PRODUCT_NAV_HREF, productPillClass } from "@/lib/nav-product-pill";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { pauseSmoothScroll, resumeSmoothScroll } from "@/lib/lenis";
@@ -122,8 +123,15 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
           // pill's padding or the row's type size changes.
           className="flex py-[9px] border-b border-white/5 last:border-none"
         >
-          <span className={productPillClass(isActive, "mobile")}>
-            {navItem.label}
+          <span className={`group/pill ${productPillClass(isActive, "mobile")}`}>
+            {/* Same wordmark-in-pill as the desktop nav — see NavbarShell. */}
+            <Image
+              src="/Branding/tourscope.svg"
+              alt={navItem.label}
+              width={507}
+              height={54}
+              className="h-[11px] w-auto brightness-0 invert transition-[filter] duration-300 group-hover/pill:brightness-100 group-hover/pill:invert-0"
+            />
           </span>
         </Link>
       );
