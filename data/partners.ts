@@ -104,16 +104,38 @@ export const PARTNER_BRANDS: PartnerBrand[] = [
  * icon ourselves and presenting it as the shipped one. The section claims these
  * are the agencies' own store icons, so it shows only icons that are.
  *
- * Every entry is 320x320; the grid renders them at 72.
+ * ⚠️ `alaa-addin` is the exception that proves the rule, and it is a KNOWN
+ * GAP rather than an oversight: its shipped icon is still the older artwork
+ * because the founder's `aladdin/` export folder carries only the `.icon`
+ * bundle and a loose symbol SVG — no rendered square. Its recipe fills the
+ * canvas with an `automatic-gradient`, which is Icon Composer deriving a ramp
+ * from one P3 colour by rules we do not have, so compositing it here would be
+ * us designing a client's app icon and captioning it as theirs. It is replaced
+ * the moment a `-iOS-Default-1024x1024@1x.png` lands in that folder — no code
+ * change, the file simply overwrites.
+ *
+ * Ordered to follow `PARTNER_BRANDS` rather than the order the icons arrived,
+ * so the exhibit and the lockup wall above it read in the same sequence.
+ *
+ * Every entry is 320x320; the grid renders them at 72 (88 from `sm`).
  */
 export const PARTNER_APPS: string[] = [
   "fly4all",
   "ibn-batuta",
   "alaa-addin",
-  "ayen-alalam",
-  "alburouj",
+  "musafer",
+  "al-nidaa",
   "papay",
+  "alburouj",
+  "amedia",
+  "ayen-alalam",
+  "dynar",
+  "transit",
+  "alpha4all",
+  "rihlat",
+  "online-bookings",
   "fly-110",
+  "nafidah",
 ];
 
 /** Locale-aware brand name for `alt`. Falls back to the latin mark. */

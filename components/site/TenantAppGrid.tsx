@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { getLocale } from "next-intl/server";
 import { FadeIn } from "@/components/site/FadeIn";
+import { SpotlightGroup } from "@/components/site/SpotlightGroup";
+import { TiltTile } from "@/components/site/TiltTile";
 import { PARTNER_APPS, PARTNER_BRANDS, brandName } from "@/data/partners";
 import { STAGGER } from "@/lib/motion";
 
@@ -23,32 +25,41 @@ export async function TenantAppGrid() {
   ).filter((b) => b !== undefined);
 
   return (
-    // `gap-3` at base rather than `gap-4`: seven 72px tiles wrap 4+3 inside a
-    // 390px viewport at 12px, and 3+3+1 at 16px — and a lone seventh tile on
-    // its own row reads as an orphan rather than a grid. It degrades back to
-    // 3+3+1 on anything narrower, which is the right way round.
-    <ul className="flex flex-wrap justify-center gap-3 sm:gap-5">
-      {brands.map((brand, i) => (
-        <FadeIn as="li" key={brand.slug} delay={i * STAGGER.base}>
-          {/* `rounded-[22%]` rather than a pixel radius: the iOS squircle is a
-              proportion of the side, so the corner stays right when the tile
-              steps up at `sm`. */}
-          {/* 88px on desktop rather than a flat 72: seven icons at 72 read as
-              a footnote under a 5xl headline, and the row is the section's
-              whole evidence. 72 stays on mobile, where three per row is the
-              constraint that matters. */}
-          <span className="block size-[72px] overflow-hidden rounded-[22%] shadow-lg shadow-black/40 ring-1 ring-inset ring-white/10 sm:size-[88px]">
-            <Image
-              src={`/partners/apps/${brand.slug}.webp`}
-              alt={brandName(brand, locale)}
-              width={320}
-              height={320}
-              unoptimized
-              className="size-full select-none object-cover"
-            />
-          </span>
-        </FadeIn>
-      ))}
-    </ul>
+    // `gap-3` at base rather than `gap-4`: at 12px, 72px tiles wrap four to a
+    // row inside a 390px viewport (4·72 + 3·12 = 324 against 342 of usable
+    // width); at 16px only three fit, which turns a full grid into a taller,
+    // sparser one. The wall is sixteen icons now, so both settings tile evenly
+    // — four rows of four on a phone, two rows of eight on the desktop — and
+    // no row is left holding a single orphan tile.
+    <SpotlightGroup>
+      <ul className="flex flex-wrap justify-center gap-3 sm:gap-5">
+        {brands.map((brand, i) => (
+          <FadeIn as="li" key={brand.slug} delay={i * STAGGER.base}>
+            {/* The tile tilts toward the cursor and its siblings recede — the
+                same gesture the card grids use, with none of their chrome. See
+                `TiltTile` for why an icon may lean further than a card. */}
+            <TiltTile>
+              {/* `rounded-[22%]` rather than a pixel radius: the iOS squircle is
+                  a proportion of the side, so the corner stays right when the
+                  tile steps up at `sm`. */}
+              {/* 88px on desktop rather than a flat 72: the row is the section's
+                  whole evidence, and at 72 it reads as a footnote under a 5xl
+                  headline. 72 stays on mobile, where fitting four per row is the
+                  constraint that matters. */}
+              <span className="block size-[72px] overflow-hidden rounded-[22%] shadow-lg shadow-black/40 ring-1 ring-inset ring-white/10 sm:size-[88px]">
+                <Image
+                  src={`/partners/apps/${brand.slug}.webp`}
+                  alt={brandName(brand, locale)}
+                  width={320}
+                  height={320}
+                  unoptimized
+                  className="size-full select-none object-cover"
+                />
+              </span>
+            </TiltTile>
+          </FadeIn>
+        ))}
+      </ul>
+    </SpotlightGroup>
   );
 }
