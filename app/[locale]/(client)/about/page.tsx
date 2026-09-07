@@ -3,8 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { localizedPageMetadata } from "@/lib/site-meta";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { ScrollRevealText } from "@/components/site/ScrollRevealText";
 import { SpotlightCard } from "@/components/site/SpotlightCard";
+import { SpotlightGroup } from "@/components/site/SpotlightGroup";
 import { HeroBackground } from "@/components/site/HeroBackground";
 import { AnimatedHeadline } from "@/components/site/AnimatedHeadline";
 import {
@@ -158,24 +160,26 @@ export default async function AboutPage() {
           <FadeIn>
             <h2 className="text-3xl font-bold text-white tracking-tight mb-12">{t("values.heading")}</h2>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {values.map((value, i) => {
-              const Icon = value.icon;
-              return (
-                <FadeIn key={value.title} delay={i * 0.1}>
-                  <SpotlightCard className="p-7 h-full flex flex-col gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-cs-teal/15 border border-cs-teal/20 flex items-center justify-center">
-                      <Icon size={20} weight="duotone" className="text-cs-teal" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-2">{value.title}</h3>
-                      <p className="text-sm text-zinc-300 leading-relaxed">{value.desc}</p>
-                    </div>
-                  </SpotlightCard>
-                </FadeIn>
-              );
-            })}
-          </div>
+                    <SpotlightGroup>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {values.map((value, i) => {
+                const Icon = value.icon;
+                return (
+                  <FadeIn key={value.title} delay={i * 0.1}>
+                    <SpotlightCard tilt className="p-7 h-full flex flex-col gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-cs-teal/15 border border-cs-teal/20 flex items-center justify-center">
+                        <Icon size={20} weight="duotone" className="text-cs-teal" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white mb-2">{value.title}</h3>
+                        <p className="text-sm text-zinc-300 leading-relaxed">{value.desc}</p>
+                      </div>
+                    </SpotlightCard>
+                  </FadeIn>
+                );
+              })}
+            </div>
+          </SpotlightGroup>
         </div>
       </section>
 
@@ -184,9 +188,11 @@ export default async function AboutPage() {
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t("cta.heading")}</h2>
             <p className="text-zinc-300 mb-10">{t("cta.subheading")}</p>
-            <Link href="/get-started" className="inline-flex items-center gap-2 px-8 py-4 bg-cs-teal text-white font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors duration-200 active:scale-[0.98]">
-              {t("cta.button")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
-            </Link>
+            <StarfieldButton variant="primary">
+              <Link href="/get-started" className="group inline-flex items-center gap-2 px-9 py-4 bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
+                {t("cta.button")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
+              </Link>
+            </StarfieldButton>
           </FadeIn>
         </div>
       </section>

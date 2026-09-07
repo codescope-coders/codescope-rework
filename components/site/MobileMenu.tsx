@@ -10,6 +10,7 @@ import { PRODUCT_NAV_HREF, productPillClass } from "@/lib/nav-product-pill";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { pauseSmoothScroll, resumeSmoothScroll } from "@/lib/lenis";
 import { DURATION, EASE, EASE_OUT, STAGGER } from "@/lib/motion";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 
 type NavItem = { href: string; label: string };
 
@@ -152,13 +153,17 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   const cta = (
     // Same target as the desktop nav CTA in NavbarShell — the two must not
     // drift, or the same button means two different things per viewport.
-    <Link
-      href="/get-started"
-      onClick={() => setOpen(false)}
-      className="w-full text-center py-3.5 px-6 bg-cs-teal text-white text-sm font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors block"
-    >
-      {ctaLabel}
-    </Link>
+    // The wrapper renders nothing on a coarse pointer, so on the phones this
+    // menu exists for it is exactly the Link it always was.
+    <StarfieldButton variant="primary" className="w-full">
+      <Link
+        href="/get-started"
+        onClick={() => setOpen(false)}
+        className="w-full text-center py-3.5 px-6 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors block"
+      >
+        {ctaLabel}
+      </Link>
+    </StarfieldButton>
   );
 
   // Login — same port as the desktop link (see NavbarShell): quiet, under the

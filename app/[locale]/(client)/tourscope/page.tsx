@@ -3,18 +3,19 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { FadeIn } from "@/components/site/FadeIn";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { ScrollRevealText } from "@/components/site/ScrollRevealText";
 import { SpotlightCard } from "@/components/site/SpotlightCard";
+import { SpotlightGroup } from "@/components/site/SpotlightGroup";
 import { HeroBackground } from "@/components/site/HeroBackground";
 import { SPOTLIGHT_PURPLE } from "@/lib/colors";
 import { BusinessEngine } from "@/components/site/tourscope/BusinessEngine";
 import { TenantAppGrid } from "@/components/site/TenantAppGrid";
 import { ProductFrame } from "@/components/site/tourscope/ProductFrame";
+import { DeepDiveRegion } from "@/components/site/tourscope/deep-dive/DeepDiveRegion";
 import {
   StorefrontSearchSlice,
   ConsoleInventorySlice,
-  VisaStorefrontSlice,
-  VisaRequirementsSlice,
   ArabicStorefrontSlice,
   PoolMarkupsSlice,
 } from "@/components/site/tourscope/ProductSlices";
@@ -46,40 +47,6 @@ export default async function TourScopePage() {
     { Icon: SimCard, title: t("verticals.f6Title"), desc: t("verticals.f6Desc") },
   ];
 
-  /* The product tour. Each item pairs ONE product view with the one claim that
-     view proves — an alternating editorial split, deliberately not a card grid:
-     the page already spends its card budget on the six verticals, and a third
-     grid would make "here is the product" and "here is what you can sell" look
-     like the same kind of content.
-
-     The views are CODED slices, not screenshots. See ProductSlices.tsx for why
-     — in short, the product renders light and the page does not, and a 1600px
-     capture shrunk into this column stops being readable exactly where it
-     starts mattering. */
-  const tour = [
-    {
-      num: "01",
-      title: t("marketTour.i1Title"),
-      body: t("marketTour.i1Body"),
-      caption: t("shots.visasCaption"),
-      slice: <VisaStorefrontSlice />,
-    },
-    {
-      num: "02",
-      title: t("marketTour.i2Title"),
-      body: t("marketTour.i2Body"),
-      caption: t("shots.visaDetailCaption"),
-      slice: <VisaRequirementsSlice />,
-    },
-    {
-      num: "03",
-      title: t("marketTour.i3Title"),
-      body: t("marketTour.i3Body"),
-      caption: t("shots.homeArCaption"),
-      slice: <ArabicStorefrontSlice />,
-    },
-  ];
-
   // Four clusters, rendered as a spec sheet — see BusinessEngine.
   const engineClusters = [
     {
@@ -109,15 +76,21 @@ export default async function TourScopePage() {
   ];
 
   /* The features that don't fit a comparison table. Hairline rows, not icon
-     cards — this is the fourth "list of things" on the page and the only one
-     whose items are pure prose. */
+     cards — the only list on the page whose items are pure prose.
+
+     Four rows, not the original six. The deep dive states the other two almost
+     word for word: "Support that knows the booking" was the SUPPORT section's
+     own headline ("A help desk that knows the booking"), and "Content that
+     speaks six languages" is the MARKETPLACE section's second fact ("Content
+     that sells in six languages"). A page that makes the same claim twice, the
+     second time with less evidence, spends the reader's trust rather than the
+     writer's words. What is left is what the deep dive genuinely does not
+     cover — and four rows fill the two-column grid exactly. */
   const beyond = [
     { num: "01", title: t("beyond.b1Title"), body: t("beyond.b1Body") },
     { num: "02", title: t("beyond.b2Title"), body: t("beyond.b2Body") },
-    { num: "03", title: t("beyond.b3Title"), body: t("beyond.b3Body") },
-    { num: "04", title: t("beyond.b4Title"), body: t("beyond.b4Body") },
-    { num: "05", title: t("beyond.b5Title"), body: t("beyond.b5Body") },
-    { num: "06", title: t("beyond.b6Title"), body: t("beyond.b6Body") },
+    { num: "03", title: t("beyond.b4Title"), body: t("beyond.b4Body") },
+    { num: "04", title: t("beyond.b6Title"), body: t("beyond.b6Body") },
   ];
 
   const story = [
@@ -177,18 +150,22 @@ export default async function TourScopePage() {
 
             <FadeIn delay={0.32}>
               <div className="flex flex-wrap gap-3 mb-8">
-                <Link
-                  href="/get-started"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-ts-purple text-white text-sm font-semibold rounded-xl hover:bg-ts-purple-hover transition-colors duration-200 active:scale-[0.98]"
-                >
-                  {t("hero.cta")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
-                </Link>
-                <a
-                  href="#platform"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 text-zinc-300 text-sm font-medium rounded-xl hover:bg-white/5 hover:text-white transition-colors duration-200"
-                >
-                  {t("hero.ctaSecondary")}<ArrowUpRight size={15} className="rtl:-scale-x-100" />
-                </a>
+                <StarfieldButton variant="primary" accent="purple">
+                  <Link
+                    href="/get-started"
+                    className="group inline-flex items-center gap-2 px-7 py-3 bg-[#170b2b] text-white text-sm font-semibold rounded-full hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
+                  >
+                    {t("hero.cta")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
+                  </Link>
+                </StarfieldButton>
+                <StarfieldButton variant="secondary" accent="purple">
+                  <a
+                    href="#platform"
+                    className="inline-flex items-center gap-2 px-7 py-3 bg-[#101013] text-zinc-300 text-sm font-medium rounded-full hover:bg-[#18181d] hover:text-white transition-colors duration-200"
+                  >
+                    {t("hero.ctaSecondary")}<ArrowUpRight size={15} className="rtl:-scale-x-100" />
+                  </a>
+                </StarfieldButton>
               </div>
             </FadeIn>
 
@@ -301,70 +278,6 @@ export default async function TourScopePage() {
         </div>
       </section>
 
-      {/* ── Inside the marketplace — the product tour ─────────────────────── */}
-      {/* overflow-x-clip (not -hidden): the ProductFrame glow extends past the
-          section's inline padding between sm and ~1360px; clip doesn't create a
-          scroll container, so the sticky navbar is unaffected. */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
-        <div className="max-w-7xl mx-auto">
-          <FadeIn>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3 max-w-[16ch] text-balance">
-              {t("marketTour.headline")}
-            </h2>
-            <p className="text-lg text-zinc-300 leading-relaxed max-w-[52ch]">{t("marketTour.sub")}</p>
-          </FadeIn>
-
-          <div className="mt-16 flex flex-col gap-20 sm:gap-24 lg:gap-28">
-            {tour.map((item, i) => {
-              /* Alternation is expressed as GRID PLACEMENT, not source order,
-                 so the DOM keeps reading title → body → image on a phone (and
-                 to a screen reader) while the desktop layout zig-zags. Column 1
-                 is the inline-start column, so the whole thing mirrors under
-                 `dir="rtl"` with no second set of rules. */
-              const flipped = i % 2 === 1;
-              return (
-                <div
-                  key={item.num}
-                  className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
-                >
-                  <FadeIn
-                    className={
-                      flipped
-                        ? "lg:col-start-2 lg:row-start-1"
-                        : "lg:col-start-1 lg:row-start-1"
-                    }
-                  >
-                    <span
-                      aria-hidden
-                      className="block text-[11px] font-semibold tabular-nums tracking-widest text-ts-purple-text mb-4"
-                    >
-                      {item.num}
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug mb-4 text-balance">
-                      {item.title}
-                    </h3>
-                    <p className="text-[17px] text-zinc-300 leading-relaxed max-w-[46ch]">
-                      {item.body}
-                    </p>
-                  </FadeIn>
-
-                  <FadeIn
-                    delay={0.08}
-                    className={
-                      flipped
-                        ? "lg:col-start-1 lg:row-start-1"
-                        : "lg:col-start-2 lg:row-start-1"
-                    }
-                  >
-                    <ProductFrame caption={item.caption}>{item.slice}</ProductFrame>
-                  </FadeIn>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* ── Six verticals ────────────────────────────────────────────────── */}
       <section className="py-28 sm:py-32 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
@@ -375,26 +288,28 @@ export default async function TourScopePage() {
             <p className="text-lg text-zinc-300 mb-12">{t("verticals.sub")}</p>
           </FadeIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {verticals.map((v, i) => (
-              <FadeIn key={v.title} delay={i * 0.06}>
-                {/* `gap-3`, not `gap-4`: the icon tile's 16px gap plus the
-                    h3's own half-leading opened ~21px between a card's icon
-                    and its own label, against ~10px between that label and the
-                    line under it — so the tile read as detached from the thing
-                    it names and the grid looked airy rather than dense. */}
-                <SpotlightCard className="group p-7 h-full flex flex-col gap-3" spotlightColor={SPOTLIGHT_PURPLE}>
-                  <div className="w-11 h-11 rounded-xl bg-ts-purple/15 border border-ts-purple/25 flex items-center justify-center">
-                    <v.Icon size={22} weight="duotone" className="text-ts-purple-hover" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{v.title}</h3>
-                    <p className="text-sm text-zinc-300 leading-relaxed">{v.desc}</p>
-                  </div>
-                </SpotlightCard>
-              </FadeIn>
-            ))}
-          </div>
+          <SpotlightGroup>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {verticals.map((v, i) => (
+                <FadeIn key={v.title} delay={i * 0.06}>
+                  {/* `gap-3`, not `gap-4`: the icon tile's 16px gap plus the
+                      h3's own half-leading opened ~21px between a card's icon
+                      and its own label, against ~10px between that label and the
+                      line under it — so the tile read as detached from the thing
+                      it names and the grid looked airy rather than dense. */}
+                  <SpotlightCard tilt className="group p-7 h-full flex flex-col gap-3" spotlightColor={SPOTLIGHT_PURPLE}>
+                    <div className="w-11 h-11 rounded-xl bg-ts-purple/15 border border-ts-purple/25 flex items-center justify-center">
+                      <v.Icon size={22} weight="duotone" className="text-ts-purple-hover" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-2">{v.title}</h3>
+                      <p className="text-sm text-zinc-300 leading-relaxed">{v.desc}</p>
+                    </div>
+                  </SpotlightCard>
+                </FadeIn>
+              ))}
+            </div>
+          </SpotlightGroup>
         </div>
       </section>
 
@@ -424,6 +339,49 @@ export default async function TourScopePage() {
           </FadeIn>
 
           <BusinessEngine clusters={engineClusters} />
+        </div>
+      </section>
+
+      {/* ── The deep dive — topic rail + long-form sections ───────────────── */}
+      {/* Sits after the three summary sections on purpose. "Two sides" names
+          the two halves, the verticals grid lists what an agency sells, and the
+          business engine lists what it runs on — this is where a reader who
+          wants any one of those in detail goes, and it is the LAST section that
+          describes the product. Everything below it is craft, proof and the ask.
+
+          It used to sit directly after "Two sides", which put ~16,000px of
+          detail BEFORE the summaries that introduce it: a reader met the six
+          verticals up close and was then handed six cards naming them. */}
+      <DeepDiveRegion />
+
+      {/* ── One storefront, six languages ─────────────────────────────────
+          What is left of the old three-item product tour. Its other two items
+          were a visa catalogue and a visa apply-sheet, and the deep dive now
+          carries both — the catalogue as a faithful `VisaCard` miniature under
+          "Visas", and the fine-print-before-payment claim as a fact on THREE
+          of its sections (hotels, groups, visas). Keeping them here made the
+          page show four visa screens and say the same thing twice.
+
+          This item survives because nothing else on the page makes its point:
+          the deep dive is drawn per vertical, and language is the one quality
+          that cuts across all of them. It reads as a single editorial split
+          rather than a tour, so the item's own title is the section heading. */}
+      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
+        <div className="max-w-7xl mx-auto grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <FadeIn>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-snug mb-4 max-w-[18ch] text-balance">
+              {t("marketTour.i3Title")}
+            </h2>
+            <p className="text-[17px] text-zinc-300 leading-relaxed max-w-[48ch]">
+              {t("marketTour.i3Body")}
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.08}>
+            <ProductFrame caption={t("shots.homeArCaption")}>
+              <ArabicStorefrontSlice />
+            </ProductFrame>
+          </FadeIn>
         </div>
       </section>
 
@@ -587,18 +545,22 @@ export default async function TourScopePage() {
             </h2>
             <p className="text-lg text-zinc-300 mb-10 max-w-[44ch] mx-auto leading-relaxed">{t("cta.subheading")}</p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <Link
-                href="/get-started"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-ts-purple text-white font-semibold rounded-xl hover:bg-ts-purple-hover transition-colors duration-200 active:scale-[0.98]"
-              >
-                {t("cta.cta")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
-              </Link>
-              <a
-                href={`mailto:${tFooter("email")}`}
-                className="inline-flex items-center gap-2 px-8 py-4 border border-white/10 text-zinc-300 font-medium rounded-xl hover:bg-white/5 hover:text-white transition-colors duration-200"
-              >
-                {t("cta.ctaSecondary")}<ArrowUpRight size={16} className="rtl:-scale-x-100" />
-              </a>
+              <StarfieldButton variant="primary" accent="purple">
+                <Link
+                  href="/get-started"
+                  className="group inline-flex items-center gap-2 px-9 py-4 bg-[#170b2b] text-white font-semibold rounded-full hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
+                >
+                  {t("cta.cta")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
+                </Link>
+              </StarfieldButton>
+              <StarfieldButton variant="secondary" accent="purple">
+                <a
+                  href={`mailto:${tFooter("email")}`}
+                  className="inline-flex items-center gap-2 px-9 py-4 bg-[#101013] text-zinc-300 font-medium rounded-full hover:bg-[#18181d] hover:text-white transition-colors duration-200"
+                >
+                  {t("cta.ctaSecondary")}<ArrowUpRight size={16} className="rtl:-scale-x-100" />
+                </a>
+              </StarfieldButton>
             </div>
           </FadeIn>
         </div>

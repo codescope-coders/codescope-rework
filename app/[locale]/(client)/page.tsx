@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { HeroBackground } from "@/components/site/HeroBackground";
 import { AnimatedHeadline } from "@/components/site/AnimatedHeadline";
 import { CountUp } from "@/components/site/CountUp";
-import { HeroProductPreview } from "@/components/site/HeroProductPreview";
+import { HeroGlobe } from "@/components/site/HeroGlobe";
 import { MagneticButton } from "@/components/site/MagneticButton";
 import { ManifestoSection } from "@/components/site/ManifestoSection";
 import { TenantBrandsMarquee } from "@/components/site/TenantBrandsMarquee";
@@ -78,22 +79,26 @@ export default async function HomePage() {
             <FadeIn delay={0.12}>
               <div className="flex flex-wrap gap-3 mb-14">
                 <MagneticButton>
-                  <Link
-                    href="/tourscope"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-cs-teal text-white text-sm font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors duration-200 active:scale-[0.98]"
-                  >
-                    {t("hero.ctaPrimary")}
-                    <ArrowRightIcon size={15} className="text-white rtl:rotate-180" />
-                  </Link>
+                  <StarfieldButton variant="primary">
+                    <Link
+                      href="/tourscope"
+                      className="group inline-flex items-center gap-2 px-7 py-3 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
+                    >
+                      {t("hero.ctaPrimary")}
+                      <ArrowRightIcon size={15} className="text-white rtl:rotate-180" />
+                    </Link>
+                  </StarfieldButton>
                 </MagneticButton>
                 <MagneticButton>
-                  <Link
-                    href="/about"
-                    className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 text-zinc-300 text-sm font-medium rounded-xl hover:bg-white/5 hover:text-white transition-colors duration-200 active:scale-[0.98]"
-                  >
-                    {t("hero.ctaSecondary")}
-                    <ArrowUpRight size={15} className="rtl:-scale-x-100" />
-                  </Link>
+                  <StarfieldButton variant="secondary">
+                    <Link
+                      href="/about"
+                      className="inline-flex items-center gap-2 px-7 py-3 bg-[#101013] text-zinc-300 text-sm font-medium rounded-full hover:bg-[#18181d] hover:text-white transition-colors duration-200 active:scale-[0.98]"
+                    >
+                      {t("hero.ctaSecondary")}
+                      <ArrowUpRight size={15} className="rtl:-scale-x-100" />
+                    </Link>
+                  </StarfieldButton>
                 </MagneticButton>
               </div>
             </FadeIn>
@@ -126,7 +131,7 @@ export default async function HomePage() {
             </FadeIn>
           </div>
 
-          <HeroProductPreview />
+          <HeroGlobe />
         </div>
 
         <FadeIn delay={0.4} className="absolute bottom-8 left-1/2 -translate-x-1/2">
@@ -392,13 +397,15 @@ export default async function HomePage() {
               {t("cta.subhead")}
             </p>
             <MagneticButton>
-              <Link
-                href="/get-started"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-cs-teal text-white font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors duration-200 active:scale-[0.98]"
-              >
-                {t("cta.button")}
-                <ArrowRightIcon size={16} className="text-white rtl:rotate-180" />
-              </Link>
+              <StarfieldButton variant="primary">
+                <Link
+                  href="/get-started"
+                  className="group inline-flex items-center gap-2 px-9 py-4 bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
+                >
+                  {t("cta.button")}
+                  <ArrowRightIcon size={16} className="text-white rtl:rotate-180" />
+                </Link>
+              </StarfieldButton>
             </MagneticButton>
           </FadeIn>
         </div>

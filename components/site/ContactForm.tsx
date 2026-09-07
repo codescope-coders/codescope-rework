@@ -7,6 +7,7 @@ import { PaperPlaneTilt, CheckCircle, WarningCircle } from "@phosphor-icons/reac
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { DURATION, EASE, EASE_OUT } from "@/lib/motion";
 import TurnstileWidget, { turnstileActive } from "@/components/site/TurnstileWidget";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -172,33 +173,49 @@ export default function ContactForm() {
 
       <TurnstileWidget onToken={setCaptchaToken} resetSignal={captchaNonce} />
 
-      <motion.button
-        type="submit"
-        // Only gated when a site key is configured: with Turnstile off there is
-        // no token to wait for and the button must behave exactly as before.
-        disabled={
-          status === "sending" || (turnstileActive && captchaToken === null)
-        }
-        // House curve rather than a per-file spring: `stiffness`/`damping`
-        // numbers are a second motion vocabulary, and this is a discrete
-        // press, not the continuous pointer-tracking a spring exists for.
-        whileHover={reduced ? undefined : { scale: 1.01 }}
-        whileTap={reduced ? undefined : { scale: 0.98 }}
-        transition={{ duration: DURATION.instant, ease: EASE_OUT }}
-        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-cs-teal text-white text-sm font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+      {/* The submit is a CTA like any other, so it wears the same skin —
+          but `disabled` suppresses the effect, because the listener is on
+          this wrapper and a disabled <button> swallows pointer events
+          without ever reaching it. Lighting the rim of a button that
+          cannot be pressed is worse than leaving it plain. */}
+      <StarfieldButton
+        variant="primary"
+        // ⚠️ `self-start` is load-bearing: this form is a flex COLUMN, so the
+        // wrapper's cross axis is its WIDTH and the default `align-items:
+        // stretch` blew it to the full form width while the button inside stayed
+        // its own size. The ring and the starfield are drawn on the WRAPPER box,
+        // so both rendered far wider than the button they belong to.
+        className="self-start"
+        disabled={status === "sending" || (turnstileActive && captchaToken === null)}
       >
-        {status === "sending" ? (
-          <>
-            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            {t("sending")}
-          </>
-        ) : (
-          <>
-            <PaperPlaneTilt size={16} weight="bold" className="rtl:-scale-x-100" />
-            {t("submit")}
-          </>
-        )}
-      </motion.button>
+        <motion.button
+          type="submit"
+          // Only gated when a site key is configured: with Turnstile off there is
+          // no token to wait for and the button must behave exactly as before.
+          disabled={
+            status === "sending" || (turnstileActive && captchaToken === null)
+          }
+          // House curve rather than a per-file spring: `stiffness`/`damping`
+          // numbers are a second motion vocabulary, and this is a discrete
+          // press, not the continuous pointer-tracking a spring exists for.
+          whileHover={reduced ? undefined : { scale: 1.01 }}
+          whileTap={reduced ? undefined : { scale: 0.98 }}
+          transition={{ duration: DURATION.instant, ease: EASE_OUT }}
+          className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {status === "sending" ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {t("sending")}
+            </>
+          ) : (
+            <>
+              <PaperPlaneTilt size={16} weight="bold" className="rtl:-scale-x-100" />
+              {t("submit")}
+            </>
+          )}
+        </motion.button>
+      </StarfieldButton>
     </form>
   );
 }

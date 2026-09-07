@@ -4,9 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { Toaster } from "sonner";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
-import { GridHighlight } from "@/components/site/GridHighlight";
+import { CodeFieldBackground } from "@/components/site/CodeFieldBackground";
 import { PageTransition } from "@/components/site/PageTransition";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
+import { ScrollToTop } from "@/components/site/ScrollToTop";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { geistMono, geistSans } from "@/lib/site-fonts";
 
@@ -71,8 +72,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${geistMono.variable} min-h-[100dvh] flex flex-col`}
     >
       <Toaster />
-      <GridHighlight />
+      <CodeFieldBackground />
       <SmoothScroll />
+      <ScrollToTop />
       <ScrollProgress />
       <Navbar />
       <main className="flex-1">

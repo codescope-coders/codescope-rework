@@ -10,6 +10,7 @@ import LanguageSwitcher from "@/components/site/LanguageSwitcher";
 import MobileMenu from "@/components/site/MobileMenu";
 import { PRODUCT_NAV_HREF, productPillClass } from "@/lib/nav-product-pill";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 
 type NavItem = { href: string; label: string };
 
@@ -134,12 +135,19 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
           </Link>
           {/* "Request a demo" is a demo request, so it goes to the flow built
               for one. The nav's own Contact link still points at /contact. */}
-          <Link
-            href="/get-started"
-            className="hidden md:inline-flex items-center px-4 py-2 text-sm font-semibold bg-cs-teal text-white rounded-lg hover:bg-cs-teal-hover transition-colors duration-200"
-          >
-            {ctaLabel}
-          </Link>
+          {/* The header CTA carries the same treatment as the page CTAs. It is
+              the smallest button that gets it — at 36px tall the field is only
+              five cells deep — but it is also the most-seen button on the site,
+              and leaving it flat made the header read as a different design
+              system from everything under it. */}
+          <StarfieldButton variant="primary" className="hidden md:inline-flex">
+            <Link
+              href="/get-started"
+              className="inline-flex items-center px-5 py-2 text-sm font-semibold bg-[#0a1c1a] text-white rounded-full hover:bg-[#0f2a27] transition-colors duration-200"
+            >
+              {ctaLabel}
+            </Link>
+          </StarfieldButton>
           <MobileMenu items={navItems} ctaLabel={ctaLabel} loginLabel={loginLabel} />
         </div>
       </nav>

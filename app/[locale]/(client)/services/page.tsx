@@ -3,7 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { localizedPageMetadata } from "@/lib/site-meta";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
+import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { SpotlightCard } from "@/components/site/SpotlightCard";
+import { SpotlightGroup } from "@/components/site/SpotlightGroup";
 import { HeroBackground } from "@/components/site/HeroBackground";
 import { AnimatedHeadline } from "@/components/site/AnimatedHeadline";
 import {
@@ -108,24 +110,26 @@ export default async function ServicesPage() {
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-12">{t("builds.heading")}</h2>
           </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {builds.map((build, i) => {
-              const Icon = build.icon;
-              return (
-                <FadeIn key={build.title} delay={i * 0.08}>
-                  <SpotlightCard className="p-6 flex gap-5 items-start h-full">
-                    <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-white/8 flex items-center justify-center shrink-0">
-                      <Icon size={18} weight="duotone" className="text-zinc-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-1.5">{build.title}</h3>
-                      <p className="text-sm text-zinc-300 leading-relaxed">{build.desc}</p>
-                    </div>
-                  </SpotlightCard>
-                </FadeIn>
-              );
-            })}
-          </div>
+                    <SpotlightGroup>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {builds.map((build, i) => {
+                const Icon = build.icon;
+                return (
+                  <FadeIn key={build.title} delay={i * 0.08}>
+                    <SpotlightCard tilt className="p-6 flex gap-5 items-start h-full">
+                      <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-white/8 flex items-center justify-center shrink-0">
+                        <Icon size={18} weight="duotone" className="text-zinc-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-white mb-1.5">{build.title}</h3>
+                        <p className="text-sm text-zinc-300 leading-relaxed">{build.desc}</p>
+                      </div>
+                    </SpotlightCard>
+                  </FadeIn>
+                );
+              })}
+            </div>
+          </SpotlightGroup>
         </div>
       </section>
 
@@ -135,9 +139,11 @@ export default async function ServicesPage() {
             <h2 className="text-2xl font-bold text-white">{t("cta.heading")}</h2>
           </FadeIn>
           <FadeIn delay={0.08}>
-            <Link href="/contact" className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-cs-teal text-white text-sm font-semibold rounded-xl hover:bg-cs-teal-hover transition-colors duration-200 active:scale-[0.98]">
-              {t("cta.button")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
-            </Link>
+            <StarfieldButton variant="primary" className="shrink-0">
+              <Link href="/contact" className="group shrink-0 inline-flex items-center gap-2 px-7 py-3 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
+                {t("cta.button")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
+              </Link>
+            </StarfieldButton>
           </FadeIn>
         </div>
       </section>
