@@ -3,11 +3,9 @@
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import {
+  AirplaneTilt,
   Bed,
   Buildings,
-  CaretRight,
-  CaretUp,
-  Check,
   CheckCircle,
   Globe,
   IdentificationBadge,
@@ -231,7 +229,16 @@ function Stars({ count }: { count: number }) {
 export function StorefrontSearchSlice() {
   const t = useTranslations("TourScope.slices");
 
+  /* The storefront's own service tabs, in the storefront's own order.
+     `features/search/Services.tsx` lists flights and hotels first (both
+     `hasSearch: true`, which is why the form below belongs to flights), then
+     the four catalogue services — groups, visa, insurance and esim — which
+     carry `hasSearch: false` and open their own pages instead of a form.
+     Drawing them as tabs is what makes "one search bar, six products behind
+     it" a structural claim rather than a caption. */
   const services = [
+    { label: t("a.svcFlights"), Icon: AirplaneTilt, active: true },
+    { label: t("a.svcHotels"), Icon: Bed },
     { label: t("a.svcTours"), Icon: MapTrifold },
     { label: t("a.svcVisas"), Icon: IdentificationBadge },
     { label: t("a.svcInsurance"), Icon: ShieldCheck },
@@ -262,8 +269,34 @@ export function StorefrontSearchSlice() {
         </span>
       </div>
 
+      {/* Service tabs — the row the real `SearchBox` puts ABOVE its form card.
+          They used to sit at the BOTTOM of this slice as a flat rail of four,
+          which inverted the product: the six services are how the storefront
+          is navigated, and the flight form is what the first of them opens.
+          `overflow-x-auto` with a hidden bar, because six tabs do not fit a
+          phone and the real row scrolls there too. */}
+      <div className="flex gap-1 overflow-x-auto px-3 pt-2.5 [scrollbar-width:none] sm:px-4 [&::-webkit-scrollbar]:hidden">
+        {services.map(({ label, Icon, active }) => (
+          <span
+            key={label}
+            className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold ${
+              active
+                ? "bg-ts-purple/15 text-white ring-1 ring-inset ring-ts-purple/30"
+                : "text-zinc-400"
+            }`}
+          >
+            <Icon
+              size={12}
+              weight="duotone"
+              className={active ? "text-ts-purple-text" : "text-zinc-500"}
+            />
+            {label}
+          </span>
+        ))}
+      </div>
+
       {/* Search widget */}
-      <div className="px-3 pb-3 pt-3 sm:px-4">
+      <div className="px-3 pb-3 pt-2.5 sm:px-4">
         <Segments
           items={[
             { label: t("a.tabOneWay"), active: true },
@@ -297,58 +330,18 @@ export function StorefrontSearchSlice() {
           />
         </div>
 
-        <p className="mt-1.5 flex items-center gap-1.5 text-[9.5px] text-zinc-500">
+        {/* The last line in the frame now. The results strip that used to
+            follow it was a one-row invention: the real home hero carries no
+            results at all (they live on their own page), and the deep dive's
+            flights section already draws the genuine `FlightCard` — so the
+            page was showing the same screen twice, once faithfully and once
+            not. */}
+        <p className="mt-2 flex items-center gap-1.5 text-[9.5px] text-zinc-500">
           <CheckCircle size={11} weight="fill" className="shrink-0 text-cs-teal" />
           {t("a.taxNote")}
         </p>
       </div>
 
-      {/* Streaming results */}
-      <div className={`border-t ${DIVIDE} px-3 pb-3 pt-2.5 sm:px-4`}>
-        <div className="mb-1.5 flex items-center justify-between gap-2">
-          <span className={LABEL}>{t("a.resultsLabel")}</span>
-          <span className="flex items-center gap-1.5">
-            <PulseDot />
-            <span className="truncate text-[9.5px] font-medium text-zinc-400">
-              {t("a.searching")}
-            </span>
-          </span>
-        </div>
-
-        <div className={`flex items-center gap-2.5 p-2 ${ROW}`}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-ts-purple/25 bg-ts-purple/15 text-[10px] font-bold tracking-tight text-ts-purple-text">
-            {t("a.airline")}
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[12px] font-semibold leading-tight text-white">
-              {t("a.route")}
-            </span>
-            <span className="block truncate text-[10px] leading-tight text-zinc-500">
-              {t("a.routeMeta")}
-            </span>
-          </span>
-          <span className="flex shrink-0 flex-col items-end gap-1">
-            <span className="text-[13px] font-bold leading-none tabular-nums text-white">
-              {t("a.price")}
-            </span>
-            <Pill tone="teal">{t("available")}</Pill>
-          </span>
-        </div>
-      </div>
-
-      {/* Service rail — the other verticals, one bar. The claim the section
-          headline makes, made literal by the product's own navigation. */}
-      <div className={`flex flex-wrap items-center gap-1.5 border-t ${DIVIDE} px-3 py-2.5 sm:px-4`}>
-        {services.map(({ label, Icon }) => (
-          <span
-            key={label}
-            className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.03] px-2 py-1 text-[9.5px] font-medium text-zinc-400"
-          >
-            <Icon size={11} weight="duotone" className="text-zinc-500" />
-            {label}
-          </span>
-        ))}
-      </div>
     </SliceRoot>
   );
 }
@@ -456,235 +449,6 @@ export function ConsoleInventorySlice() {
   );
 }
 
-/* ── C. Visa storefront — browse by passport ────────────────────────────────
-   Two country cards at full fidelity and a third clipped by the frame, which
-   is what tells the reader this is a grid continuing past the window rather
-   than a two-item list. */
-
-export function VisaStorefrontSlice() {
-  const t = useTranslations("TourScope.slices");
-
-  const cards = [
-    {
-      flag: "bh" as FlagKey,
-      name: t("c.c1Name"),
-      type: t("c.c1Type"),
-      types: t("c.c1Types"),
-      fastest: t("c.c1Fastest"),
-      stay: t("c.c1Stay"),
-      price: t("c.c1Price"),
-      band: "from-[#1c2a4a] to-[#3a2350]",
-    },
-    {
-      flag: "cn" as FlagKey,
-      name: t("c.c2Name"),
-      type: t("c.c2Type"),
-      types: t("c.c2Types"),
-      fastest: t("c.c2Fastest"),
-      stay: t("c.c2Stay"),
-      price: t("c.c2Price"),
-      band: "from-[#123037] to-[#25204a]",
-    },
-  ];
-
-  return (
-    <SliceRoot>
-      {/* Passport context line */}
-      <div className={`flex items-center gap-2 border-b ${DIVIDE} px-3 py-2.5 sm:px-4`}>
-        <FlagDot code="iq" />
-        <span className="truncate text-[11.5px] font-semibold text-white">{t("c.passport")}</span>
-        <Dot />
-        <span className="truncate text-[10.5px] text-zinc-500">{t("c.countries")}</span>
-      </div>
-
-      {/* Card grid, clipped at the bottom */}
-      <div className="relative max-h-[268px] overflow-hidden px-3 pt-3 sm:px-4">
-        <div className="grid grid-cols-2 gap-2">
-          {cards.map((c) => (
-            <div key={c.name} className={`overflow-hidden ${CARD}`}>
-              {/* Photo band. A gradient, not a stock image: the real card
-                  carries a destination photo, and a wrong photo is a worse
-                  lie than an honest colour field. The sheen and the darkened
-                  foot are what keep it reading as a photo slot rather than as
-                  an empty div. */}
-              <div className={`relative h-10 overflow-hidden bg-gradient-to-br ${c.band} sm:h-12`}>
-                <span className="absolute -inset-x-4 -top-6 h-10 rotate-[-8deg] bg-white/[0.06] blur-md" />
-                <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent" />
-                <span className="absolute start-1.5 top-1.5">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-1.5 py-[2px] text-[8.5px] font-semibold text-zinc-200 backdrop-blur-sm">
-                    <span className="block h-[3px] w-[3px] rounded-full bg-ts-purple-text" />
-                    {t("c.typeCount")}
-                  </span>
-                </span>
-                <span className="absolute end-1.5 top-1.5">
-                  <Pill tone="purple" className="bg-ts-purple/30 backdrop-blur-sm">
-                    {t("c.badge")}
-                  </Pill>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5 px-2 pt-2">
-                <FlagDot code={c.flag} size={12} />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[11.5px] font-bold leading-tight text-white">
-                    {c.name}
-                  </span>
-                  <span className="block truncate text-[9.5px] leading-tight text-zinc-500">
-                    {c.type}
-                  </span>
-                </span>
-              </div>
-
-              <div className={`mx-2 mt-2 grid grid-cols-3 divide-x divide-white/[0.06] rounded-md border border-white/[0.06] bg-white/[0.03] rtl:divide-x-reverse`}>
-                {[
-                  { l: t("c.typesLabel"), v: c.types },
-                  { l: t("c.fastestLabel"), v: c.fastest },
-                  { l: t("c.stayLabel"), v: c.stay },
-                ].map((s) => (
-                  <span key={s.l} className="min-w-0 px-1 py-1 text-center">
-                    <span className={`block truncate ${LABEL}`}>{s.l}</span>
-                    <span className="mt-[2px] block truncate text-[10px] font-semibold leading-none text-zinc-200">
-                      {s.v}
-                    </span>
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex items-end justify-between gap-1.5 px-2 pb-2 pt-2">
-                <span className="min-w-0">
-                  <span className={`block ${LABEL}`}>{t("c.fromLabel")}</span>
-                  <span className="mt-[1px] flex items-baseline gap-[2px] text-white">
-                    <span className="text-[9px] text-zinc-500">$</span>
-                    <span className="text-[15px] font-bold leading-none tabular-nums">
-                      {c.price}
-                    </span>
-                  </span>
-                </span>
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-ts-purple/40 px-2 py-1 text-[9.5px] font-semibold leading-none text-ts-purple-text">
-                  {t("c.apply")}
-                  <CaretRight size={9} weight="bold" className="rtl:rotate-180" />
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* The row that continues past the window */}
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {["from-[#2a1c40] to-[#123037]", "from-[#331f2e] to-[#1c2a4a]"].map((band) => (
-            <div key={band} className={`h-10 bg-gradient-to-br ${band} ${CARD}`} />
-          ))}
-        </div>
-
-        <span className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-cs-panel to-transparent" />
-      </div>
-    </SliceRoot>
-  );
-}
-
-/* ── D. Visa requirements — the zoom slice ──────────────────────────────────
-   The pre-payment disclosure step, and the page's one genuinely zoomed view:
-   one dialog at close to real size, because the claim it proves is that the
-   documents and the rules are *legible* before anyone pays. */
-
-export function VisaRequirementsSlice() {
-  const t = useTranslations("TourScope.slices");
-
-  const stats = [
-    { l: t("d.maxStayLabel"), v: t("d.maxStay") },
-    { l: t("d.processingLabel"), v: t("d.processing") },
-    { l: t("d.entriesLabel"), v: t("d.entries") },
-  ];
-
-  return (
-    <SliceRoot>
-      {/* Dialog head */}
-      <div className={`flex items-center gap-2.5 border-b ${DIVIDE} px-3.5 py-3`}>
-        <FlagDot code="bh" size={20} />
-        <span className="truncate text-[14px] font-bold text-white">{t("d.name")}</span>
-        <span className="ms-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-500">
-          <X size={10} weight="bold" />
-        </span>
-      </div>
-
-      <div className="px-3.5 py-3">
-        <p className={`mb-2 ${LABEL}`}>{t("d.selectType")}</p>
-
-        {/* The selected visa type — purple ring, exactly as the product marks it */}
-        <div className="overflow-hidden rounded-lg border border-ts-purple/35 bg-ts-purple/[0.06]">
-          <div className="flex items-center gap-2 px-2.5 py-2">
-            <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border-[1.5px] border-ts-purple-text">
-              <span className="block h-[6px] w-[6px] rounded-full bg-ts-purple-text" />
-            </span>
-            <span className="truncate text-[12px] font-semibold text-white">{t("d.type")}</span>
-            <Pill tone="purple">{t("d.badge")}</Pill>
-            <span className="ms-auto flex shrink-0 items-baseline gap-[2px] text-white">
-              <span className="text-[9.5px] text-zinc-500">$</span>
-              <span className="text-[16px] font-bold leading-none tabular-nums">{t("d.price")}</span>
-            </span>
-          </div>
-
-          {/* Three-cell stat strip */}
-          <div className={`grid grid-cols-3 divide-x divide-white/[0.07] border-y ${DIVIDE} bg-white/[0.02] rtl:divide-x-reverse`}>
-            {stats.map((s) => (
-              <span key={s.l} className="min-w-0 px-2.5 py-2">
-                <span className={`block truncate ${LABEL}`}>{s.l}</span>
-                <span className="mt-[3px] block truncate text-[12px] font-semibold leading-none text-white">
-                  {s.v}
-                </span>
-              </span>
-            ))}
-          </div>
-
-          <div className={`flex items-center gap-1.5 border-b ${DIVIDE} px-2.5 py-1.5`}>
-            <span className={LABEL}>{t("d.availableFor")}</span>
-            <FlagDot code="iq" size={11} />
-            <span className="text-[10px] font-medium text-zinc-300">{t("d.nationality")}</span>
-          </div>
-
-          <div className="px-2.5 py-2">
-            <p className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-ts-purple-text">
-              {t("d.toggle")}
-              <CaretUp size={9} weight="bold" />
-            </p>
-
-            <p className={`mb-1.5 ${LABEL}`}>{t("d.docsLabel")}</p>
-            <div className="mb-2.5 flex flex-col gap-[5px]">
-              {[t("d.doc1"), t("d.doc2"), t("d.doc3")].map((doc) => (
-                <span key={doc} className="flex items-center gap-1.5">
-                  <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border border-cs-teal/30 bg-cs-teal/10 text-cs-teal">
-                    <Check size={7} weight="bold" />
-                  </span>
-                  <span className="truncate text-[11px] text-zinc-200">{doc}</span>
-                </span>
-              ))}
-            </div>
-
-            <p className={`mb-1.5 ${LABEL}`}>{t("d.rulesLabel")}</p>
-            <div className="flex flex-col gap-[3px]">
-              {[t("d.rule1"), t("d.rule2")].map((rule) => (
-                <span key={rule} className="flex gap-1.5 text-[10.5px] leading-snug text-zinc-400">
-                  <span className="mt-[5px] block h-[3px] w-[3px] shrink-0 rounded-full bg-zinc-600" />
-                  <span className="min-w-0">{rule}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Dialog footer */}
-      <div className={`flex items-center gap-3 border-t ${DIVIDE} bg-white/[0.02] px-3.5 py-2.5`}>
-        <span className="flex items-baseline gap-[2px] text-white">
-          <span className="text-[10px] text-zinc-500">$</span>
-          <span className="text-[18px] font-bold leading-none tabular-nums">{t("d.price")}</span>
-        </span>
-        <Action label={t("d.apply")} className="ms-auto px-4 py-2.5" />
-      </div>
-    </SliceRoot>
-  );
-}
-
 /* ── E. Arabic storefront — always RTL ──────────────────────────────────────
    Slice A's anatomy, pinned to `dir="rtl"` and Arabic on BOTH locales. That is
    the whole point: an English reader has to SEE the mirrored product, and a
@@ -693,6 +457,15 @@ export function VisaRequirementsSlice() {
 
 export function ArabicStorefrontSlice() {
   const t = useTranslations("TourScope.slices");
+
+  const arServices = [
+    { label: t("e.svcFlights"), Icon: AirplaneTilt, active: true },
+    { label: t("e.svcHotels"), Icon: Bed },
+    { label: t("e.svcTours"), Icon: MapTrifold },
+    { label: t("e.svcVisas"), Icon: IdentificationBadge },
+    { label: t("e.svcInsurance"), Icon: ShieldCheck },
+    { label: t("e.svcEsim"), Icon: SimCard },
+  ];
 
   return (
     <div dir="rtl" lang="ar">
@@ -718,7 +491,31 @@ export function ArabicStorefrontSlice() {
           </span>
         </div>
 
-        <div className="px-3 pb-3 pt-3 sm:px-4">
+        {/* The same service tabs the hero's storefront draws, mirrored. This
+            section's claim is that the experience mirrors "down to the smallest
+            control", so the two exhibits have to be the SAME screen — one in
+            each direction — not two different drawings of a storefront. */}
+        <div className="flex gap-1 overflow-x-auto px-3 pt-2.5 [scrollbar-width:none] sm:px-4 [&::-webkit-scrollbar]:hidden">
+          {arServices.map(({ label, Icon, active }) => (
+            <span
+              key={label}
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold ${
+                active
+                  ? "bg-ts-purple/15 text-white ring-1 ring-inset ring-ts-purple/30"
+                  : "text-zinc-400"
+              }`}
+            >
+              <Icon
+                size={12}
+                weight="duotone"
+                className={active ? "text-ts-purple-text" : "text-zinc-500"}
+              />
+              {label}
+            </span>
+          ))}
+        </div>
+
+        <div className="px-3 pb-3 pt-2.5 sm:px-4">
           <Segments
             items={[
               { label: t("e.tabOneWay"), active: true },
@@ -750,7 +547,7 @@ export function ArabicStorefrontSlice() {
             />
           </div>
 
-          <p className="mt-1.5 flex items-center gap-1.5 text-[9.5px] text-zinc-500">
+            <p className="mt-1.5 flex items-center gap-1.5 text-[9.5px] text-zinc-500">
             <CheckCircle size={11} weight="fill" className="shrink-0 text-cs-teal" />
             {t("e.taxNote")}
           </p>
