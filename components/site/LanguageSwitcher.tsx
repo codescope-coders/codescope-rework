@@ -1,8 +1,7 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/routing";
-import { useTransition, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSwitchLocale } from "@/lib/useSwitchLocale";
 import { motion, AnimatePresence } from "motion/react";
 import { GlobeHemisphereWestIcon, CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -14,10 +13,9 @@ const LOCALES = [
 ] as const;
 
 export default function LanguageSwitcher() {
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  // The switch is a cookie write + a server refresh, NOT a navigation — see
+  // `useSwitchLocale` for why next-intl's router is the wrong call here.
+  const { switchLocale, isPending, activeLocale: locale } = useSwitchLocale();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotionSafe();
@@ -61,11 +59,8 @@ export default function LanguageSwitcher() {
   }, [open]);
 
   function switchTo(code: string) {
-    if (code === locale) { setOpen(false); return; }
     setOpen(false);
-    startTransition(() => {
-      router.replace(pathname, { locale: code });
-    });
+    switchLocale(code);
   }
 
   return (

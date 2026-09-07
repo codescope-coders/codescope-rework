@@ -13,7 +13,8 @@ import {
   Settings,
   Sun,
 } from "lucide-react";
-import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
+import { useSwitchLocale } from "@/lib/useSwitchLocale";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/stores/sidebar";
 import useDashboardTheme from "@/stores/dashboardTheme";
@@ -44,8 +45,6 @@ export function Topbar() {
   const t = useTranslations("dash");
   const tf = (k: string, fb: string) => (t.has(k) ? t(k) : fb);
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
   const openMobile = useSidebar((s) => s.openMobile);
   const theme = useDashboardTheme((s) => s.theme);
   const toggleTheme = useDashboardTheme((s) => s.toggle);
@@ -62,9 +61,10 @@ export function Topbar() {
 
   const roleLabel = user ? tf(`roles.${user.role}`, user.role) : "";
   const initials = (user?.name || user?.email || "?").slice(0, 1).toUpperCase();
-  const switchLocale = (loc: string) => {
-    if (loc !== locale) router.push(pathname, { locale: loc as "en" | "ar" });
-  };
+  // Cookie + server refresh, not a navigation: the locale is no longer part of
+  // the URL, and pushing one would bounce through `/ar/dashboard` and lose the
+  // reader's place. See `useSwitchLocale`.
+  const { switchLocale } = useSwitchLocale();
 
   return (
     <header className="relative z-30 mx-4 mt-1 sm:mx-1">

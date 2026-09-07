@@ -1,8 +1,7 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/routing";
-import { useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { useSwitchLocale } from "@/lib/useSwitchLocale";
 import { cn } from "@/lib/utils";
 
 const LANGS: { code: "en" | "ar"; label: string }[] = [
@@ -12,16 +11,11 @@ const LANGS: { code: "en" | "ar"; label: string }[] = [
 
 export function LoginFooter() {
   const t = useTranslations("auth");
-  const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  // Same locale switch the marketing header uses — a cookie write plus a
+  // server refresh, so the URL stays bare and the page does not jump.
+  const { switchLocale, isPending, activeLocale: locale } = useSwitchLocale();
 
-  // Same locale switch the marketing Header uses — replace the current route
-  // with the chosen locale.
-  const setLang = (code: "en" | "ar") => {
-    startTransition(() => router.replace(pathname, { locale: code }));
-  };
+  const setLang = (code: "en" | "ar") => switchLocale(code);
 
   return (
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
