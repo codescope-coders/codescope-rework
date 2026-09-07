@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState, type PointerEvent, type CSSProperties } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { SPOTLIGHT_TEAL } from "@/lib/colors";
+import { SPOTLIGHT_TEAL, withAlpha } from "@/lib/colors";
+import { useSpotlightGroup } from "@/components/site/SpotlightGroup";
+
+/* Tilt is deliberately shallower than the 9° the technique is usually drawn
+   with. These cards carry three lines of body copy, and past ~6° the text edges
+   visibly resample on a non-retina display — the card reads as slightly out of
+   focus rather than as tilted. */
+const TILT_MAX = 6;
+const TILT_SPRING = { stiffness: 300, damping: 28 } as const;
 
 interface Props {
   children: React.ReactNode;
@@ -28,6 +37,14 @@ interface Props {
    * hover is exactly the vestibular trigger the preference exists for.
    */
   lift?: boolean;
+  /**
+   * Magnetic 3D tilt toward the pointer, plus a shimmer sweep and an accent
+   * rule that draws itself along the card's block end on hover.
+   *
+   * Opt-in for the same reason `lift` is: fifteen cards on this site use this
+   * component, and only the grids the founder named are meant to move.
+   */
+  tilt?: boolean;
 }
 
 export function SpotlightCard({
@@ -36,11 +53,29 @@ export function SpotlightCard({
   spotlightColor = SPOTLIGHT_TEAL,
   surfaceClassName = "glass-card",
   lift = false,
+  tilt = false,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const rect = useRef<DOMRect | null>(null);
   const [hovering, setHovering] = useState(false);
   const reduced = useReducedMotionSafe();
+
+  // A card outside a `SpotlightGroup` is never dimmed and its callbacks are
+  // inert, so this stays a drop-in for the eleven cards that are not grouped.
+  const id = useId();
+  const { dimmed, enter, leave } = useSpotlightGroup(id);
+
+  /* The tilt reads the SAME pointer position the spotlight already measures —
+     one `getBoundingClientRect`, one rAF, two effects. Motion values are
+     written outside React state on purpose: a tilt driven by `useState` would
+     re-render the card, and everything inside it, on every frame of a hover. */
+  const normX = useMotionValue(0.5);
+  const normY = useMotionValue(0.5);
+  const rotateX = useSpring(useTransform(normY, [0, 1], [TILT_MAX, -TILT_MAX]), TILT_SPRING);
+  const rotateY = useSpring(useTransform(normX, [0, 1], [-TILT_MAX, TILT_MAX]), TILT_SPRING);
+
+  const animated = tilt && !reduced;
+  const accent = withAlpha(spotlightColor, 0.85);
 
   // Pending pointer position, flushed once per frame. Two `setProperty` calls
   // straight out of `pointermove` are two style writes per event, and the
@@ -73,6 +108,7 @@ export function SpotlightCard({
   function handlePointerEnter() {
     stale.current = true;
     setHovering(true);
+    if (animated) enter();
   }
 
   function handlePointerMove(e: PointerEvent<HTMLDivElement>) {
@@ -93,11 +129,22 @@ export function SpotlightCard({
       if (!p) return;
       el.style.setProperty("--mouse-x", `${p.x}px`);
       el.style.setProperty("--mouse-y", `${p.y}px`);
+      if (animated && rect.current) {
+        normX.set(p.x / rect.current.width);
+        normY.set(p.y / rect.current.height);
+      }
     });
   }
 
   function handlePointerLeave() {
     setHovering(false);
+    if (animated) {
+      leave();
+      // Back to centre, so the card settles level instead of freezing at the
+      // angle the pointer happened to leave it at.
+      normX.set(0.5);
+      normY.set(0.5);
+    }
     rect.current = null;
     pending.current = null;
     cancelAnimationFrame(frame.current);
@@ -107,7 +154,7 @@ export function SpotlightCard({
   }
 
   const card = (
-    <div
+    <motion.div
       ref={ref}
       // Reduced motion: the spotlight layer is not rendered, so tracking the
       // pointer across the card would drive nothing.
@@ -124,11 +171,17 @@ export function SpotlightCard({
       ]
         .filter(Boolean)
         .join(" ")}
+      /* Siblings recede rather than disappear: at kokonut's 0.5 the unhovered
+         cards stopped being readable, which on a grid whose whole job is six
+         comparable claims reads as the page breaking, not as focus. */
+      animate={animated ? { scale: dimmed ? 0.985 : 1, opacity: dimmed ? 0.72 : 1 } : undefined}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       style={
         {
           "--mouse-x": "-999px",
           "--mouse-y": "-999px",
           "--spotlight-color": spotlightColor,
+          ...(animated ? { rotateX, rotateY, transformPerspective: 900 } : null),
         } as CSSProperties
       }
     >
@@ -144,8 +197,25 @@ export function SpotlightCard({
           }}
         />
       )}
+      {animated && (
+        <>
+          {/* Shimmer sweep. `start-0` + the `rtl:` pair mirror it: in Arabic the
+              light has to travel the way the reader does, or the card looks
+              like it is being wiped backwards. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 start-0 w-[55%] -skew-x-12 -translate-x-full bg-linear-to-r from-transparent via-white/[0.055] to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[280%] rtl:translate-x-full rtl:group-hover:-translate-x-[280%]"
+          />
+          {/* Accent rule along the block end, drawn on hover. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 start-0 h-px w-0 [--accent-to:right] transition-[width] duration-500 ease-out group-hover:w-full rtl:[--accent-to:left]"
+            style={{ background: `linear-gradient(to var(--accent-to, right), ${accent}, transparent)` }}
+          />
+        </>
+      )}
       {children}
-    </div>
+    </motion.div>
   );
 
   if (!lift || reduced) return card;

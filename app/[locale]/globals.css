@@ -317,7 +317,7 @@ body:has([data-site="public"]) {
    Dahab. Naming the Geist variable directly moves substitution onto the wrapper,
    where it is defined. */
 /* NO `background` here, deliberately — it belongs on `body` above and nowhere
-   else. `GridHighlight` is `fixed inset-0 -z-10`, i.e. a negative-z descendant
+   else. `CodeFieldBackground` is `fixed inset-0 -z-10`, i.e. a negative-z descendant
    of this wrapper, and CSS paints those BEFORE the backgrounds of non-positioned
    block descendants: an opaque ground on the wrapper covers the ambient grid
    completely, which is exactly what happened. A `body` background instead
@@ -420,7 +420,8 @@ body:has([data-site="public"]) {
      them. */
   .pkg-ground,
   .pkg-ground-featured,
-  .pkg-ground-value {
+  .pkg-ground-value,
+  .pkg-ground-advanced {
     transition:
       border-color 300ms cubic-bezier(0.21, 0.47, 0.32, 0.98),
       box-shadow 300ms cubic-bezier(0.21, 0.47, 0.32, 0.98),
@@ -459,6 +460,20 @@ body:has([data-site="public"]) {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
+  /* Advanced, since the founder made it the highlighted card (2026-09-08):
+     a near-BLACK ground rather than a tinted one, because the Mosaic Waves
+     canvas is this card's real surface and the halftone reads against dark —
+     the reference render sits on #0a0a0a. Purple accent throughout: the
+     founder's spec is "tourscope colors", overriding the earlier teal
+     identity this card carried. */
+  .pkg-ground-advanced {
+    background: linear-gradient(160deg, #0a0a12 0%, #0c0916 55%, #0a0a10 100%);
+    border: 1px solid color-mix(in srgb, var(--color-ts-purple) 42%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-ts-purple) 14%, transparent),
+      0 24px 60px -24px color-mix(in srgb, var(--color-ts-purple) 55%, transparent);
+  }
+
   /* ⚠️ Hover is sensed on `.lift-scope` — SpotlightCard's STATIC wrapper —
      never on the card itself. The card RISES on hover, so its own `:hover`
      region rises with it: a cursor in the bottom few pixels would then sit
@@ -468,7 +483,7 @@ body:has([data-site="public"]) {
      flap. The bare `:hover` fallbacks keep the brightening alive anywhere a
      ground is used without the lift wrapper (reduced-motion renders unwrapped). */
   @media (hover: hover) {
-    .lift-scope:hover :is(.pkg-ground, .pkg-ground-featured, .pkg-ground-value) {
+    .lift-scope:hover :is(.pkg-ground, .pkg-ground-featured, .pkg-ground-value, .pkg-ground-advanced) {
       translate: 0 -4px;
     }
 
@@ -488,6 +503,14 @@ body:has([data-site="public"]) {
         0 30px 72px -26px color-mix(in srgb, var(--color-ts-purple) 58%, transparent);
     }
 
+    .lift-scope:hover .pkg-ground-advanced,
+    .pkg-ground-advanced:hover {
+      border-color: color-mix(in srgb, var(--color-ts-purple) 62%, transparent);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-ts-purple) 22%, transparent),
+        0 30px 70px -24px color-mix(in srgb, var(--color-ts-purple) 65%, transparent);
+    }
+
     .lift-scope:hover .pkg-ground-value,
     .pkg-ground-value:hover {
       border-color: color-mix(in srgb, var(--color-cs-teal) 58%, transparent);
@@ -497,22 +520,12 @@ body:has([data-site="public"]) {
     }
   }
 
-  /* The cursor-follow grid glow (see `GridHighlight`).
-     It is a full-viewport masked layer repainted on every pointer frame, mounted
-     on every route — and on a device with no hovering pointer it can never be
-     seen at all, so it is off there. `lg` because it is desktop ambience, not
-     something to spend a phone's compositor on. The static base grid underneath
-     stays everywhere: that layer is texture, not motion.
-     Written as one rule rather than stacked arbitrary variants so the media
-     query is legible and can't be mis-composed at the call site. */
-  .cursor-glow-layer {
-    display: none;
-  }
-  @media (hover: hover) and (pointer: fine) and (width >= 64rem) {
-    .cursor-glow-layer {
-      display: block;
-    }
-  }
+  /* The retired `.cursor-glow-layer` lived here: a full-viewport masked copy
+     of the rule-grid, revealed near the pointer. `CodeFieldBackground` now owns
+     both halves — it paints one canvas and lights the tokens near the cursor
+     itself — so the layer, and the media query that hid it on touch devices,
+     have no consumer. The gate survives as `INTERACTIVE` inside that
+     component, which is where the listener it guards now lives. */
 
   /* The TourScope card ground: a deep purple-black wash used by the B2B card on
      both pages. It shipped twice with different stops, so the same card was

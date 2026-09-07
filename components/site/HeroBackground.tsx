@@ -17,10 +17,14 @@ interface Props {
   variant?: "teal" | "purple";
 }
 
-const CURSOR_GLOW = `radial-gradient(circle, ${tealGlow(0.16)} 0%, ${tealGlow(0.05)} 40%, transparent 70%)`;
-
 /** The orbs re-enter every time the hero does, so this is deliberately not `once`. */
 const ORB_VIEWPORT = { once: false } as const;
+
+// Halved (0.16 -> 0.08) in the same pass that halved the token field's lit
+// alpha: the two stack on every hero, and the COMPOUND is what read as a shine
+// following the cursor around the site.
+const CURSOR_GLOW = `radial-gradient(circle, ${tealGlow(0.08)} 0%, ${tealGlow(0.025)} 40%, transparent 70%)`;
+
 
 export function HeroBackground({ variant = "teal" }: Props) {
   const isTeal = variant === "teal";
@@ -43,7 +47,10 @@ export function HeroBackground({ variant = "teal" }: Props) {
   const glowOpacity = useTransform(maskRadius, [0, 80], [0, 1]);
 
   // Circular spotlight mask: scope only visible near cursor
-  const mask = useMotionTemplate`radial-gradient(circle ${maskRadius}px at ${smoothX}px ${smoothY}px, black 50%, transparent 100%)`;
+  // `black 25%`, not 50: the reveal used to hold full strength for half its
+  // radius and then fall away, which cut the reticle lines off along a visible
+  // circle. A quarter-radius core with a long feather lets them dissolve.
+  const mask = useMotionTemplate`radial-gradient(circle ${maskRadius}px at ${smoothX}px ${smoothY}px, black 25%, transparent 92%)`;
 
   const pendingAnim = useRef<{ stop: () => void } | null>(null);
   const isOver      = useRef(false);
@@ -52,6 +59,10 @@ export function HeroBackground({ variant = "teal" }: Props) {
   // heroes on one page (or a hero plus any future consumer) would both point at
   // the first `hero-noise`. `useId` is per-instance; its React delimiters are
   // stripped because they are not valid in a CSS `url()` fragment.
+  // The orbs drift on a long loop; under reduced motion they simply sit still.
+  const primaryDrift = reduced ? undefined : { x: [0, 60, -30, 0], y: [0, -40, 60, 0] };
+  const secondaryDrift = reduced ? undefined : { x: [0, -50, 30, 0], y: [0, 50, -30, 0] };
+
   const noiseId = `hero-noise-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
 
   useEffect(() => {
@@ -145,18 +156,19 @@ export function HeroBackground({ variant = "teal" }: Props) {
     };
   }, [mx, my, maskRadius, reduced]);
 
-  // The orbs drift on a long loop; under reduced motion they simply sit still.
-  const primaryDrift   = reduced ? undefined : { x: [0, 60, -30, 0], y: [0, -40, 60, 0] };
-  const secondaryDrift = reduced ? undefined : { x: [0, -50, 30, 0], y: [0, 50, -30, 0] };
-
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden" aria-hidden="true">
       {/* Grid */}
       <div className="absolute inset-0 grid-bg opacity-60" />
 
-      {/* Primary orb. `whileInView` rather than `animate`: these are infinite
-          loops on `blur-3xl` layers, and as plain `animate` they kept compositing
-          for the whole scroll of the page long after the hero left the screen.
+      {/* ── Orbs ────────────────────────────────────────────────────────────
+          Two slow, heavily-blurred washes. These predate the aurora beam that
+          briefly replaced them and are back because the beam read as glare —
+          at `/8` and `/5` over a `blur-3xl` these are atmosphere, not shine.
+
+          `whileInView` rather than `animate`: they are infinite loops on
+          `blur-3xl` layers, and as plain `animate` they kept compositing for
+          the whole scroll of the page long after the hero left the screen.
           `once: false` so they resume when the hero comes back. */}
       <motion.div
         className={`pointer-events-none absolute -top-32 ${isTeal ? "-start-32" : "-end-32"} h-[650px] w-[650px] rounded-full blur-3xl ${isTeal ? "bg-cs-teal/8" : "bg-ts-purple/8"}`}
@@ -165,13 +177,17 @@ export function HeroBackground({ variant = "teal" }: Props) {
         transition={reduced ? undefined : { duration: 14, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
       />
 
-      {/* Secondary orb */}
       <motion.div
         className={`pointer-events-none absolute -bottom-48 ${isTeal ? "-end-24" : "-start-24"} h-[500px] w-[500px] rounded-full blur-3xl ${isTeal ? "bg-ts-purple/5" : "bg-cs-teal/5"}`}
         whileInView={secondaryDrift}
         viewport={ORB_VIEWPORT}
         transition={reduced ? undefined : { duration: 18, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 2 }}
       />
+
+      {/* ── Ghost scope — barely-visible silhouette at rest (desktop) ── */}
+      <div className="hidden lg:flex absolute inset-0 items-center pointer-events-none opacity-[0.05]">
+        <ScopeReticle className="w-full" />
+      </div>
 
       {/* Noise texture */}
       <svg className="absolute inset-0 h-full w-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
@@ -182,10 +198,6 @@ export function HeroBackground({ variant = "teal" }: Props) {
         <rect width="100%" height="100%" filter={`url(#${noiseId})`} />
       </svg>
 
-      {/* ── Ghost scope — barely-visible silhouette at rest (desktop) ── */}
-      <div className="hidden lg:flex absolute inset-0 items-center pointer-events-none opacity-[0.05]">
-        <ScopeReticle className="w-full" />
-      </div>
 
       {/* ── Cursor-driven layers ───────────────────────────────────────
           Both are meaningless without a tracked pointer, so reduced motion

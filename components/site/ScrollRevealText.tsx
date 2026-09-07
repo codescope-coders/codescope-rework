@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import {
   motion,
-  useIsomorphicLayoutEffect,
   useScroll,
   useSpring,
   useTransform,
@@ -121,12 +120,10 @@ function buildTokens(text: string, highlights: string[], rtl: boolean): RevealTo
 // ── Per-token reveal ───────────────────────────────────────────────────────────
 
 /**
- * `static`  — server HTML and the first client render: plain, readable white.
- * `settled` — the finished paragraph, highlights lit. What a reader who can
- *             already see the whole thing gets (see `RevealPhase` below).
- * `live`    — scroll-linked.
+ * `static` — server HTML and the first client render: plain, readable white.
+ * `live`   — scroll-linked.
  */
-type RevealPhase = "static" | "settled" | "live";
+type RevealPhase = "static" | "live";
 
 function Token({
   char, progress, index, total, isHighlighted, phase,
@@ -181,14 +178,7 @@ function Token({
   // paragraph ships legible in the HTML and only becomes scroll-linked once JS
   // is running — so nothing is ever gated on a script.
   const style =
-    phase === "live"
-      ? { color, textShadow }
-      : phase === "settled"
-        ? {
-            color:      isHighlighted ? TEAL : REVEALED,
-            textShadow: isHighlighted ? GLOW_REST : GLOW_OFF,
-          }
-        : { color: REVEALED };
+    phase === "live" ? { color, textShadow } : { color: REVEALED };
 
   return (
     <motion.span className="inline" style={style}>
@@ -241,29 +231,6 @@ export function ScrollRevealText({
   }));
   const animatable = _ai;
 
-  // A reveal only engages for text the reader has NOT already been shown.
-  //
-  // Every offset here is measured from the target's centre travelling up the
-  // viewport, so a paragraph that is entirely on screen at load sits at
-  // progress 0 — fully dimmed, above the fold, with a visible white→dim flip
-  // the moment hydration runs. That is the exact failure `useMounted` exists to
-  // avoid, and it is reachable: the About page's statement is the second thing
-  // on that page and clears the fold on a tall monitor.
-  //
-  // So a paragraph that is FULLY visible at mount renders `settled` — the
-  // finished line, highlights lit — instead of a wave for words the reader has
-  // already read. Anything that extends past the fold (every placement on a
-  // laptop, every placement on a phone, and both of the others at any size)
-  // reveals as designed. Measured once, at mount: re-testing on resize would
-  // flip live text between dim and lit mid-read.
-  const [fullyVisibleAtMount, setFullyVisibleAtMount] = useState(false);
-  useIsomorphicLayoutEffect(() => {
-    const el = selfRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setFullyVisibleAtMount(rect.top >= 0 && rect.bottom <= window.innerHeight);
-  }, []);
-
   const scrollTarget: React.RefObject<HTMLElement | null> = targetRef ?? selfRef;
   const { scrollYProgress } = useScroll({ target: scrollTarget, offset });
   // Stiff, because this spring is stacked on top of Lenis, which has already
@@ -284,11 +251,17 @@ export function ScrollRevealText({
     );
   }
 
-  const phase: RevealPhase = !mounted
-    ? "static"
-    : fullyVisibleAtMount
-      ? "settled"
-      : "live";
+  // static (server HTML: plain readable white) -> live once JS runs. There
+  // used to be a third state: a paragraph FULLY visible at mount rendered
+  // "settled" — finished, highlights lit — on the theory that dimming words
+  // the reader can already see is a flash and a wave for text already read.
+  // The founder overruled it from the Arabic About page, where compact copy
+  // puts the statement above the fold and the rule meant the reveal never
+  // played at all: "already applied before the scroll". The trade accepted in
+  // its place: on a tall viewport the paragraph dims shortly after hydration
+  // and waits for the scroll, which is the effect doing its job visibly
+  // rather than skipping itself.
+  const phase: RevealPhase = !mounted ? "static" : "live";
 
   return (
     <p ref={selfRef} className={className} style={style}>
