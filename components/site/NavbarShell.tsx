@@ -49,14 +49,36 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
         WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px) saturate(100%)",
       }}
     >
-      <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+      {/* ⚠️ Two DIFFERENT breakpoints live on this bar, deliberately.
+          The gutter, the gap and the wordmark switch at `md` — they answer
+          "is this bar cramped?", and at 768px it is not. The nav MODE (the
+          link list, Login, the CTA, and `MobileMenu`'s own trigger and panel)
+          switches at `lg`, because it answers a different question: "does the
+          desktop nav fit?" Measured, it does not until 983px — at 768 the row
+          needed 983 and pushed "Request a demo" to x=834, off the right edge of
+          every iPad in portrait, which is the same defect the CTA wrapper below
+          documents, one breakpoint up. Keep the two apart; collapsing them onto
+          one number re-cramps the phone bar or re-breaks the tablet.
+
+          ⚠️ The gutter and the gap are TIGHTER below `md`, and that is
+          load-bearing rather than cosmetic. The wordmark alone measures 194px
+          at `h-6`; with `px-6` and `gap-8` the bar's content came to 405px,
+          which does not fit a 360px Android or a 375px iPhone SE — the trailing
+          control (the menu button) simply sat outside the viewport. Measured at
+          360px: 194 + 32 + 131 + 48 = 405 against 360 available.
+
+          `px-4`/`gap-4` and a `h-5` wordmark bring it to 341px, which clears a
+          360px screen with 19px to spare and is unchanged from `md` upward.
+          Anything narrower than ~340px will overflow again; re-measure before
+          adding a third control to this row. */}
+      <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4 md:gap-8">
         {/* Logo */}
         <Link href="/" className="shrink-0 flex items-center">
-          <CodeScopeLogo className="h-6 w-auto" />
+          <CodeScopeLogo className="h-5 md:h-6 w-auto" />
         </Link>
 
         {/* Desktop nav links with active indicator */}
-        <ul className="hidden md:flex items-center gap-6 flex-1 justify-center">
+        <ul className="hidden lg:flex items-center gap-6 flex-1 justify-center">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const isProduct = item.href === PRODUCT_NAV_HREF;
@@ -129,7 +151,7 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
               demo CTA — the header carries one filled button only. */}
           <Link
             href="/login"
-            className="hidden md:inline-flex items-center px-2 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
+            className="hidden lg:inline-flex items-center px-2 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
           >
             {loginLabel}
           </Link>
@@ -140,14 +162,32 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
               five cells deep — but it is also the most-seen button on the site,
               and leaving it flat made the header read as a different design
               system from everything under it. */}
-          <StarfieldButton variant="primary" className="hidden md:inline-flex">
-            <Link
-              href="/get-started"
-              className="inline-flex items-center px-5 py-2 text-sm font-semibold bg-[#0a1c1a] text-white rounded-full hover:bg-[#0f2a27] transition-colors duration-200"
-            >
-              {ctaLabel}
-            </Link>
-          </StarfieldButton>
+          {/* ⚠️ The responsive visibility lives on THIS wrapper, never on the
+              StarfieldButton's own `className`.
+
+              `StarfieldButton` hardcodes `relative inline-flex` on its host and
+              appends the caller's classes to that same string, so a
+              caller-supplied `hidden` collides with an `inline-flex` of equal
+              specificity — and Tailwind emits `.inline-flex` AFTER `.hidden`,
+              so the later rule wins and the element is never hidden at all.
+
+              Measured at a 390px viewport before this wrapper existed: the CTA
+              computed `display: flex`, ran 103px past the right edge, and
+              shoved the `lg:hidden` hamburger to x=505 — 115px outside the
+              viewport. The mobile menu was in the DOM, correct, and physically
+              unreachable, so the site had no navigation on a phone. A wrapper
+              carries exactly one display utility per breakpoint, so there is
+              nothing for the emission order to decide. */}
+          <span className="hidden lg:inline-flex">
+            <StarfieldButton variant="primary">
+              <Link
+                href="/get-started"
+                className="inline-flex items-center px-5 py-2 text-sm font-semibold bg-[#0a1c1a] text-white rounded-full hover:bg-[#0f2a27] transition-colors duration-200"
+              >
+                {ctaLabel}
+              </Link>
+            </StarfieldButton>
+          </span>
           <MobileMenu items={navItems} ctaLabel={ctaLabel} loginLabel={loginLabel} />
         </div>
       </nav>

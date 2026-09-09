@@ -281,6 +281,17 @@ interface Props {
    * Extra classes for the WRAPPER. The pill's own padding, font, radius and
    * colour stay on the caller's `<Link>` / `<button>` inside — this component
    * introduces none of its own and reads the radius it needs off that child.
+   *
+   * ⚠️ Do NOT pass a `display` utility here — `hidden`, `flex`, `block`, or a
+   * responsive spelling of one. The host below hardcodes `relative inline-flex`
+   * and simply appends this string to it, so the two land at equal specificity
+   * and the winner is decided by Tailwind's emission order, not by yours.
+   * `.inline-flex` is emitted AFTER `.hidden`, so `className="hidden md:inline-flex"`
+   * reads as intended and hides nothing. That shipped: it left the header CTA
+   * visible on phones, which pushed the mobile menu button 115px off the right
+   * edge of the viewport and removed the site's only mobile navigation. Put
+   * responsive visibility on a wrapper element around this one — see the header
+   * CTA in `NavbarShell`.
    */
   className?: string;
   variant?: "primary" | "secondary";

@@ -2,14 +2,14 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { List, X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import Image from "next/image";
-import { PRODUCT_NAV_HREF, productPillClass } from "@/lib/nav-product-pill";
+import { PRODUCT_NAV_HREF } from "@/lib/nav-product-pill";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { pauseSmoothScroll, resumeSmoothScroll } from "@/lib/lenis";
-import { DURATION, EASE, EASE_OUT, STAGGER } from "@/lib/motion";
+import { DURATION, EASE, EASE_OUT, EASE_TRAVEL, STAGGER } from "@/lib/motion";
+import { tealGlow } from "@/lib/colors";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
 
 type NavItem = { href: string; label: string };
@@ -29,18 +29,120 @@ const overlay = {
     transition: {
       duration: DURATION.fast,
       ease: EASE_OUT,
-      when: "beforeChildren",
-      staggerChildren: STAGGER.tight,
+      // ⚠️ NOT `when: "beforeChildren"`. That held every row back until the
+      // ground had finished arriving, so the menu did nothing at all for its
+      // first 220ms and then started — which reads as lag rather than as
+      // layering. The rows now begin while the ground is still coming up, and
+      // `delayChildren` is only the beat that keeps them from racing it.
+      delayChildren: STAGGER.base,
+      staggerChildren: STAGGER.base,
     },
   },
-  exit: { opacity: 0, transition: { duration: 0.18, ease: "easeIn" as const } },
+  // A dismissal should be quicker than an arrival, and it is one fade: the
+  // ground carries the rows out with it. Staggering the rows on the way out
+  // too was tried and put half a second between the tap and an empty screen.
+  exit: { opacity: 0, transition: { duration: DURATION.fast, ease: EASE_OUT } },
 };
 
+// Mostly a FADE, with just enough lift to carry a direction (founder, mobile
+// review 2026-09-09). A 16px throw over 0.22s read as rows being flung into
+// place; 8px over `DURATION.base` reads as rows arriving.
 const item = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: DURATION.fast, ease: EASE } },
-  exit: { opacity: 0, y: 8 },
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: DURATION.base, ease: EASE } },
+  exit: { opacity: 0, transition: { duration: DURATION.instant, ease: EASE_OUT } },
 };
+
+/**
+ * The teal hairline that sweeps the panel once, on open.
+ *
+ * The menu's one piece of ornament, and it is borrowed rather than invented:
+ * the desktop nav marks its current page with a teal hairline, and
+ * `StarfieldButton` runs a light around a CTA's rim. A light travelling a
+ * surface is already this site's way of saying "this is live". Here it reads as
+ * the panel being DRAWN rather than merely appearing, and it is timed to reach
+ * the foot of the list at about the moment the last row settles: the rows start
+ * at `STAGGER.base` and step by the same, so the seventh begins at 0.42s and
+ * finishes at 0.77s — against this sweep's `DURATION.slower`. Re-time one and
+ * re-time both, or the light lands on a list still assembling.
+ *
+ * ⚠️ Transform and opacity ONLY, and on a layer of its own OUTSIDE the panel.
+ * The panel is a full-screen `backdrop-blur-xl` surface, so anything that
+ * changes its geometry — a `scale`, a `clip-path`, an animated `height` — makes
+ * the browser re-sample the blur of the entire page behind it on every frame,
+ * on the device least able to afford it. That is the same reason the overlay
+ * below fades rather than scales. A 1px line translating inside its own
+ * `overflow-hidden` box costs a composite and nothing else.
+ *
+ * Keeping the layer OUT of the panel is the second half of that: the panel is
+ * `overflow-y-auto`, and a transformed child travelling its full height would
+ * be counted in its scrollable overflow — the menu would gain a screen of empty
+ * scroll for the duration of the animation.
+ */
+const sweep = {
+  hidden: { y: "0%", opacity: 0 },
+  show: {
+    y: "100%",
+    // Struck, held, then gone — a light that simply faded in and out would read
+    // as a glow rather than as something travelling.
+    opacity: [0, 1, 0.9, 0],
+    transition: { duration: DURATION.slower, ease: EASE_TRAVEL, times: [0, 0.1, 0.72, 1] },
+  },
+};
+
+/**
+ * The trigger's glyph: three bars that fold into a cross.
+ *
+ * It replaces a cross-fade between two icon-font glyphs, which could only ever
+ * CUT from one shape to the other — the outgoing glyph rotated out while the
+ * incoming one rotated in, and at 150ms that reads as a flicker rather than as
+ * a change of state. Bars this component owns can actually travel: the outer
+ * two converge on the middle's centre line and rotate into the X while the
+ * middle one gets out of their way.
+ *
+ * The geometry is measured, not eyeballed. Three 1.5px bars on a 6.25px pitch
+ * span 14px, centred in a 20px box puts their tops at 3 / 9.25 / 15.5 and their
+ * centres at 3.75 / 10 / 16.25 — so the outer two each travel exactly 6.25px to
+ * land on the middle's centre. The 20px box inside the button's `p-2` keeps the
+ * trigger's hit area at the 36x36 it was with the icon font, so the header's
+ * layout does not move.
+ *
+ * `bg-current` inherits the button's own `text-zinc-400 hover:text-white`, so
+ * the hover treatment is unchanged from the icon it replaces. Transform and
+ * opacity only.
+ */
+function MenuGlyph({ open, reduced }: { open: boolean; reduced: boolean }) {
+  const spring = reduced
+    ? { duration: 0 }
+    : { type: "spring" as const, stiffness: 500, damping: 32, mass: 0.7 };
+  const fade = reduced ? { duration: 0 } : { duration: DURATION.instant, ease: EASE_OUT };
+  const bar = "absolute inset-x-0 block h-[1.5px] rounded-full bg-current";
+
+  return (
+    <span aria-hidden="true" className="relative block h-5 w-5">
+      <motion.span
+        className={bar}
+        style={{ top: 3 }}
+        animate={open ? { y: 6.25, rotate: 45 } : { y: 0, rotate: 0 }}
+        transition={spring}
+      />
+      <motion.span
+        className={bar}
+        style={{ top: 9.25 }}
+        // Shrinking as it goes, so it reads as being absorbed into the cross
+        // rather than as a bar that blinked out.
+        animate={open ? { opacity: 0, scaleX: 0.3 } : { opacity: 1, scaleX: 1 }}
+        transition={fade}
+      />
+      <motion.span
+        className={bar}
+        style={{ top: 15.5 }}
+        animate={open ? { y: -6.25, rotate: -45 } : { y: 0, rotate: 0 }}
+        transition={spring}
+      />
+    </span>
+  );
+}
 
 export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: NavItem[]; ctaLabel: string; loginLabel: string }) {
   const [open, setOpen] = useState(false);
@@ -104,10 +206,13 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   }, [open]);
 
   const navLinks = items.map((navItem) => {
-    // TourScope gets the same product pill as the desktop nav. The ROW keeps
-    // its height, divider and pitch — the pill is the label, not the row —
-    // because a full-width purple bar in a list of plain links would read as a
-    // second CTA rather than as "this one is the product".
+    // ⚠️ NO product pill here, unlike the desktop nav (founder, mobile review
+    // 2026-09-09). The purple chip was the one framed object in a column of
+    // plain words, and at this type size it read as a button that had fallen
+    // into a list of links rather than as "this one is the product". The
+    // wordmark alone already says which row it is. The desktop pill in
+    // `NavbarShell` is unchanged — there it sits among other chips, not among
+    // 24px words.
     if (navItem.href === PRODUCT_NAV_HREF) {
       const isActive = pathname === navItem.href;
       return (
@@ -116,22 +221,20 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
           href={navItem.href}
           onClick={() => setOpen(false)}
           aria-current={isActive ? "page" : undefined}
-          // `py-[9px]`, not the neighbours' `py-4`: the pill is 42px tall
-          // (28px line + 2×6px padding + 2×1px border) against a plain row's
-          // 28px line, so keeping `py-4` here made this row 74px in a list of
-          // 60px rows — a visible stutter in the menu's pitch. 2×9 + 42 = 60
-          // restores it exactly. Measured, not guessed; re-measure if the
-          // pill's padding or the row's type size changes.
-          className="flex py-[9px] border-b border-white/5 last:border-none"
+          className="group flex py-5 border-b border-white/5 last:border-none"
         >
-          <span className={`group/pill ${productPillClass(isActive, "mobile")}`}>
-            {/* Same wordmark-in-pill as the desktop nav — see NavbarShell. */}
+          {/* The mark is centred in a box exactly the height of a neighbour's
+              LINE (`h-8` is `text-2xl`'s 2rem), so every row in the list is
+              72px and the pitch does not stutter on the one row that carries an
+              image instead of text. Measured, not guessed — re-measure if the
+              row's type size changes. */}
+          <span className="flex h-8 items-center">
             <Image
               src="/Branding/tourscope.svg"
               alt={navItem.label}
               width={507}
               height={54}
-              className="h-[11px] w-auto brightness-0 invert transition-[filter] duration-300 group-hover/pill:brightness-100 group-hover/pill:invert-0"
+              className="h-[15px] w-auto brightness-0 invert transition-[filter] duration-300 group-hover:brightness-100 group-hover:invert-0"
             />
           </span>
         </Link>
@@ -143,7 +246,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
         key={navItem.href}
         href={navItem.href}
         onClick={() => setOpen(false)}
-        className="block text-zinc-300 hover:text-white py-4 border-b border-white/5 text-xl font-medium transition-colors last:border-none"
+        className="block text-zinc-300 hover:text-white py-5 border-b border-white/5 text-2xl font-medium transition-colors last:border-none"
       >
         {navItem.label}
       </Link>
@@ -179,7 +282,13 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   );
 
   const panelBody = (
-    <nav className="max-w-7xl mx-auto px-6 py-8 flex flex-col gap-1">
+    // ⚠️ `max-w-2xl`, not the site's usual `max-w-7xl`. This panel serves
+    // tablets now that the nav switches at `lg`, and at 1023px an unconstrained
+    // column gave a 975px-wide "Request a demo" button under six links strung
+    // across the full width — a phone layout stretched, not a tablet one. 672px
+    // is wider than any phone, so nothing below `sm` changes at all; above it
+    // the column centres and keeps a readable measure.
+    <nav className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-1">
       {reduced
         ? navLinks.map((link) => <div key={link.key}>{link}</div>)
         : navLinks.map((link) => (
@@ -208,7 +317,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   // `bottom-0` both resolved against the header's own 64px box and the panel
   // computed to `height: 0` — open, focus-trapped, body scroll locked, and
   // invisible. Measured on both this build and the design source it was ported
-  // from: `getBoundingClientRect().height === 0` at every width below `md`,
+  // from: `getBoundingClientRect().height === 0` at every width below `lg`,
   // i.e. the mobile menu could never be seen on a phone.
   //
   // Pinning the height sidesteps the containing block entirely while leaving
@@ -217,34 +326,28 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   // correct because the header is full-bleed. 4rem is the same `h-16` the
   // header and `top-16` already assume — one number, three call sites, so it
   // stays consistent if the bar is ever resized.
-  const panelClassName =
-    "md:hidden fixed top-16 inset-x-0 h-[calc(100dvh-4rem)] bg-zinc-950/98 backdrop-blur-xl z-40 overflow-y-auto";
+  //
+  // The geometry is factored out because the sweep layer below has to occupy
+  // exactly the same box. Two hand-written copies of a comment this long is how
+  // one of them quietly stops matching the other.
+  const panelBoxClassName = "lg:hidden fixed top-16 inset-x-0 h-[calc(100dvh-4rem)]";
+  const panelClassName = `${panelBoxClassName} bg-zinc-950/98 backdrop-blur-xl z-40 overflow-y-auto`;
 
   return (
     <>
       <button
         ref={triggerRef}
         onClick={() => setOpen(!open)}
-        className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+        className="lg:hidden inline-flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors"
         aria-label={open ? t("closeMenu") : t("openMenu")}
         aria-expanded={open}
         aria-controls={panelId}
       >
-        {reduced ? (
-          open ? <X size={20} weight="bold" /> : <List size={20} weight="bold" />
-        ) : (
-          <AnimatePresence mode="wait" initial={false}>
-            {open ? (
-              <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: DURATION.instant }}>
-                <X size={20} weight="bold" />
-              </motion.span>
-            ) : (
-              <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: DURATION.instant }}>
-                <List size={20} weight="bold" />
-              </motion.span>
-            )}
-          </AnimatePresence>
-        )}
+        {/* One glyph in both states — see `MenuGlyph`. Under reduced motion its
+            bars land in place with a zero-length transition, so the button
+            still SHOWS a cross while open rather than freezing on a
+            hamburger. */}
+        <MenuGlyph open={open} reduced={reduced} />
       </button>
 
       {reduced ? (
@@ -292,6 +395,35 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
             </motion.div>
           )}
         </AnimatePresence>
+      )}
+
+      {/* The sweep — OVER the panel, and outside it.
+          ⚠️ `z-[41]`, one above the panel's own `z-40`, and rendered after it.
+          Either alone would do it; both are here because the first cut relied
+          on DOM order, sat before the panel in the tree, and was painted over
+          by an opaque surface — a light animating perfectly, invisibly, with
+          nothing to say why.
+          `overflow-hidden` keeps the travelling line inside the panel's box.
+          No `AnimatePresence`: unmounting the instant `open` flips is what we
+          want — a light sweeping the panel as it CLOSES would be ornament
+          arguing with a dismissal. */}
+      {!reduced && open && (
+        <span
+          aria-hidden="true"
+          className={`${panelBoxClassName} z-[41] overflow-hidden pointer-events-none`}
+        >
+          <motion.span
+            className="absolute inset-x-0 top-0 block h-full"
+            variants={sweep}
+            initial="hidden"
+            animate="show"
+          >
+            <span
+              className="absolute inset-x-0 top-0 block h-px bg-cs-teal"
+              style={{ boxShadow: `0 0 14px 1px ${tealGlow(0.55)}` }}
+            />
+          </motion.span>
+        </span>
       )}
     </>
   );

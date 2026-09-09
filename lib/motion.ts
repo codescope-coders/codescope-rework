@@ -16,6 +16,19 @@ export const EASE: Ease = [0.21, 0.47, 0.32, 0.98];
 /** Sharper out-curve for UI that must feel immediate (menus, toggles). */
 export const EASE_OUT: Ease = [0.32, 0, 0.16, 1];
 
+/**
+ * For something TRAVELLING a path rather than arriving at a destination — the
+ * mobile menu's scanline today.
+ *
+ * Symmetric and gentle: it leaves, it cruises, it settles. Both curves above
+ * are front-loaded, which is right for an element that appears and is
+ * immediately at rest, and wrong for a light crossing a surface — under `EASE`
+ * the scanline covered 60% of the panel in its first 150ms and then crawled,
+ * which reads as a flick rather than a sweep. Near-linear in the middle is what
+ * makes it look like it is moving at a speed rather than easing.
+ */
+export const EASE_TRAVEL: Ease = [0.4, 0, 0.6, 1];
+
 /** Seconds. Named by intent, not by number, so timings stay comparable. */
 export const DURATION = {
   /** Icon swaps, state flips. */
