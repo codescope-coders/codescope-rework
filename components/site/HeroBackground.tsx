@@ -12,13 +12,11 @@ import {
 import { ScopeReticle } from "./ScopeReticle";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { tealGlow } from "@/lib/colors";
+import "./hero-background.css";
 
 interface Props {
   variant?: "teal" | "purple";
 }
-
-/** The orbs re-enter every time the hero does, so this is deliberately not `once`. */
-const ORB_VIEWPORT = { once: false } as const;
 
 // Halved (0.16 -> 0.08) in the same pass that halved the token field's lit
 // alpha: the two stack on every hero, and the COMPOUND is what read as a shine
@@ -32,6 +30,8 @@ export function HeroBackground({ variant = "teal" }: Props) {
 
   // ── Mouse tracking ──────────────────────────────────────────────────────────
   const containerRef = useRef<HTMLDivElement>(null);
+  const primaryOrbRef = useRef<HTMLDivElement>(null);
+  const secondaryOrbRef = useRef<HTMLDivElement>(null);
   const mx           = useMotionValue(-9999);
   const my           = useMotionValue(-9999);
   const maskRadius   = useMotionValue(0);
@@ -59,16 +59,44 @@ export function HeroBackground({ variant = "teal" }: Props) {
   // heroes on one page (or a hero plus any future consumer) would both point at
   // the first `hero-noise`. `useId` is per-instance; its React delimiters are
   // stripped because they are not valid in a CSS `url()` fragment.
-  // The orbs drift on a long loop; under reduced motion they simply sit still.
-  const primaryDrift = reduced ? undefined : { x: [0, 60, -30, 0], y: [0, -40, 60, 0] };
-  const secondaryDrift = reduced ? undefined : { x: [0, -50, 30, 0], y: [0, 50, -30, 0] };
-
   const noiseId = `hero-noise-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let visible = false;
+    const update = () => {
+      const covered = document.querySelector(".site-menu-toggle[open]") !== null;
+      const state = visible && !document.hidden && !covered ? "running" : "paused";
+      for (const orb of [primaryOrbRef.current, secondaryOrbRef.current]) {
+        if (orb) orb.style.animationPlayState = state;
+      }
+    };
+    const onToggle = (event: Event) => {
+      if ((event.target as Element)?.matches?.(".site-menu-toggle")) update();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      update();
+    });
+    observer.observe(container);
+    document.addEventListener("toggle", onToggle, true);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("toggle", onToggle, true);
+      document.removeEventListener("visibilitychange", update);
+    };
+  }, []);
 
   useEffect(() => {
     // Reduced motion: no cursor tracking at all. The listener exists only to
     // drive the spotlight, so with the spotlight gone it is pure overhead.
     if (reduced) return;
+    // iOS synthesizes mouse events for taps. Those must not start the desktop
+    // spotlight's full-hero mask spring before a navigation click is delivered.
+    // The ambient orbs, texture, and branding remain visible on touch screens.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     // The container's box, cached. `getBoundingClientRect` is a layout read;
     // doing it inside `mousemove` forces a synchronous reflow on every frame
@@ -166,22 +194,17 @@ export function HeroBackground({ variant = "teal" }: Props) {
           briefly replaced them and are back because the beam read as glare —
           at `/8` and `/5` over a `blur-3xl` these are atmosphere, not shine.
 
-          `whileInView` rather than `animate`: they are infinite loops on
-          `blur-3xl` layers, and as plain `animate` they kept compositing for
-          the whole scroll of the page long after the hero left the screen.
-          `once: false` so they resume when the hero comes back. */}
-      <motion.div
-        className={`pointer-events-none absolute -top-32 ${isTeal ? "-start-32" : "-end-32"} h-[650px] w-[650px] rounded-full blur-3xl ${isTeal ? "bg-cs-teal/8" : "bg-ts-purple/8"}`}
-        whileInView={primaryDrift}
-        viewport={ORB_VIEWPORT}
-        transition={reduced ? undefined : { duration: 14, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          CSS transform loops preserve the drift without JavaScript per frame.
+          Pause at the current position while outside the viewport or covered
+          by navigation; resume the decoration when the page is visible again. */}
+      <div
+        ref={primaryOrbRef}
+        className={`site-hero-orb site-hero-orb-primary pointer-events-none absolute -top-32 ${isTeal ? "-start-32" : "-end-32"} h-[650px] w-[650px] rounded-full blur-3xl ${isTeal ? "bg-cs-teal/8" : "bg-ts-purple/8"}`}
       />
 
-      <motion.div
-        className={`pointer-events-none absolute -bottom-48 ${isTeal ? "-end-24" : "-start-24"} h-[500px] w-[500px] rounded-full blur-3xl ${isTeal ? "bg-ts-purple/5" : "bg-cs-teal/5"}`}
-        whileInView={secondaryDrift}
-        viewport={ORB_VIEWPORT}
-        transition={reduced ? undefined : { duration: 18, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 2 }}
+      <div
+        ref={secondaryOrbRef}
+        className={`site-hero-orb site-hero-orb-secondary pointer-events-none absolute -bottom-48 ${isTeal ? "-end-24" : "-start-24"} h-[500px] w-[500px] rounded-full blur-3xl ${isTeal ? "bg-ts-purple/5" : "bg-cs-teal/5"}`}
       />
 
       {/* ── Ghost scope — barely-visible silhouette at rest (desktop) ── */}

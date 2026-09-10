@@ -32,7 +32,7 @@ export function SmoothScroll() {
     // Everything that reads the instance already handles its absence, because
     // that is the normal state under reduced motion: `ScrollToTop` falls back
     // to `window.scrollTo`, and `pauseSmoothScroll` / `resumeSmoothScroll` are
-    // documented no-ops (`MobileMenu` locks `body` itself either way). Topic
+    // documented no-ops (`MobileMenu` contains scrolling in its own panel). Topic
     // links use native smooth scrolling on demand when this driver is absent.
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
