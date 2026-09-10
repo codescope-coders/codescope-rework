@@ -86,3 +86,15 @@ Validation: production build, TypeScript, scoped ESLint, whitespace checks, and 
 A local read-only proxy delayed navigation responses by four seconds. During that simulated delay, the menu reported closed and visible "Loading page…" feedback appeared before the URL changed; the feedback disappeared once navigation completed. This is a controlled local check, not a measurement on physical Safari/Chrome or the live deployment.
 
 References: [Next.js linking and navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status), [WebKit fixed descendants under backdrop filters](https://bugs.webkit.org/show_bug.cgi?id=215256).
+
+## Follow-up: native activation on iPhone (2026-09-10)
+
+The user still reported failed/delayed taps on an iPhone Air and iPhone 17 Pro Max while desktop interactions worked. A fresh request to `https://codescope.dev/tourscope` confirmed that the previously pushed `.site-menu-panel` implementation was present; its menu JavaScript contained no old laser-sweep layer. An old deployment was therefore not established as the cause.
+
+The mobile trigger now uses a native `details`/`summary` disclosure. Its browser-owned `open` attribute directly drives the existing CSS fade, row movement, and animated glyph. React enhances focus, Escape, and route cleanup, but opening and closing no longer require a React click handler or hydration. The sibling panel remains mounted so closing can still fade smoothly. CSS scroll locking also works before hydration. Avoided setting/removing `inert` on the full marketing page for every toggle; the full-screen panel, modal semantics, and keyboard trap handle navigation isolation.
+
+Visual styling and the ordinary site decorations remain intact. The menu laser sweep remains absent; the standard scroll progress decoration is preserved following the user's request to keep the site's decorative treatment.
+
+Validation: a local proxy stripped all page scripts and blocked JavaScript via CSP. With zero script elements present, English (390px) and Arabic (320px) menus opened/closed, retained the 180ms panel transition, locked background scrolling, and exposed the correct localized control label. Native keyboard activation and navigation were checked too. Hydrated Escape cleanup was separately verified. Production build, TypeScript, scoped lint, and public SEO checks passed during this refinement. No physical-iPhone test or exact device-latency measurement is claimed.
+
+Native disclosure reference: [MDN details element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details).

@@ -6,7 +6,7 @@
   transition: opacity 180ms ease-out, visibility 0s linear 180ms;
 }
 
-[data-site="public"] .site-menu-panel[data-open="true"] {
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -19,7 +19,7 @@
   transition: opacity 160ms ease-out, transform 200ms cubic-bezier(0.2, 0.7, 0.3, 1), color 150ms ease-out;
 }
 
-[data-site="public"] .site-menu-panel[data-open="true"] .site-menu-row {
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-row {
   opacity: 1;
   transform: translateY(0);
 }
@@ -42,13 +42,29 @@
 .site-menu-glyph > span:nth-child(1) { top: 3px; }
 .site-menu-glyph > span:nth-child(2) { top: 9.25px; }
 .site-menu-glyph > span:nth-child(3) { top: 15.5px; }
-.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(1) { transform: translateY(6.25px) rotate(45deg); }
-.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
-.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
+.site-menu-toggle[open] .site-menu-glyph > span:nth-child(1) { transform: translateY(6.25px) rotate(45deg); }
+.site-menu-toggle[open] .site-menu-glyph > span:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
+.site-menu-toggle[open] .site-menu-glyph > span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
 
 @media (prefers-reduced-motion: reduce) {
   [data-site="public"] :is(.site-menu-panel, .site-menu-row, .site-menu-glyph > span) {
     transition: none;
     transform: none;
   }
+}
+
+/* Native disclosure activation works before hydration and without JavaScript. */
+[data-site="public"] .site-menu-trigger {
+  list-style: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-site="public"] .site-menu-trigger::-webkit-details-marker { display: none; }
+[data-site="public"] .site-menu-label-close { display: none; }
+[data-site="public"] .site-menu-toggle[open] .site-menu-label-open { display: none; }
+[data-site="public"] .site-menu-toggle[open] .site-menu-label-close { display: block; }
+
+@media (max-width: 1023px) {
+  html:has(.site-menu-toggle[open]),
+  body:has(.site-menu-toggle[open]) { overflow: hidden; }
 }

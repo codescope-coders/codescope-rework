@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link, usePathname } from "@/i18n/routing";
@@ -23,19 +23,34 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement>(null);
+  const disclosureRef = useRef<HTMLDetailsElement>(null);
+  const closeMenu = useCallback(() => {
+    if (disclosureRef.current) disclosureRef.current.open = false;
+    setOpen(false);
+  }, []);
+
+  // The browser may have opened the disclosure before hydration completed.
+  // Subscribe directly so React only enhances focus/scroll behavior; it never
+  // owns the native open attribute or delays the visual response to a tap.
+  useEffect(() => {
+    const disclosure = disclosureRef.current;
+    if (!disclosure) return;
+    const sync = () => setOpen(disclosure.open);
+    sync();
+    disclosure.addEventListener("toggle", sync);
+    return () => disclosure.removeEventListener("toggle", sync);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
     pauseSmoothScroll();
     const desktop = window.matchMedia("(min-width: 1024px)");
-    const onDesktop = () => { if (desktop.matches) setOpen(false); };
+    const onDesktop = () => { if (desktop.matches) closeMenu(); };
     desktop.addEventListener("change", onDesktop);
-    const content = document.querySelector<HTMLElement>('[data-site="public"] main');
-    const footer = document.querySelector<HTMLElement>('[data-site="public"] footer');
-    const previousInert = [content?.inert, footer?.inert];
-    if (content) content.inert = true;
-    if (footer) footer.inert = true;
+    // The opaque viewport panel, modal semantics, and keyboard trap isolate
+    // navigation. Avoid toggling inert across the very large marketing page
+    // on every tap, which adds accessibility/style work on mobile browsers.
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const trigger = triggerRef.current;
@@ -49,7 +64,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        setOpen(false);
+        closeMenu();
         return;
       }
       if (event.key !== "Tab") return;
@@ -71,41 +86,40 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       desktop.removeEventListener("change", onDesktop);
-      if (content) content.inert = previousInert[0] ?? false;
-      if (footer) footer.inert = previousInert[1] ?? false;
       document.body.style.overflow = previousOverflow;
       resumeSmoothScroll();
       trigger?.focus({ preventScroll: true });
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="site-menu-trigger lg:hidden inline-flex h-11 w-11 shrink-0 items-center justify-center p-2 text-zinc-400 hover:text-white"
-        aria-label={open ? t("closeMenu") : t("openMenu")}
-        aria-expanded={open}
-        aria-controls={panelId}
+      <details
+        ref={disclosureRef}
+        suppressHydrationWarning
+        className="site-menu-toggle lg:hidden shrink-0"
       >
-        <span aria-hidden="true" className="site-menu-glyph">
-          <span /><span /><span />
-        </span>
-      </button>
+        <summary
+          ref={triggerRef}
+          className="site-menu-trigger inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center p-2 text-zinc-400 hover:text-white"
+          aria-controls={panelId}
+        >
+          <span className="site-menu-label-open sr-only">{t("openMenu")}</span>
+          <span className="site-menu-label-close sr-only">{t("closeMenu")}</span>
+          <span aria-hidden="true" className="site-menu-glyph">
+            <span /><span /><span />
+          </span>
+        </summary>
+      </details>
 
-      {/* Keep the small menu tree mounted: taps only change CSS state, without
-          mounting Motion controllers or waiting for an exit lifecycle. */}
+      {/* This sibling stays mounted so native [open] can drive both directions
+          of the CSS transition, even with JavaScript unavailable. */}
       <div
         ref={panelRef}
         id={panelId}
         role="dialog"
         aria-modal={open ? true : undefined}
         aria-label={t("menuLabel")}
-        aria-hidden={!open}
-        inert={!open}
-        data-open={open}
         data-lenis-prevent
         className="site-menu-panel lg:hidden fixed top-16 inset-x-0 bottom-0 z-40 overflow-y-auto overscroll-contain bg-zinc-950"
       >
@@ -114,7 +128,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               aria-current={pathname === item.href ? "page" : undefined}
               className={`site-menu-row flex items-center min-h-14 py-4 sm:py-5 border-b border-white/5 text-2xl font-medium transition-colors ${pathname === item.href ? "text-cs-teal" : "text-zinc-300 hover:text-white"}`}
             >
@@ -127,11 +141,11 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
             </Link>
           ))}
           <div className="site-menu-row mt-6">
-            <Link href="/get-started" onClick={() => setOpen(false)} className="block w-full text-center py-3.5 px-6 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors">
+            <Link href="/get-started" onClick={closeMenu} className="block w-full text-center py-3.5 px-6 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors">
               {ctaLabel}
               <NavigationPending />
             </Link>
-            <InternalLink href="/login" onClick={() => setOpen(false)} className="block w-full text-center py-3 px-6 text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+            <InternalLink href="/login" onClick={closeMenu} className="block w-full text-center py-3 px-6 text-sm font-medium text-zinc-400 hover:text-white transition-colors">
               {loginLabel}
               <NavigationPending />
             </InternalLink>
