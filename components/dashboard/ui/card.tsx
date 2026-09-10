@@ -1,13 +1,12 @@
 import { cn } from "@/lib/utils";
 
-// whitelabel-console card: a neutral-50 frame wrapping a bordered bg-background
-// content surface (Geist — flat, border-led).
+// Shared Codescope surface: one quiet border and a clear content hierarchy.
 export function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col gap-2 overflow-hidden rounded-2xl border border-border bg-neutral-50 p-2",
+        "flex flex-col overflow-hidden rounded-2xl border border-border bg-overlay shadow-sm",
         className,
       )}
       {...props}
@@ -19,7 +18,7 @@ export function CardHeader({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 px-3 py-2.5",
+        "flex items-center justify-between gap-3 px-5 py-4",
         className,
       )}
       {...props}
@@ -40,7 +39,7 @@ export function CardContent({ className, ...props }: React.ComponentProps<"div">
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-background p-5",
+        "border-t border-border p-5 first:border-t-0",
         className,
       )}
       {...props}

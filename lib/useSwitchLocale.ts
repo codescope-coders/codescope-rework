@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useTransition } from "react";
 import { useLocale } from "next-intl";
-import { LOCALE_COOKIE } from "@/i18n/routing";
+import { LOCALE_COOKIE } from "@/i18n/config";
+import { localizedPath, unlocalizedPath } from "@/lib/site-urls";
 import { getLenis } from "@/lib/lenis";
 
 /** A year. The locale is a preference, not a session. */
@@ -102,47 +103,8 @@ function restore(anchor: ScrollAnchor) {
   else window.scrollTo(0, target);
 }
 
-/**
- * Switch the site's language IN PLACE — no locale in the URL, and no jump back
- * to the top of the page.
- *
- * ── Why this is not `router.replace(pathname, { locale })` ──────────────────
- * next-intl's own navigation router is the obvious call and it is wrong for
- * both goals. Its `createHandler` passes `forcePrefix: nextLocale != null`
- * whenever a locale is given (`navigation/react-client/createNavigation.js`),
- * so it deliberately navigates to the PREFIXED URL — `/ar/tourscope` — even
- * under `localePrefix: "never"`, leaving the middleware to redirect back to the
- * bare path. That costs a visible `/ar` in the address bar, an extra server
- * round trip, and the reader's place. `scroll: false` cannot save it: the
- * option rides the client call that the server's redirect supersedes.
- *
- * So the switch is done the way the locale is actually resolved: write the
- * cookie the middleware reads, then ask for a fresh server render of the URL we
- * are already on.
- *
- * ⚠️ The cookie MUST be written before `refresh()` — the refresh is a request
- * that passes through the middleware, and the middleware picks the language
- * from that cookie. Written after, the refresh re-renders the language the
- * reader is already looking at.
- *
- * ── Why the scroll is restored by hand ──────────────────────────────────────
- * `refresh()` alone still lands the reader at the top. Traced: the App Router
- * reads the re-routed payload as a route change, mounts a fresh
- * `ScrollAndFocusHandler`, and its `componentDidMount` → `handlePotentialScroll`
- * sets `document.documentElement.scrollTop = 0`. No userland flag disables it,
- * so the position is captured before the switch and re-applied after.
- *
- * ⚠️ The restore cannot run in a plain effect body: a deep child's effects fire
- * BEFORE a shallow parent's `componentDidMount`, so it would be undone by the
- * reset a moment later. It is deferred one animation frame past the commit that
- * carries the new locale — after Next's reset, still inside the same paint, so
- * nothing is visibly scrolled twice.
- *
- * ⚠️ And it must survive the remount: the rAF is cancelled on unmount but
- * `pendingRestore` is deliberately NOT cleared there, so the second mount
- * re-schedules it. Only the frame that actually applies the scroll clears it.
- */
-export function useSwitchLocale() {
+/** Preserve the reader’s place across public URL changes and internal cookie refreshes. */
+export function useSwitchLocale(publicSite = false) {
   const router = useRouter();
   const activeLocale = useLocale();
   const [isPending, startTransition] = useTransition();
@@ -182,7 +144,12 @@ export function useSwitchLocale() {
     document.cookie = `${LOCALE_COOKIE}=${nextLocale};path=/;max-age=${COOKIE_MAX_AGE};samesite=lax`;
 
     startTransition(() => {
-      router.refresh();
+      if (publicSite) {
+        const path = unlocalizedPath(window.location.pathname);
+        router.replace(localizedPath(path, nextLocale) + window.location.search + window.location.hash, { scroll: false });
+      } else {
+        router.refresh();
+      }
     });
   }
 

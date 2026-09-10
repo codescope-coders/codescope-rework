@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 
-// whitelabel-console table: a neutral-50 card framing a bg-background panel with
-// hairline row separators (last row flush) and a soft row hover.
+// One surface with contained horizontal scrolling on narrow screens.
 export function TableWrap({
   className,
   children,
@@ -12,11 +11,11 @@ export function TableWrap({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-border bg-neutral-50 p-2",
+        "min-w-0 overflow-hidden rounded-2xl border border-border bg-overlay shadow-sm",
         className,
       )}
     >
-      <div className="scrollbar-thin overflow-x-auto rounded-xl border border-border bg-background">
+      <div className="scrollbar-thin overflow-x-auto overscroll-x-contain">
         {children}
       </div>
     </div>
@@ -39,7 +38,7 @@ export function Th({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "h-11 whitespace-nowrap border-b border-border px-4 text-start align-middle font-medium text-muted-foreground",
+        "h-11 whitespace-nowrap border-b border-border bg-neutral-50 px-4 text-start align-middle font-medium text-muted-foreground",
         className,
       )}
       {...props}

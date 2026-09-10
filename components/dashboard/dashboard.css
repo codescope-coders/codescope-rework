@@ -1,0 +1,110 @@
+/* Dashboard-only skin. Marketing routes and authentication keep their own UI. */
+[data-theme="light"] {
+  color-scheme: light;
+  --dashboard-brand: #08baa8;
+  --theme-background: #ffffff;
+  --theme-canvas: #f4f6f6;
+  --theme-overlay: #ffffff;
+  --theme-card: #ffffff;
+  --theme-foreground: #182323;
+  --theme-card-foreground: #182323;
+  --theme-border: #e2e8e7;
+  --theme-muted: #edf2f1;
+  --theme-muted-foreground: #5d6b69;
+  /* A deeper brand teal keeps white button labels and inline links readable. */
+  --theme-primary: #087f73;
+  --theme-primary-foreground: #ffffff;
+  --theme-neutral-50: #f8fafa;
+  --theme-neutral-100: #edf2f1;
+  --theme-neutral-200: #e2e8e7;
+  --theme-neutral-300: #c9d3d1;
+  --theme-neutral-400: #73817f;
+  --theme-neutral-500: #62716f;
+  --theme-neutral-600: #4d5e5b;
+}
+
+[data-theme="dark"][data-theme] {
+  color-scheme: dark;
+  --dashboard-brand: #08baa8;
+  --theme-background: #121717;
+  --theme-canvas: #0b1010;
+  --theme-overlay: #141b1b;
+  --theme-card: #141b1b;
+  --theme-foreground: #edf5f3;
+  --theme-card-foreground: #edf5f3;
+  --theme-border: #2a3735;
+  --theme-muted: #1e2927;
+  --theme-muted-foreground: #a1b2ae;
+  --theme-primary: #22d3be;
+  --theme-primary-foreground: #062d28;
+  --theme-primary-50: #123630;
+  --theme-primary-100: #16453d;
+  --theme-primary-50-foreground: #a7f3e5;
+  --theme-primary-100-foreground: #a7f3e5;
+  --theme-primary-600: #35c6b1;
+  --theme-primary-700: #7be3d3;
+  --theme-neutral-50: #17201f;
+  --theme-neutral-100: #1e2927;
+  --theme-neutral-200: #2a3735;
+  --theme-neutral-300: #40534f;
+  --theme-neutral-400: #91a39f;
+  --theme-neutral-500: #a1b2ae;
+  --theme-neutral-600: #b6c7c2;
+  --theme-neutral-700: #ccdad6;
+}
+
+[data-theme][data-theme] {
+  font-family: "IBM Plex Sans Arabic Fallback", var(--font-geist-sans), Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] [data-theme][data-theme],
+[data-theme][dir="rtl"] {
+  font-family: "IBM Plex Sans Arabic", var(--font-geist-sans), sans-serif;
+  letter-spacing: normal;
+}
+
+/* Global theme mapping supplies tokens; individual panels own their surfaces. */
+[data-theme][data-theme]:not(.dashboard-shell) {
+  background-color: var(--theme-overlay);
+}
+
+.dashboard-shell {
+  isolation: isolate;
+}
+
+/* Dropdowns anchor to the viewport on phones so every trigger has room. */
+@media (max-width: 639px) {
+  .dashboard-topbar .dashboard-header-menu {
+    position: fixed;
+    inset-inline: 16px;
+    top: 80px;
+    width: auto !important;
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+  }
+
+  [data-theme] :is(input, textarea, select) {
+    font-size: 16px; /* Avoid automatic form-field zoom on iOS. */
+  }
+}
+
+@media (pointer: coarse) {
+  [data-theme] :is(button, [data-slot="button"], nav a) {
+    min-height: 44px;
+  }
+
+  .dashboard-topbar button,
+  [data-theme] button:has(> svg:only-child) {
+    min-width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme], [data-theme] *, [data-theme] *::before, [data-theme] *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

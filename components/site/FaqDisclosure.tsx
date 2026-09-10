@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 /**
@@ -19,15 +19,9 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
  * engine, and needs no height guesses (`max-height: 500px` truncates the two
  * long refund answers and animates at the wrong speed for the short ones).
  *
- * ── The choreography ───────────────────────────────────────────────────────
- * Open: set `open` first (content becomes measurable), then animate the
- * details' height summary→full while the body fades and rises 4px. Close: the
- * same in reverse, and `open` is only removed when the animation FINISHES —
- * remove it first and the content vanishes before the height starts moving.
- * A toggle mid-flight cancels the running animation and starts from the
- * current measured height, so hammering the question can't strand it half
- * open. `overflow: clip` lives only for the duration of the animation; at
- * rest the element is untouched.
+ * Animate only the disclosure height. Text remains readable during reversal;
+ * there is no persistent opacity animation to hide a reopened answer.
+ * A target ref records intent so rapid taps reverse the current transition.
  *
  * Reduced motion: the handler stands aside entirely and the platform's
  * instant toggle happens — instant IS the reduced-motion design.
@@ -41,7 +35,7 @@ export function FaqDisclosure({
 }) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
-  const bodyRef = useRef<HTMLDivElement>(null);
+  const targetOpen = useRef(false);
   const heightAnim = useRef<Animation | null>(null);
   const reduced = useReducedMotionSafe();
 
@@ -64,43 +58,31 @@ export function FaqDisclosure({
     // overflow; nothing to restore here.
   }
 
+  useEffect(() => () => heightAnim.current?.cancel(), []);
+
   function onClick(e: MouseEvent<HTMLElement>) {
     const el = detailsRef.current;
     const head = summaryRef.current;
-    if (!el || !head || reduced) return; // native instant toggle
-
+    if (!el || !head || reduced) return;
     e.preventDefault();
 
     const startHeight = el.getBoundingClientRect().height;
-    const headHeight = head.getBoundingClientRect().height;
-    // Mid-flight, `el.open` is not the visual truth — the measured height is.
-    // "More than the summary tall" means visually opening/open, so close.
-    const visuallyOpen = el.open && startHeight > headHeight + 1;
-
-    if (visuallyOpen) {
-      bodyRef.current?.animate(
-        { opacity: [1, 0], transform: ["translateY(0)", "translateY(-4px)"] },
-        { duration: 180, easing: "ease-out", fill: "forwards" },
-      );
-      animateHeight(el, startHeight, headHeight, () => {
-        el.open = false;
-      });
-    } else {
-      el.open = true;
-      const fullHeight = el.getBoundingClientRect().height;
-      animateHeight(el, Math.max(startHeight, headHeight), fullHeight);
-      bodyRef.current?.animate(
-        { opacity: [0, 1], transform: ["translateY(-4px)", "translateY(0)"] },
-        { duration: 300, delay: 60, easing: EASE, fill: "backwards" },
-      );
-    }
+    const nextOpen = heightAnim.current ? !targetOpen.current : !el.open;
+    targetOpen.current = nextOpen;
+    // Cancel before measuring the natural height. A running animation would
+    // otherwise return its intermediate height and strand a rapid re-toggle.
+    heightAnim.current?.cancel();
+    el.open = true;
+    const endHeight = nextOpen
+      ? el.getBoundingClientRect().height
+      : head.getBoundingClientRect().height;
+    animateHeight(el, startHeight, endHeight, () => {
+      el.open = nextOpen;
+    });
   }
 
   return (
     <details ref={detailsRef} className="group">
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions --
-          <summary> is the platform's own disclosure button; the click handler
-          only re-times what the element already does. */}
       <summary
         ref={summaryRef}
         onClick={onClick}
@@ -109,7 +91,6 @@ export function FaqDisclosure({
         {summary}
       </summary>
       <div
-        ref={bodyRef}
         className="flex max-w-[68ch] flex-col gap-3 pb-6 text-sm leading-relaxed text-zinc-400"
       >
         {children}

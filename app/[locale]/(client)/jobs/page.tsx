@@ -1,39 +1,20 @@
+import { getPublicJobs } from "@/lib/public-jobs";
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { FadeIn } from "@/components/site/FadeIn";
 import { HeroBackground } from "@/components/site/HeroBackground";
-import { localizedPageMetadata } from "@/lib/site-meta";
 import { Content } from "./components/Content";
 
-/**
- * Careers had NO metadata of its own, so both locales served the HOME page's
- * title and description — a browser tab and a search result claiming to be the
- * company's front page.
- *
- * The titles are the nav label this page is reached by, and BOTH descriptions
- * are now this page's own heading. That symmetry is new: while the page was
- * hardcoded Arabic there was no English page copy to describe, so the English
- * description borrowed the site-wide company sentence rather than have someone
- * invent prose for a meta tag. The careers surface is translated now, so the
- * description says what the page says, in the language the page is in.
- */
-export async function generateMetadata({
-  params,
-}: {
+export async function generateMetadata({ params }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const nav = await getTranslations({ locale, namespace: "Nav" });
-  const t = await getTranslations({ locale, namespace: "Jobs" });
-
-  return localizedPageMetadata({
-    locale,
-    enTitle: nav("jobs"),
-    enDescription: t("heading"),
-    arTitleLabel: nav("jobs"),
-    arDescription: t("heading"),
-  });
+  return pageMetadata("/jobs", locale);
 }
+
 
 /**
  * Careers — reskinned into the public design system (P3), translated (P8).
@@ -55,11 +36,14 @@ export async function generateMetadata({
  * nowhere here, because Careers is a Codescope page.
  */
 export default async function page() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("Jobs");
+  const jobs = await getPublicJobs();
 
   return (
     <div className="text-white">
-      <section className="relative overflow-hidden px-6 pb-14 pt-40">
+      <BreadcrumbData path="/jobs" locale={locale} />
+      <section className="site-hero relative overflow-hidden px-6 pb-14 pt-40">
         <HeroBackground />
         <div className="relative mx-auto max-w-7xl">
           <FadeIn>
@@ -72,7 +56,7 @@ export default async function page() {
 
       <section className="px-6 pb-28">
         <div className="mx-auto max-w-7xl">
-          <Content />
+          <Content initialJobs={jobs ?? undefined} />
         </div>
       </section>
     </div>

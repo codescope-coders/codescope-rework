@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "@/i18n/routing";
+import { localizedPath } from "@/lib/site-urls";
 import { useSwitchLocale } from "@/lib/useSwitchLocale";
 import { motion, AnimatePresence } from "motion/react";
 import { GlobeHemisphereWestIcon, CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
@@ -13,9 +15,8 @@ const LOCALES = [
 ] as const;
 
 export default function LanguageSwitcher() {
-  // The switch is a cookie write + a server refresh, NOT a navigation — see
-  // `useSwitchLocale` for why next-intl's router is the wrong call here.
-  const { switchLocale, isPending, activeLocale: locale } = useSwitchLocale();
+  const { switchLocale, isPending, activeLocale: locale } = useSwitchLocale(true);
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotionSafe();
@@ -82,7 +83,7 @@ export default function LanguageSwitcher() {
         // aria-busy, not disabled: disabling mid-transition drops keyboard
         // focus to <body> the moment a locale switch starts.
         aria-busy={isPending}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white transition-colors duration-150 text-sm font-medium ${isPending ? "opacity-40 pointer-events-none" : ""}`}
+        className={`flex items-center gap-1.5 min-h-11 px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white transition-colors duration-150 text-sm font-medium ${isPending ? "opacity-40 pointer-events-none" : ""}`}
       >
         <GlobeHemisphereWestIcon size={15} weight="bold" className="text-zinc-400" />
         <span>{current.short}</span>
@@ -116,10 +117,18 @@ export default function LanguageSwitcher() {
             {LOCALES.map(({ code, label }) => {
               const isActive = locale === code;
               return (
-                <button
+                <a
                   key={code}
-                  onClick={() => switchTo(code)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors duration-100 ${
+                  href={localizedPath(pathname, code)}
+                  hrefLang={code}
+                  lang={code}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={(event) => {
+                    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                    event.preventDefault();
+                    switchTo(code);
+                  }}
+                  className={`w-full flex items-center justify-between min-h-11 px-4 py-2.5 text-sm transition-colors duration-100 ${
                     isActive
                       ? "text-white bg-white/[0.06]"
                       : "text-zinc-400 hover:text-white hover:bg-white/[0.04]"
@@ -127,7 +136,7 @@ export default function LanguageSwitcher() {
                 >
                   <span>{label}</span>
                   {isActive && <CheckIcon size={13} weight="bold" className="text-cs-teal-glow" />}
-                </button>
+                </a>
               );
             })}
           </motion.div>

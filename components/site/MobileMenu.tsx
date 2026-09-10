@@ -1,5 +1,7 @@
 "use client";
 
+import { Link as InternalLink } from "@/i18n/internal-routing";
+
 import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
@@ -17,11 +19,11 @@ type NavItem = { href: string; label: string };
 const FOCUSABLE =
   'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-// Opacity only — no `scale`. The panel is a full-screen `backdrop-blur-xl`
-// surface, and scaling it forces the browser to re-sample the blur of
-// everything behind it on every frame of the open and close: the most expensive
-// thing on the page, animated, on the device least able to afford it. The
-// children's y-stagger already reads as the menu assembling.
+// Opacity only — no `scale`. Scaling a full-screen surface repaints it every
+// frame; the children's y-stagger already reads as the menu assembling, so the
+// scale bought nothing and cost the whole viewport. (It was originally ruled
+// out because the panel carried a `backdrop-blur-xl`, which made it far worse
+// still — that blur is gone now, but the rule stands on its own.)
 const overlay = {
   hidden: { opacity: 0 },
   show: {
@@ -34,8 +36,8 @@ const overlay = {
       // first 220ms and then started — which reads as lag rather than as
       // layering. The rows now begin while the ground is still coming up, and
       // `delayChildren` is only the beat that keeps them from racing it.
-      delayChildren: STAGGER.base,
-      staggerChildren: STAGGER.base,
+      delayChildren: STAGGER.tight,
+      staggerChildren: STAGGER.tight,
     },
   },
   // A dismissal should be quicker than an arrival, and it is one fade: the
@@ -45,11 +47,16 @@ const overlay = {
 };
 
 // Mostly a FADE, with just enough lift to carry a direction (founder, mobile
-// review 2026-09-09). A 16px throw over 0.22s read as rows being flung into
-// place; 8px over `DURATION.base` reads as rows arriving.
+// review 2026-09-09). A 16px throw read as rows being flung into place; 8px
+// reads as rows arriving.
+//
+// ⚠️ `DURATION.fast`, not `.base`. Smooth is not the same as slow: at 0.35s per
+// row on a 0.06 stagger the last one landed at 0.77s, which on a phone reads as
+// the menu labouring rather than as it being unhurried. The whole thing now
+// resolves by 0.50s and feels lighter for it, with the same curve.
 const item = {
   hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: DURATION.base, ease: EASE } },
+  show: { opacity: 1, y: 0, transition: { duration: DURATION.fast, ease: EASE } },
   exit: { opacity: 0, transition: { duration: DURATION.instant, ease: EASE_OUT } },
 };
 
@@ -62,17 +69,15 @@ const item = {
  * surface is already this site's way of saying "this is live". Here it reads as
  * the panel being DRAWN rather than merely appearing, and it is timed to reach
  * the foot of the list at about the moment the last row settles: the rows start
- * at `STAGGER.base` and step by the same, so the seventh begins at 0.42s and
- * finishes at 0.77s — against this sweep's `DURATION.slower`. Re-time one and
+ * at `STAGGER.tight` and step by the same, so the seventh begins at 0.28s and
+ * finishes at 0.50s — just inside this sweep's `DURATION.slow`. Re-time one and
  * re-time both, or the light lands on a list still assembling.
  *
  * ⚠️ Transform and opacity ONLY, and on a layer of its own OUTSIDE the panel.
- * The panel is a full-screen `backdrop-blur-xl` surface, so anything that
- * changes its geometry — a `scale`, a `clip-path`, an animated `height` — makes
- * the browser re-sample the blur of the entire page behind it on every frame,
- * on the device least able to afford it. That is the same reason the overlay
- * below fades rather than scales. A 1px line translating inside its own
- * `overflow-hidden` box costs a composite and nothing else.
+ * Anything that changes the panel's geometry — a `scale`, a `clip-path`, an
+ * animated `height` — repaints the whole viewport every frame on the device
+ * least able to afford it. A 1px line translating inside its own
+ * `overflow-hidden` box is one composited layer and nothing else.
  *
  * Keeping the layer OUT of the panel is the second half of that: the panel is
  * `overflow-y-auto`, and a transformed child travelling its full height would
@@ -86,7 +91,7 @@ const sweep = {
     // Struck, held, then gone — a light that simply faded in and out would read
     // as a glow rather than as something travelling.
     opacity: [0, 1, 0.9, 0],
-    transition: { duration: DURATION.slower, ease: EASE_TRAVEL, times: [0, 0.1, 0.72, 1] },
+    transition: { duration: DURATION.slow, ease: EASE_TRAVEL, times: [0, 0.1, 0.72, 1] },
   },
 };
 
@@ -104,8 +109,7 @@ const sweep = {
  * span 14px, centred in a 20px box puts their tops at 3 / 9.25 / 15.5 and their
  * centres at 3.75 / 10 / 16.25 — so the outer two each travel exactly 6.25px to
  * land on the middle's centre. The 20px box inside the button's `p-2` keeps the
- * trigger's hit area at the 36x36 it was with the icon font, so the header's
- * layout does not move.
+ * trigger's full 44px touch target independent of the visible glyph.
  *
  * `bg-current` inherits the button's own `text-zinc-400 hover:text-white`, so
  * the hover treatment is unchanged from the icon it replaces. Transform and
@@ -148,8 +152,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotionSafe();
   const t = useTranslations("Nav");
-  // Only the product pill reads this — the plain rows carry no active state in
-  // this menu, and adding one to them is a separate design decision.
+  // Every row exposes the current route to assistive technology.
   const pathname = usePathname();
   const panelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -162,6 +165,14 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
     // the window itself and ignores `overflow: hidden`, and under reduced
     // motion Lenis is never mounted so only the CSS lock applies.
     pauseSmoothScroll();
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const onDesktop = () => { if (desktop.matches) setOpen(false); };
+    desktop.addEventListener("change", onDesktop);
+    const pageContent = document.querySelector<HTMLElement>('[data-site="public"] main');
+    const footer = document.querySelector<HTMLElement>('[data-site="public"] footer');
+    const previousInert = [pageContent?.inert, footer?.inert];
+    if (pageContent) pageContent.inert = true;
+    if (footer) footer.inert = true;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     // Captured now: by cleanup time the ref may already point elsewhere.
@@ -185,18 +196,23 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
       const last = nodes[nodes.length - 1];
       const active = document.activeElement;
 
-      if (e.shiftKey && active === first) {
+      if (e.shiftKey && (active === first || active === trigger)) {
         e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && active === last) {
+        trigger?.focus();
+        if (active === trigger) last.focus();
+      } else if (!e.shiftKey && (active === last || active === trigger)) {
         e.preventDefault();
-        first.focus();
+        if (active === last) trigger?.focus();
+        else first.focus();
       }
     }
 
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onDesktop);
+      if (pageContent) pageContent.inert = previousInert[0] ?? false;
+      if (footer) footer.inert = previousInert[1] ?? false;
       document.body.style.overflow = previousOverflow;
       resumeSmoothScroll();
       // Send focus back where it came from, so closing with Escape doesn't
@@ -221,13 +237,9 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
           href={navItem.href}
           onClick={() => setOpen(false)}
           aria-current={isActive ? "page" : undefined}
-          className="group flex py-5 border-b border-white/5 last:border-none"
+          className="group flex py-4 sm:py-5 border-b border-white/5 last:border-none"
         >
-          {/* The mark is centred in a box exactly the height of a neighbour's
-              LINE (`h-8` is `text-2xl`'s 2rem), so every row in the list is
-              72px and the pitch does not stutter on the one row that carries an
-              image instead of text. Measured, not guessed — re-measure if the
-              row's type size changes. */}
+          {/* Match the neighbouring text line height, including on phones. */}
           <span className="flex h-8 items-center">
             <Image
               src="/Branding/tourscope.svg"
@@ -246,7 +258,8 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
         key={navItem.href}
         href={navItem.href}
         onClick={() => setOpen(false)}
-        className="block text-zinc-300 hover:text-white py-5 border-b border-white/5 text-2xl font-medium transition-colors last:border-none"
+        aria-current={pathname === navItem.href ? "page" : undefined}
+        className={`block py-4 sm:py-5 border-b border-white/5 text-2xl font-medium transition-colors last:border-none ${pathname === navItem.href ? "text-cs-teal" : "text-zinc-300 hover:text-white"}`}
       >
         {navItem.label}
       </Link>
@@ -272,13 +285,13 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   // Login — same port as the desktop link (see NavbarShell): quiet, under the
   // CTA, closing the menu on tap like every other item.
   const loginCta = (
-    <Link
+    <InternalLink
       href="/login"
       onClick={() => setOpen(false)}
       className="w-full text-center py-3 px-6 text-sm font-medium text-zinc-400 hover:text-white transition-colors block"
     >
       {loginLabel}
-    </Link>
+    </InternalLink>
   );
 
   const panelBody = (
@@ -288,7 +301,7 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
     // across the full width — a phone layout stretched, not a tablet one. 672px
     // is wider than any phone, so nothing below `sm` changes at all; above it
     // the column centres and keeps a readable measure.
-    <nav className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-1">
+    <nav className="site-mobile-menu-body max-w-2xl mx-auto px-6 py-4 sm:py-8 flex flex-col gap-1">
       {reduced
         ? navLinks.map((link) => <div key={link.key}>{link}</div>)
         : navLinks.map((link) => (
@@ -331,14 +344,25 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: { items: Nav
   // exactly the same box. Two hand-written copies of a comment this long is how
   // one of them quietly stops matching the other.
   const panelBoxClassName = "lg:hidden fixed top-16 inset-x-0 h-[calc(100dvh-4rem)]";
-  const panelClassName = `${panelBoxClassName} bg-zinc-950/98 backdrop-blur-xl z-40 overflow-y-auto`;
+  // ⚠️ OPAQUE, and deliberately NOT `backdrop-blur-xl` any more.
+  //
+  // The blur was costing a full-screen 24px gaussian, re-sampled by the
+  // compositor for every frame of the open and the close, on the device least
+  // able to afford it — and buying almost nothing: measured against the ground
+  // it sat on, `bg-zinc-950/98` let through a luminance spread of 5/255, i.e.
+  // 2%. A phone was rendering the most expensive effect on the page so that a
+  // sliver of the hero could be not-quite-seen behind it.
+  //
+  // Opaque is also simply better here: this is a full-screen menu, not a scrim,
+  // so there is nothing behind it the reader wants.
+  const panelClassName = `${panelBoxClassName} bg-zinc-950 z-40 overflow-y-auto overscroll-contain`;
 
   return (
     <>
       <button
         ref={triggerRef}
         onClick={() => setOpen(!open)}
-        className="lg:hidden inline-flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors"
+        className="lg:hidden inline-flex h-11 w-11 shrink-0 items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors"
         aria-label={open ? t("closeMenu") : t("openMenu")}
         aria-expanded={open}
         aria-controls={panelId}

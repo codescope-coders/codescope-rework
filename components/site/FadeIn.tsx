@@ -90,7 +90,7 @@ export function FadeIn({
   // no opacity gate that could leave a section blank.
   if (reduced) {
     const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
+    return <Tag className={`site-fade-in ${className ?? ""}`}>{children}</Tag>;
   }
 
   const MotionTag = as === "li" ? motion.li : motion.div;
@@ -101,7 +101,7 @@ export function FadeIn({
       initial="hidden"
       whileInView="show"
       viewport={VIEWPORT}
-      className={className}
+      className={`site-fade-in ${className ?? ""}`}
     >
       {children}
     </MotionTag>

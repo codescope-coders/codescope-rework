@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/internal-routing";
 import { cn } from "@/lib/utils";
 import {
   filterSidebarConfig,
@@ -57,7 +57,41 @@ export function Sidebar() {
   const { data: brandingData } = useBranding();
   const brand = brandingData?.payload;
 
+  const drawerRef = useRef<HTMLDivElement>(null);
   const isDesktop = useIsDesktop();
+
+  useEffect(() => {
+    if (isDesktop) {
+      closeMobile();
+      return;
+    }
+    if (!mobileOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const drawer = drawerRef.current;
+    const getFocusable = () => Array.from(drawer?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex="0"]',
+    ) ?? []).filter((element) => element.getClientRects().length > 0);
+    getFocusable()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMobile();
+      if (event.key !== "Tab") return;
+      const elements = getFocusable();
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      previousFocus?.focus();
+    };
+  }, [isDesktop, mobileOpen, closeMobile]);
   const effectiveCollapsed = isDesktop ? collapsed : false;
 
   const config: SidebarConfig = useMemo(
@@ -72,17 +106,19 @@ export function Sidebar() {
 
   return (
     <div
+      ref={drawerRef}
+      inert={!isDesktop && !mobileOpen}
       className={cn(
         "z-50 shrink-0",
-        "fixed top-1 start-1 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        "fixed top-2 start-2 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
         mobileOpen ? "translate-x-0" : "-translate-x-[130%] rtl:translate-x-[130%]",
-        "lg:relative lg:inset-auto lg:z-40 lg:m-1 lg:!translate-x-0 lg:transition-none",
+        "lg:relative lg:inset-auto lg:z-40 lg:m-2 lg:me-0 lg:!translate-x-0 lg:transition-none",
       )}
     >
       <motion.aside
         animate={{ width: effectiveCollapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-        className="flex h-[calc(100vh-0.5rem)] flex-col rounded-[20px] border border-border bg-overlay shadow-[0_8px_24px_-12px_rgba(17,17,17,0.14)]"
+        className="flex h-[calc(100dvh-1rem)] flex-col rounded-[20px] border border-border bg-overlay shadow-[0_8px_24px_-12px_rgba(17,17,17,0.14)]"
       >
         {/* Brand row + collapse / close */}
         <div
@@ -115,7 +151,7 @@ export function Sidebar() {
                     </span>
                   </>
                 ) : (
-                  <HeaderLogo className="h-[18px] w-auto shrink-0 text-foreground" />
+                  <HeaderLogo className="h-auto w-[150px] max-w-full text-[var(--dashboard-brand)]" />
                 )}
               </Link>
               <button

@@ -1,3 +1,7 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 import { setRequestLocale } from "next-intl/server";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
@@ -10,5 +14,5 @@ export default async function DashboardLayout({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <DashboardShell>{children}</DashboardShell>;
+  return <NextIntlClientProvider messages={await getMessages()}><DashboardShell>{children}</DashboardShell></NextIntlClientProvider>;
 }

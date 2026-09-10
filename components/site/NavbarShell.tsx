@@ -1,5 +1,7 @@
 "use client";
 
+import { Link as InternalLink } from "@/i18n/internal-routing";
+
 import { useScroll, useMotionValueEvent, motion } from "motion/react";
 import { useState } from "react";
 import { usePathname } from "@/i18n/routing";
@@ -49,32 +51,12 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
         WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px) saturate(100%)",
       }}
     >
-      {/* ⚠️ Two DIFFERENT breakpoints live on this bar, deliberately.
-          The gutter, the gap and the wordmark switch at `md` — they answer
-          "is this bar cramped?", and at 768px it is not. The nav MODE (the
-          link list, Login, the CTA, and `MobileMenu`'s own trigger and panel)
-          switches at `lg`, because it answers a different question: "does the
-          desktop nav fit?" Measured, it does not until 983px — at 768 the row
-          needed 983 and pushed "Request a demo" to x=834, off the right edge of
-          every iPad in portrait, which is the same defect the CTA wrapper below
-          documents, one breakpoint up. Keep the two apart; collapsing them onto
-          one number re-cramps the phone bar or re-breaks the tablet.
-
-          ⚠️ The gutter and the gap are TIGHTER below `md`, and that is
-          load-bearing rather than cosmetic. The wordmark alone measures 194px
-          at `h-6`; with `px-6` and `gap-8` the bar's content came to 405px,
-          which does not fit a 360px Android or a 375px iPhone SE — the trailing
-          control (the menu button) simply sat outside the viewport. Measured at
-          360px: 194 + 32 + 131 + 48 = 405 against 360 available.
-
-          `px-4`/`gap-4` and a `h-5` wordmark bring it to 341px, which clears a
-          360px screen with 19px to spare and is unchanged from `md` upward.
-          Anything narrower than ~340px will overflow again; re-measure before
-          adding a third control to this row. */}
-      <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4 md:gap-8">
+      {/* Navigation switches at lg, when all desktop links fit. The logo
+          scales down below 360px to leave two full 44px touch controls. */}
+      <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-2 md:gap-8">
         {/* Logo */}
         <Link href="/" className="shrink-0 flex items-center">
-          <CodeScopeLogo className="h-5 md:h-6 w-auto" />
+          <CodeScopeLogo className="h-auto w-[132px] min-[360px]:w-[160px] md:w-auto md:h-6" />
         </Link>
 
         {/* Desktop nav links with active indicator */}
@@ -117,6 +99,7 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
               <li key={item.href} className="relative">
                 <Link
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`text-sm transition-colors duration-200 ${
                     isActive ? "text-white" : "text-zinc-400 hover:text-white"
                   }`}
@@ -143,18 +126,18 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
         </ul>
 
         {/* Right controls */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           <LanguageSwitcher />
           {/* Login — ported from a teammate's concurrent change to the OLD
               header ("Login button added", merged 2026-09-05): the door to the
               Follow-up console. A quiet text link, deliberately junior to the
               demo CTA — the header carries one filled button only. */}
-          <Link
+          <InternalLink
             href="/login"
             className="hidden lg:inline-flex items-center px-2 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
           >
             {loginLabel}
-          </Link>
+          </InternalLink>
           {/* "Request a demo" is a demo request, so it goes to the flow built
               for one. The nav's own Contact link still points at /contact. */}
           {/* The header CTA carries the same treatment as the page CTAs. It is

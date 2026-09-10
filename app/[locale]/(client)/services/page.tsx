@@ -1,6 +1,8 @@
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { localizedPageMetadata } from "@/lib/site-meta";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
@@ -13,32 +15,16 @@ import {
   Ticket, UsersThree, ChartBar, Globe, ArrowRight,
 } from "@phosphor-icons/react/dist/ssr";
 
-/**
- * EN metadata is unchanged; AR is assembled from this page's own approved
- * strings (its nav label and its hero subheading) — see `lib/site-meta.ts`.
- * As a static `const metadata` this block served the English title and
- * description on the Arabic route.
- */
-export async function generateMetadata({
-  params,
-}: {
+export async function generateMetadata({ params }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Services" });
-  const nav = await getTranslations({ locale, namespace: "Nav" });
-
-  return localizedPageMetadata({
-    locale,
-    enTitle: "Engineering",
-    enDescription:
-      "The engineering standard behind Tourscope: clean architecture, design systems, and flow-first thinking — the same bar we hold every line of code to.",
-    arTitleLabel: nav("services"),
-    arDescription: t("hero.subheading"),
-  });
+  return pageMetadata("/services", locale);
 }
 
+
 export default async function ServicesPage() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("Services");
 
   const pillars = [
@@ -56,7 +42,8 @@ export default async function ServicesPage() {
 
   return (
     <>
-      <section className="relative pt-40 pb-24 px-6 overflow-hidden">
+      <BreadcrumbData path="/services" locale={locale} />
+      <section className="site-hero relative pt-24 sm:pt-40 pb-16 px-6 overflow-hidden sm:pb-24">
         <HeroBackground />
         {/* No eyebrow — the headline names the section on its own, and the
             tracked-uppercase label above every section is the reflex
@@ -65,7 +52,7 @@ export default async function ServicesPage() {
           <AnimatedHeadline
             text={t("hero.heading")}
             accent={t("hero.headlineAccent")}
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6"
+            className="text-[clamp(2.25rem,10vw,3rem)] sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6"
             accentClassName="text-zinc-400"
           />
           <FadeIn delay={0.5}>
@@ -105,7 +92,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-24 px-6 border-t border-white/5">
+      <section className="py-16 px-6 border-t border-white/5 sm:py-24">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-12">{t("builds.heading")}</h2>
@@ -133,7 +120,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      <section className="py-24 px-6">
+      <section className="py-16 px-6 sm:py-24">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 glass-card rounded-2xl p-8 md:p-12">
           <FadeIn>
             <h2 className="text-2xl font-bold text-white">{t("cta.heading")}</h2>

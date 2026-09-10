@@ -8,6 +8,13 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=production
+      # Public marketing analytics: runtime values passed by the server layout.
+      # Enable only after consent/privacy review and disabling GA4 enhanced measurement.
+      - GA4_ENABLED=${GA4_ENABLED:-false}
+      - GA4_MEASUREMENT_ID=${GA4_MEASUREMENT_ID:-}
+      - GA4_DEBUG_MODE=${GA4_DEBUG_MODE:-false}
+      # Optional URL-prefix verification; Domain properties use DNS instead.
+      - GOOGLE_SITE_VERIFICATION=${GOOGLE_SITE_VERIFICATION:-}
       - JWT_SECRET=${JWT_SECRET}
       # OTP email delivery — REQUIRED in production (lib/email.ts throws if the
       # key is missing, so sign-in codes can't be sent). Define both on the prod

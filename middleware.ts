@@ -1,9 +1,10 @@
 import createMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
+import { routing, internalRouting } from "./i18n/config";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 const intlMiddleware = createMiddleware(routing);
+const internalMiddleware = createMiddleware(internalRouting);
 
 function getPathnameWithoutLocale(pathname: string, locales: string[]) {
   for (const locale of locales) {
@@ -51,7 +52,22 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  return intlMiddleware(request);
+  const internal = isProtected || pathnameWithoutLocale === "/login";
+  const wwwPublic = !internal && request.headers.get("host")?.split(":")[0] === "www.codescope.dev";
+  const redundantEnglishPrefix = !internal && (pathname === "/en" || pathname.startsWith("/en/"));
+  if (wwwPublic || redundantEnglishPrefix) {
+    const url = request.nextUrl.clone();
+    if (redundantEnglishPrefix) url.pathname = pathnameWithoutLocale;
+    if (wwwPublic) {
+      url.hostname = "codescope.dev";
+      url.protocol = "https:";
+      url.port = "";
+    }
+    return NextResponse.redirect(url, 308);
+  }
+  const response = internal ? internalMiddleware(request) : intlMiddleware(request);
+  if (internal) response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
 }
 
 export const config = {

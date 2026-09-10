@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import type { LucideIcon } from "lucide-react";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/internal-routing";
 import {
   filterSidebarConfig,
   type SidebarItem,

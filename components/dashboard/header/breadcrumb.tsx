@@ -3,7 +3,7 @@
 import { Fragment } from "react";
 import { ChevronRight, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link, usePathname } from "@/i18n/internal-routing";
 
 /** Path segment → `dash.nav.*` key, so a crumb reads the same as the sidebar. */
 const SEG_KEY: Record<string, string> = {

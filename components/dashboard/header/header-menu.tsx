@@ -31,7 +31,10 @@ export function HeaderMenu({
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        ref.current?.querySelector<HTMLButtonElement>("button")?.focus();
+      }
     };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
@@ -49,9 +52,9 @@ export function HeaderMenu({
       {trigger({ open, toggle })}
       {open && (
         <div
-          style={{ width }}
+          style={{ width, maxWidth: "calc(100vw - 2rem)" }}
           className={cn(
-            "animate-in fade-in-0 zoom-in-95 absolute top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-border bg-overlay text-foreground shadow-[0_12px_32px_-8px_rgba(17,17,17,0.22)] duration-100",
+            "dashboard-header-menu animate-in fade-in-0 zoom-in-95 absolute top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-border bg-overlay text-foreground shadow-[0_12px_32px_-8px_rgba(17,17,17,0.22)] duration-100",
             align === "end" ? "end-0" : "start-0",
             className,
           )}

@@ -19,6 +19,23 @@ export function SmoothScroll() {
     // enough to seize the first scroll of the session.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // ⚠️ Never on a touch device — it is pure cost there.
+    //
+    // The only thing this instance smooths is the WHEEL (`smoothWheel: true`,
+    // and `syncTouch` is off, which since Lenis 1.x is what decides whether it
+    // takes over touch at all). A phone has no wheel, so its scrolling was
+    // already the browser's own — while the `raf` loop below ran 60 times a
+    // second, forever, on every page. Measured on a phone viewport with the
+    // page idle and untouched: 120 callbacks in 3 seconds at 120Hz, from a
+    // driver with nothing to drive.
+    //
+    // Everything that reads the instance already handles its absence, because
+    // that is the normal state under reduced motion: `ScrollToTop` falls back
+    // to `window.scrollTo`, and `pauseSmoothScroll` / `resumeSmoothScroll` are
+    // documented no-ops (`MobileMenu` locks `body` itself either way). Topic
+    // links use native smooth scrolling on demand when this driver is absent.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

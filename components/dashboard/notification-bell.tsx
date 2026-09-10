@@ -2,7 +2,7 @@
 
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/internal-routing";
 import { cn } from "@/lib/utils";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useNotificationText } from "./notification-format";
@@ -26,7 +26,7 @@ export function NotificationBell() {
           aria-expanded={open}
           aria-label={tf("common.notifications", "الإشعارات")}
           className={cn(
-            "relative flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground",
+            "relative flex h-10 min-w-10 items-center justify-center rounded-full px-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground",
             open && "bg-neutral-100 text-foreground",
           )}
         >

@@ -17,7 +17,7 @@ import {
 } from "@/lib/dashboard/constants";
 import { PERMISSIONS } from "@/lib/rbac/permissions";
 import { useCan } from "@/lib/rbac/use-permissions";
-import { useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/internal-routing";
 import { useMe } from "@/hooks/useMe";
 import { useLeads } from "@/hooks/usePipeline";
 import { useTickets } from "@/hooks/useTickets";

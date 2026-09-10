@@ -105,6 +105,8 @@ export function MosaicWaves({ className }: { className?: string }) {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const frameInterval = touch ? 1000 / 30 : 0;
     let raf = 0;
     let elapsed = 0;
     let last = 0;
@@ -122,7 +124,7 @@ export function MosaicWaves({ className }: { className?: string }) {
       const cssW = canvas.clientWidth;
       const cssH = canvas.clientHeight;
       if (cssW < 2 || cssH < 2) return false;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
       width = Math.floor(cssW * dpr);
       height = Math.floor(cssH * dpr);
       canvas.width = width;
@@ -185,6 +187,10 @@ export function MosaicWaves({ className }: { className?: string }) {
     }
 
     function frame(now: number) {
+      if (last && now - last < frameInterval) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       if (!last) last = now;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -212,15 +218,23 @@ export function MosaicWaves({ className }: { className?: string }) {
     });
     ro.observe(canvas);
 
+    let visible = false;
+    const onVisibility = () => {
+      if (visible && !document.hidden) start();
+      else stop();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     let io: IntersectionObserver | null = null;
     if (!reduced) {
-      io = new IntersectionObserver(([entry]) =>
-        entry.isIntersecting ? start() : stop(),
-      );
+      io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        onVisibility();
+      });
       io.observe(canvas);
     }
 
     return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
       io?.disconnect();
       ro.disconnect();
       stop();

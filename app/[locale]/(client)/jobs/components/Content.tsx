@@ -1,11 +1,13 @@
 "use client";
+import type { JobDto } from "@/services/jobs";
 import { timeAgo } from "@/helpers/date";
 import { useGetJobs } from "@/hooks/useJobs";
+import { JobLoadError } from "@/components/site/JobLoadError";
 import { FadeIn } from "@/components/site/FadeIn";
 import clsx from "clsx";
 import { BriefcaseIcon, MapPinIcon, TimerIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useCallback, useEffect, useRef, useState } from "react";
 import JobCardSkeleton from "./JobSkeleton";
 
@@ -51,13 +53,13 @@ export function useJobTypeLabel() {
   };
 }
 
-export const Content = () => {
+export const Content = ({ initialJobs }: { initialJobs?: JobDto[] }) => {
   const t = useTranslations("Jobs");
   const locale = useLocale() as "en" | "ar";
   const jobTypeLabel = useJobTypeLabel();
-  const { data, isPending } = useGetJobs();
+  const { data, isPending, isError, isFetching, refetch } = useGetJobs(undefined, initialJobs ? { message: "Jobs loaded", payload: initialJobs } : undefined);
   const observerTarget = useRef<HTMLDivElement>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialJobs ? Math.max(1, Math.ceil(initialJobs.length / ITEMS_PER_PAGE)) : 1);
 
   const totalJobs = data?.payload?.length || 0;
   const displayedJobs =
@@ -91,6 +93,10 @@ export const Content = () => {
       }
     };
   }, [loadMore]);
+
+  if (isError) {
+    return <JobLoadError onRetry={() => { void refetch(); }} pending={isFetching} />;
+  }
 
   // ── Empty state ──
   // Deliberate rather than apologetic: an icon plate in the site's teal, the

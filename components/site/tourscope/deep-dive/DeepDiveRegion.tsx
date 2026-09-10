@@ -34,25 +34,10 @@ import {
  * it. Adding a section is an entry there, a `nav.<navKey>` message pair, and a
  * body in `sectionBody` below — never a second hand-maintained list of anchors.
  *
- * ── Anchors, and why the offset is PADDING and not `scroll-mt` ──────────────
- * Items are plain `<a href="#id">`. Lenis is constructed with `anchors: true`,
- * so the scroll is eased for free — and under reduced motion Lenis is never
- * constructed, so the browser's own instant jump takes over.
- *
- * ⚠️ Lenis does NOT honour `scroll-margin-top`. Its `scrollTo` resolves a
- * target to `rect.top + animatedScroll` and nothing else (lenis 1.3.x,
- * `dist/lenis.mjs`), so a `scroll-mt-28` here would be dead on the Lenis path
- * and live on the reduced-motion path — the heading would land clear of the
- * navbar for one reader and underneath it for the other, which is exactly the
- * kind of split nobody notices until a screenshot.
- *
- * So the offset is the section's own TOP PADDING instead. Both paths scroll the
- * section's box top to y=0, and both then find the heading one padding-step
- * down — identical by construction, with no scroll-margin anywhere. The padding
- * doubles as the spacing between sections, which is why the column has no gap.
- *
- * The phone needs more of it than the desktop: the sticky chip bar sits under
- * the fixed navbar there, so the floor is navbar + chip bar, not navbar alone.
+ * Desktop jumps use Lenis and the section's top padding to clear the header.
+ * Native phone scrolling also honours scroll-margin, clearing the sticky pill
+ * bar without requiring large gaps between every section. Reduced-motion
+ * readers use the same offsets with an instant native jump.
  */
 
 function sectionBody(section: DeepDiveSection): ReactNode {
@@ -88,7 +73,7 @@ export async function DeepDiveRegion() {
   const t = await getTranslations("TourScope.deepDive");
 
   return (
-    <section id="explore" className="py-28 sm:py-32 px-6 border-t border-white/5">
+    <section id="explore" className="py-16 sm:py-32 px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto">
         <FadeIn>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-ts-purple-text mb-3">
@@ -108,7 +93,7 @@ export async function DeepDiveRegion() {
 
           <div className="flex flex-col">
             {DEEP_DIVE_SECTIONS.map((section) => (
-              <section key={section.id} id={section.id} className="pt-36 lg:pt-24">
+              <section key={section.id} id={section.id} className="pt-16 scroll-mt-32 lg:scroll-mt-0 lg:pt-24">
                 {sectionBody(section)}
               </section>
             ))}

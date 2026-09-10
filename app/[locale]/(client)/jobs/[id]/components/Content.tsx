@@ -1,4 +1,5 @@
 "use client";
+import type { JobDto } from "@/services/jobs";
 import { timeAgo } from "@/helpers/date";
 import { useGetJobById } from "@/hooks/useJobs";
 import { FadeIn } from "@/components/site/FadeIn";
@@ -8,6 +9,7 @@ import { ClockIcon, MapPinIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useJobTypeLabel } from "../../components/Content";
+import { JobLoadError } from "@/components/site/JobLoadError";
 import { ApplicationForm } from "./ApplicationForm";
 import DetailsSkeleton from "./DetailsSkeleton";
 
@@ -30,12 +32,12 @@ import DetailsSkeleton from "./DetailsSkeleton";
  * in either language regardless of which route the visitor is on. The two
  * section headings are furniture and follow the document.
  */
-export const Content = () => {
+export const Content = ({ initialJob }: { initialJob?: JobDto }) => {
   const { id } = useParams<{ id: string }>();
   const t = useTranslations("Jobs");
   const locale = useLocale() as "en" | "ar";
   const jobTypeLabel = useJobTypeLabel();
-  const { data, isPending } = useGetJobById(id);
+  const { data, isPending, isError, isFetching, refetch } = useGetJobById(id, initialJob);
   const job = data?.payload;
 
   if (isPending) {
@@ -46,9 +48,13 @@ export const Content = () => {
     );
   }
 
+  if (isError || !job) {
+    return <section className="px-6 pt-28 pb-16"><JobLoadError onRetry={() => { void refetch(); }} pending={isFetching} /></section>;
+  }
+
   return (
     <section>
-      <div className="relative overflow-hidden px-6 pb-12 pt-40">
+      <div className="relative overflow-hidden px-6 pb-12 pt-24 sm:pt-40">
         <HeroBackground />
         <div className="relative mx-auto max-w-4xl">
           <FadeIn>

@@ -2,9 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tone } from "@/lib/dashboard/constants";
 
-// Icon-chip tones mirror whitelabel-console's KpiCard: solid tint + saturated
-// glyph. The scales invert per theme, so the chip stays a dark tint with a
-// bright glyph in dark mode.
+// Semantic icon chips retain their meaning in both dashboard themes.
 const CHIP: Record<Tone, string> = {
   neutral: "bg-neutral-100 text-neutral-500",
   primary: "bg-primary/10 text-primary",
@@ -34,33 +32,39 @@ export function StatCard({
   return (
     <div
       onClick={onClick}
+      onKeyDown={interactive ? (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick?.();
+        }
+      } : undefined}
       role={interactive ? "button" : undefined}
       tabIndex={interactive ? 0 : undefined}
       className={cn(
-        "surface-raised relative flex flex-col gap-2 overflow-hidden rounded-xl border border-border p-3.5 transition-all duration-200",
+        "surface-raised relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border p-4 sm:p-5 transition-colors duration-200",
         interactive &&
-          "cursor-pointer hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md focus-visible:outline-none",
+          "cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] focus-visible:outline-none",
         className,
       )}
     >
       <div className="flex items-center gap-2">
         <span
           className={cn(
-            "grid size-6 shrink-0 place-items-center rounded-md",
+            "grid size-8 shrink-0 place-items-center rounded-lg",
             CHIP[tone],
           )}
         >
           {Icon ? (
-            <Icon className="size-3.5" />
+            <Icon className="size-4" />
           ) : (
             <span className="size-1.5 rounded-full bg-current" />
           )}
         </span>
-        <span className="truncate text-[10.5px] font-semibold uppercase tracking-wider text-neutral-500">
+        <span className="min-w-0 text-xs font-medium leading-relaxed text-muted-foreground">
           {label}
         </span>
       </div>
-      <div className="text-2xl font-bold leading-none tracking-tight text-foreground tabular-nums">
+      <div className="break-words text-[clamp(1rem,5vw,1.5rem)] font-semibold leading-tight tracking-tight sm:text-3xl text-foreground tabular-nums">
         {value}
       </div>
     </div>

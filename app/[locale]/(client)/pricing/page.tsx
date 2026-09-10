@@ -1,3 +1,5 @@
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowRight, Check } from "@phosphor-icons/react/dist/ssr";
@@ -49,21 +51,13 @@ import { usd } from "@/lib/bidi";
  * tabular ladder.
  */
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Pricing");
-
-  return {
-    // `absolute` bypasses the layout's "%s | CodeScope" template: the copy
-    // already names both the product and the company, and the template would
-    // print "…by Codescope | CodeScope".
-    title: { absolute: t("meta.title") },
-    description: t("meta.description"),
-    openGraph: {
-      title: t("meta.title"),
-      description: t("meta.description"),
-    },
-  };
+export async function generateMetadata({ params }: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata("/pricing", locale);
 }
+
 
 export default async function PricingPage() {
   const t = await getTranslations("Pricing");
@@ -72,14 +66,15 @@ export default async function PricingPage() {
 
   return (
     <>
+      <BreadcrumbData path="/pricing" locale={locale} />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden px-6 pb-20 pt-40">
+      <section className="site-hero relative overflow-hidden px-6 pb-20 pt-24 sm:pt-40">
         <HeroBackground />
         <div className="relative mx-auto max-w-7xl">
           <AnimatedHeadline
             text={t("hero.heading")}
             accent={t("hero.headingAccent")}
-            className="mb-6 text-5xl font-bold tracking-tighter leading-[1.05] text-white sm:text-6xl lg:text-7xl"
+            className="mb-6 text-[clamp(2.25rem,10vw,3rem)] font-bold tracking-tighter leading-[1.05] text-white sm:text-6xl lg:text-7xl"
             accentClassName="text-zinc-400"
           />
           <FadeIn delay={0.5}>
@@ -401,7 +396,7 @@ export default async function PricingPage() {
       </section>
 
       {/* ── Add-ons ──────────────────────────────────────────────────────── */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-7xl">
           <FadeIn>
             <h2 className="mb-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -525,7 +520,7 @@ export default async function PricingPage() {
       </section>
 
       {/* ── What setup buys ──────────────────────────────────────────────── */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-7xl">
           <FadeIn>
             <h2 className="mb-10 text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -556,7 +551,7 @@ export default async function PricingPage() {
           block put this one alone in the middle of the page. The heading holds
           its own column and sticks while the reader works down seventeen
           answers; the answers keep a readable measure. */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 sm:py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-20">
           <FadeIn>
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:sticky lg:top-28">
@@ -573,7 +568,7 @@ export default async function PricingPage() {
       </section>
 
       {/* ── Closing ──────────────────────────────────────────────────────── */}
-      <section className="border-t border-white/5 px-6 py-28">
+      <section className="border-t border-white/5 px-6 py-16 sm:py-28">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
           <FadeIn>
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">

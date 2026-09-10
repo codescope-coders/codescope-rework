@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { trackSuccessfulLead } from "@/lib/public-analytics";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
 import { PaperPlaneTilt, CheckCircle, WarningCircle } from "@phosphor-icons/react";
@@ -17,6 +18,8 @@ export default function ContactForm() {
   // Sent with the submission so the dashboard knows which language to reply in
   // — the message itself is not always a reliable signal.
   const locale = useLocale();
+  const submitting = useRef(false);
+  const submissionId = useRef<string | null>(null);
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<Status>("idle");
@@ -38,6 +41,9 @@ export default function ContactForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting.current || status === "success") return;
+    submitting.current = true;
+    submissionId.current = crypto.randomUUID();
     setStatus("sending");
     setCaptchaRejected(false);
     try {
@@ -62,11 +68,16 @@ export default function ContactForm() {
         }
         throw new Error(`contact ${res.status}`);
       }
+      const result = await res.json();
+      if (result?.ok !== true) throw new Error("Submission not confirmed");
+      trackSuccessfulLead("contact", submissionId.current!);
       setStatus("success");
     } catch {
       // The error copy already routes the visitor to info@codescope.dev — an
       // honest failure beats a fake checkmark on the site's only lead path.
       setStatus("error");
+    } finally {
+      submitting.current = false;
     }
   }
 
@@ -74,7 +85,7 @@ export default function ContactForm() {
   // what a field wants, and at zinc-600 on a zinc-900 input it sat at 2.2:1 —
   // legible as a shape, not as words.
   const inputClass =
-    "w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/8 text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:border-cs-teal/50 focus:ring-2 focus:ring-cs-teal/15 transition-all duration-200";
+    "w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/8 text-white text-base sm:text-sm placeholder:text-zinc-400 focus:outline-none focus:border-cs-teal/50 focus:ring-2 focus:ring-cs-teal/15 transition-all duration-200";
 
   if (status === "success") {
     // No `AnimatePresence` here: this card REPLACES the form rather than being
@@ -106,6 +117,7 @@ export default function ContactForm() {
         <input
           id="name"
           name="name"
+          autoComplete="name"
           type="text"
           required
           placeholder={t("namePlaceholder")}
@@ -125,6 +137,11 @@ export default function ContactForm() {
         <input
           id="email"
           name="email"
+          autoComplete="email"
+          inputMode="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          dir="ltr"
           type="email"
           required
           placeholder={t("emailPlaceholder")}
@@ -149,7 +166,7 @@ export default function ContactForm() {
           placeholder={t("messagePlaceholder")}
           value={form.message}
           onChange={handleChange}
-          className={`${inputClass} resize-none`}
+          className={`${inputClass} resize-y min-h-36`}
         />
       </div>
 

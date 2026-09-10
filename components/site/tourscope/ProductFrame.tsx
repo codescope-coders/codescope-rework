@@ -127,7 +127,7 @@ export function ProductFrame(props: ProductFrameProps) {
   const rounding = variant === "device" ? "rounded-[1.75rem] p-1.5" : "rounded-xl";
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative min-w-0 ${className}`}>
       {/* Ambient wash. One soft radial rather than a stack of drop-shadows —
           layered shadows on a near-black ground turn into grey mud. It sits
           before the frame in the DOM, so the frame paints over it without
@@ -135,7 +135,7 @@ export function ProductFrame(props: ProductFrameProps) {
       {glow && (
         <div
           aria-hidden
-          className="pointer-events-none absolute -inset-6 sm:-inset-10"
+          className="pointer-events-none absolute -inset-6"
           style={{
             background: `radial-gradient(ellipse 70% 60% at 50% 45%, ${tsPurple(0.16)}, transparent 70%)`,
           }}

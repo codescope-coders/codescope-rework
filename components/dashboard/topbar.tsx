@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -13,7 +13,7 @@ import {
   Settings,
   Sun,
 } from "lucide-react";
-import { Link } from "@/i18n/routing";
+import { Link } from "@/i18n/internal-routing";
 import { useSwitchLocale } from "@/lib/useSwitchLocale";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/stores/sidebar";
@@ -27,6 +27,10 @@ import { NotificationBell } from "./notification-bell";
 import { HeaderMenu } from "./header/header-menu";
 import { Breadcrumb } from "./header/breadcrumb";
 
+const subscribePlatform = () => () => {};
+const getPlatform = () => /Mac|iPhone|iPad/i.test(navigator.platform);
+const getServerPlatform = () => false;
+
 const LOCALES = [
   { code: "en", name: "English" },
   { code: "ar", name: "العربية" },
@@ -35,7 +39,7 @@ const LOCALES = [
 /** Shared style for the bar's icon-button triggers. */
 function triggerClasses(open: boolean, extra?: string) {
   return cn(
-    "flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-lg px-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground",
+    "flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-full px-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-foreground",
     open && "bg-neutral-100 text-foreground",
     extra,
   );
@@ -46,6 +50,7 @@ export function Topbar() {
   const tf = (k: string, fb: string) => (t.has(k) ? t(k) : fb);
   const locale = useLocale();
   const openMobile = useSidebar((s) => s.openMobile);
+  const mobileOpen = useSidebar((s) => s.mobileOpen);
   const theme = useDashboardTheme((s) => s.theme);
   const toggleTheme = useDashboardTheme((s) => s.toggle);
   const openPalette = useCommandPalette((s) => s.openPalette);
@@ -54,10 +59,7 @@ export function Topbar() {
   const logout = useLogout();
   const can = useCan();
 
-  const [isMac, setIsMac] = useState(false);
-  useEffect(() => {
-    setIsMac(/Mac|iPhone|iPad/i.test(navigator.platform));
-  }, []);
+  const isMac = useSyncExternalStore(subscribePlatform, getPlatform, getServerPlatform);
 
   const roleLabel = user ? tf(`roles.${user.role}`, user.role) : "";
   const initials = (user?.name || user?.email || "?").slice(0, 1).toUpperCase();
@@ -67,25 +69,26 @@ export function Topbar() {
   const { switchLocale } = useSwitchLocale();
 
   return (
-    <header className="relative z-30 mx-4 mt-1 sm:mx-1">
-      <div className="flex h-14 items-center gap-3 rounded-[20px] border border-border bg-overlay/90 px-3 shadow-[0_8px_24px_-12px_rgba(17,17,17,0.14)] backdrop-blur sm:px-4">
+    <header className="dashboard-topbar relative z-30 mx-2 mt-2 shrink-0 lg:mx-4">
+      <div className="flex min-h-16 items-center gap-1 sm:gap-3 rounded-[20px] border border-border bg-overlay px-2 shadow-[0_8px_24px_-12px_rgba(17,17,17,0.14)] sm:px-4">
         {/* Mobile — open the nav drawer */}
         <button
           type="button"
           onClick={openMobile}
-          aria-label={tf("common.open_nav", "القائمة")}
+          aria-label={locale === "ar" ? "فتح القائمة" : "Open navigation"}
+          aria-expanded={mobileOpen}
           className={triggerClasses(false, "-ms-1 lg:hidden")}
         >
           <Menu className="size-5" />
         </button>
 
         {/* Left — breadcrumb navigation context */}
-        <div className="flex min-w-0 flex-1 items-center">
+        <div className="hidden min-w-0 flex-1 items-center sm:flex">
           <Breadcrumb />
         </div>
 
         {/* Right — search, language, notifications, theme, account */}
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="ms-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
           <button
             type="button"
             onClick={openPalette}
@@ -120,10 +123,10 @@ export function Topbar() {
                 type="button"
                 onClick={toggle}
                 aria-expanded={open}
-                aria-label="language"
+                aria-label={locale === "ar" ? "اللغة" : "Language"}
                 className={triggerClasses(open)}
               >
-                <Globe className="size-4.5" />
+                <Globe className="hidden size-4.5 sm:block" />
                 <span className="text-[13px] font-medium uppercase">{locale}</span>
               </button>
             )}
@@ -166,7 +169,9 @@ export function Topbar() {
           <button
             type="button"
             onClick={toggleTheme}
-            aria-label={tf("common.theme", "المظهر")}
+            aria-label={locale === "ar" ? "الوضع الداكن" : "Dark mode"}
+            aria-pressed={theme === "dark"}
+            title={theme === "light" ? (locale === "ar" ? "تفعيل الوضع الداكن" : "Switch to dark mode") : (locale === "ar" ? "تفعيل الوضع الفاتح" : "Switch to light mode")}
             className={triggerClasses(false)}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -196,7 +201,7 @@ export function Topbar() {
             </AnimatePresence>
           </button>
 
-          <span className="mx-1.5 h-6 w-px bg-border" />
+          <span className="mx-1.5 hidden h-6 w-px bg-border sm:block" />
 
           {/* Account */}
           <HeaderMenu
@@ -206,7 +211,7 @@ export function Topbar() {
                 type="button"
                 onClick={toggle}
                 aria-expanded={open}
-                aria-label="account"
+                aria-label={locale === "ar" ? "الحساب" : "Account"}
                 className={cn(
                   "flex h-10 items-center gap-1 rounded-full pe-1.5 ps-1 transition-colors hover:bg-neutral-100",
                   open && "bg-neutral-100",

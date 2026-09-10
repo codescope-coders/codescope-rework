@@ -59,7 +59,7 @@ export function ManifestoSection({ text, eyebrow, highlights }: Props) {
           highlights={highlights}
           targetRef={sectionRef}
           className="font-medium leading-[1.5] tracking-tight"
-          style={{ fontSize: "clamp(1.9rem,3.4vw,3.25rem)" }}
+          style={{ fontSize: "clamp(1.5rem,3.4vw,3.25rem)" }}
         />
       </div>
     </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { trackSuccessfulLead } from "@/lib/public-analytics";
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryState } from "nuqs";
 import { motion, AnimatePresence } from "motion/react";
@@ -54,6 +55,8 @@ export default function GetStartedForm() {
   const t = useTranslations("GetStarted");
   const tCommon = useTranslations("common");
   const locale = useLocale();
+  const submitting = useRef(false);
+  const submissionId = useRef<string | null>(null);
   const reduced = useReducedMotionSafe();
   const uid = useId();
   const successRef = useRef<HTMLDivElement>(null);
@@ -129,7 +132,10 @@ export default function GetStartedForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting.current || status === "success") return;
     if (!validate()) return;
+    submitting.current = true;
+    submissionId.current = crypto.randomUUID();
     setStatus("sending");
     setCaptchaRejected(false);
     try {
@@ -166,6 +172,9 @@ export default function GetStartedForm() {
         }
         throw new Error(`get-started ${res.status}`);
       }
+      const result = await res.json();
+      if (result?.ok !== true) throw new Error("Submission not confirmed");
+      if (res.status === 201 && !form.company.trim()) trackSuccessfulLead("demo_request", submissionId.current!);
       setStatus("success");
       // The form is gone, so focus has nowhere to be — move it to the
       // confirmation or a keyboard/screen-reader user is left on a detached
@@ -173,11 +182,13 @@ export default function GetStartedForm() {
       requestAnimationFrame(() => successRef.current?.focus());
     } catch {
       setStatus("error");
+    } finally {
+      submitting.current = false;
     }
   }
 
   const inputClass =
-    "w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/8 text-white text-sm placeholder:text-zinc-500 focus:outline-none focus:border-cs-teal/50 focus:ring-2 focus:ring-cs-teal/15 transition-all duration-200";
+    "w-full px-4 py-3 rounded-xl bg-zinc-900 border border-white/8 text-white text-base sm:text-sm placeholder:text-zinc-400 focus:outline-none focus:border-cs-teal/50 focus:ring-2 focus:ring-cs-teal/15 transition-all duration-200";
   const errorClass = "border-red-400/50 focus:border-red-400/60";
   const labelClass =
     "text-xs font-semibold text-zinc-400 uppercase tracking-wider";
@@ -320,7 +331,7 @@ export default function GetStartedForm() {
               <label
                 key={c}
                 className={[
-                  "cursor-pointer rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors duration-200",
+                  "inline-flex min-h-11 items-center justify-center cursor-pointer rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors duration-200",
                   "focus-within:ring-2 focus-within:ring-cs-teal/40",
                   active
                     ? "border-cs-teal bg-[#0a1c1a] text-white"

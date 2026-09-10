@@ -11,6 +11,7 @@ import {
 } from "motion/react";
 import { useLocale } from "next-intl";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import { useTouchDevice } from "@/lib/useTouchDevice";
 import { useMounted } from "@/lib/useMounted";
 import { isRtlLocale } from "@/lib/motion";
 import { CS_TEAL_GLOW, tealGlow } from "@/lib/colors";
@@ -126,7 +127,7 @@ function buildTokens(text: string, highlights: string[], rtl: boolean): RevealTo
 type RevealPhase = "static" | "live";
 
 function Token({
-  char, progress, index, total, isHighlighted, phase,
+  char, progress, index, total, isHighlighted, phase, dimColor,
 }: {
   char: string;
   progress: MotionValue<number>;
@@ -134,6 +135,7 @@ function Token({
   total: number;
   isHighlighted: boolean;
   phase: RevealPhase;
+  dimColor: string;
 }) {
   // Word tokens are an order of magnitude fewer than character tokens, so the
   // per-token reveal window scales with the step instead of being a constant —
@@ -159,7 +161,7 @@ function Token({
   // around, and against a pure-white settled line they need to stay marked.
   const color = useTransform(
     progress, [start, mid, end],
-    [UNREVEALED, TEAL, isHighlighted ? TEAL : REVEALED],
+    [dimColor, TEAL, isHighlighted ? TEAL : REVEALED],
   );
   const textShadow = useTransform(
     progress, [start, mid, end],
@@ -221,11 +223,12 @@ export function ScrollRevealText({
   const selfRef = useRef<HTMLParagraphElement>(null);
   const reduced = useReducedMotionSafe();
   const mounted = useMounted();
+  const touch = useTouchDevice();
   const locale  = useLocale();
 
   const rtl = isRtlLocale(locale);
   let _ai = 0;
-  const entries = buildTokens(text, highlights, rtl).map((token) => ({
+  const entries = buildTokens(text, highlights, rtl || touch).map((token) => ({
     ...token,
     idx: token.animatable ? _ai++ : -1,
   }));
@@ -264,7 +267,7 @@ export function ScrollRevealText({
   const phase: RevealPhase = !mounted ? "static" : "live";
 
   return (
-    <p ref={selfRef} className={className} style={style}>
+    <p ref={selfRef} className={`site-scroll-reveal ${className ?? ""}`} style={style}>
       {entries.map(({ text: token, idx, isHighlighted }, i) =>
         idx === -1 ? (
           <span key={i}>{token}</span>
@@ -277,6 +280,7 @@ export function ScrollRevealText({
             total={animatable}
             isHighlighted={isHighlighted}
             phase={phase}
+            dimColor={touch ? "rgba(255,255,255,0.46)" : UNREVEALED}
           />
         )
       )}

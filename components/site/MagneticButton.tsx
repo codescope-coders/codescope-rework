@@ -26,7 +26,7 @@ export function MagneticButton({ children, className = "", strength = 0.12 }: Pr
   // had long since left. Scrolling drops the measurement; the next move
   // re-takes it.
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     const invalidate = () => { centre.current = null; };
     window.addEventListener("scroll", invalidate, { passive: true });
     window.addEventListener("resize", invalidate);

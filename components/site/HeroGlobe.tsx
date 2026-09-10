@@ -521,6 +521,8 @@ export function HeroGlobe() {
     let radius = 0;
     let cx = 0;
     let cy = 0;
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const frameInterval = touch ? 1000 / 30 : 0;
     let raf = 0;
     let elapsed = 0;
     let last = 0;
@@ -557,7 +559,7 @@ export function HeroGlobe() {
       // No layout box yet; the ResizeObserver calls back with the real size.
       if (cssW < 2 || cssH < 2) return false;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, touch ? 1.5 : 2);
       width = cssW;
       height = cssH;
       canvas.width = Math.floor(cssW * dpr);
@@ -970,6 +972,10 @@ export function HeroGlobe() {
     }
 
     function frame(now: number) {
+      if (last && now - last < frameInterval) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       if (!last) last = now;
       // Clamped, so a backgrounded tab cannot teleport the globe half a turn
       // on the frame it comes back.
@@ -1086,15 +1092,23 @@ export function HeroGlobe() {
 
     // ⚠️ The bound on the always-running loop. Without this the globe spins for
     // the whole session, including the ten screens of page below it.
+    let visible = false;
+    const onVisibility = () => {
+      if (visible && !document.hidden) start();
+      else stop();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     let io: IntersectionObserver | null = null;
     if (!reduced) {
-      io = new IntersectionObserver(([entry]) =>
-        entry.isIntersecting ? start() : stop(),
-      );
+      io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        onVisibility();
+      });
       io.observe(canvas);
     }
 
     return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
       io?.disconnect();
       ro.disconnect();
       stop();
@@ -1125,7 +1139,7 @@ export function HeroGlobe() {
           `items-center` grid absorbs symmetrically. */}
       <canvas
         ref={canvasRef}
-        className="relative mx-auto block h-[400px] w-full max-w-[420px] lg:-mx-10 lg:h-[640px] lg:w-[calc(100%+5rem)] lg:max-w-none"
+        className="relative mx-auto block h-[300px] sm:h-[400px] w-full max-w-[420px] lg:-mx-10 lg:h-[640px] lg:w-[calc(100%+5rem)] lg:max-w-none"
       />
     </div>
   );

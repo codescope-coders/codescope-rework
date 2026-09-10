@@ -51,12 +51,12 @@ export default async function Footer() {
           <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-5">
             {t("links")}
           </h2>
-          <ul className="flex flex-col gap-3">
+          <ul className="grid grid-cols-2 gap-x-5 gap-y-0 md:flex md:flex-col md:gap-1">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
+                  className="inline-flex min-h-11 items-center text-sm text-zinc-400 hover:text-white transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -72,7 +72,7 @@ export default async function Footer() {
           </h2>
           <a
             href={`mailto:${t("email")}`}
-            className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
+            className="inline-flex min-h-11 items-center text-sm text-zinc-400 hover:text-white transition-colors duration-200"
           >
             {t("email")}
           </a>

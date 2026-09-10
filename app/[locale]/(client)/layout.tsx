@@ -1,6 +1,13 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { publicMessages } from "@/lib/public-messages";
+import { ApplicationSentMessage } from "@/components/ApplicationSentMessage";
+import { PublicAnalytics } from "@/components/site/PublicAnalytics";
+import { OrganizationData } from "@/components/site/StructuredData";
+import { SITE_URL } from "@/lib/site-urls";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+
 import { Toaster } from "sonner";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
@@ -26,51 +33,24 @@ import { geistMono, geistSans } from "@/lib/site-fonts";
  * fixed navbar and scroll-progress bar. Overflow is instead a property the
  * pages themselves have to keep clean.
  */
-/**
- * Per-locale metadata, declared HERE rather than on the root layout.
- *
- * As a `const metadata` the Arabic site served the English title, description
- * and Open Graph card — the two things a search result and a shared link are
- * made of, in the wrong language, on every page that doesn't override them.
- * It sits on the (client) layout because the root layout is shared with the
- * internal dashboard, whose own title must not move.
- */
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Meta" });
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
+};
 
-  return {
-    metadataBase: new URL("https://codescope.dev"),
-    title: {
-      default: t("title"),
-      // Not translated: it is the brand name plus a separator.
-      template: "%s | CodeScope",
-    },
-    description: t("description"),
-    keywords: t("keywords")
-      .split(",")
-      .map((keyword) => keyword.trim())
-      .filter(Boolean),
-    openGraph: {
-      type: "website",
-      siteName: "CodeScope",
-      locale,
-      title: t("title"),
-      description: t("ogDescription"),
-    },
-  };
-}
-
-export default function ClientLayout({ children }: { children: ReactNode }) {
+export default async function ClientLayout({ children }: { children: ReactNode }) {
+  const messages = publicMessages(await getMessages());
+  const measurementId = process.env.GA4_MEASUREMENT_ID ?? "";
+  const analyticsEnabled = process.env.GA4_ENABLED === "true" && /^G-[A-Z0-9]+$/.test(measurementId);
   return (
+    <NextIntlClientProvider messages={messages}>
     <div
       data-site="public"
       className={`${geistSans.variable} ${geistMono.variable} min-h-[100dvh] flex flex-col`}
     >
+      <ApplicationSentMessage />
+      <OrganizationData />
       <Toaster />
       <CodeFieldBackground />
       <SmoothScroll />
@@ -81,6 +61,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
+      {analyticsEnabled && <PublicAnalytics measurementId={measurementId} debug={process.env.GA4_DEBUG_MODE === "true"} />}
     </div>
+    </NextIntlClientProvider>
   );
 }

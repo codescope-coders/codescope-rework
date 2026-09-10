@@ -13,7 +13,9 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/routing";
+import useDashboardTheme from "@/stores/dashboardTheme";
+import { dashboardFontVariables } from "@/lib/dashboard/appearance";
+import { Link } from "@/i18n/internal-routing";
 import { cn } from "@/lib/utils";
 import type { SidebarItem as SidebarItemType } from "@/lib/rbac/permissions";
 
@@ -179,10 +181,10 @@ export function SidebarItem({
   }
 
   const sharedClasses = cn(
-    "group/item relative flex w-full items-center gap-2.5 rounded-lg text-[13px] font-medium transition-colors duration-150",
-    collapsed ? "mx-auto size-9 justify-center px-0" : "h-9 pe-2 ps-3",
+    "group/item relative flex w-full items-center gap-2.5 rounded-xl text-[13px] font-medium transition-colors duration-150",
+    collapsed ? "mx-auto size-9 justify-center px-0" : "h-10 pe-2 ps-3",
     showActive
-      ? "bg-neutral-100 text-foreground hover:bg-neutral-100"
+      ? "bg-primary/10 font-semibold text-primary hover:bg-primary/15"
       : "text-neutral-600 hover:bg-neutral-100 hover:text-foreground",
   );
 
@@ -191,6 +193,7 @@ export function SidebarItem({
       <div>
         <button
           onClick={onToggle}
+          aria-expanded={isExpanded}
           className={sharedClasses}
           style={!collapsed ? { paddingInlineStart: paddingStart } : undefined}
         >
@@ -239,6 +242,7 @@ export function SidebarItem({
     return (
       <Link
         href={item.href}
+        aria-current={isActive ? "page" : undefined}
         className={sharedClasses}
         style={!collapsed ? { paddingInlineStart: paddingStart } : undefined}
       >
@@ -266,6 +270,7 @@ function CollapsedFlyout({
   active: boolean;
 }) {
   const label = useItemLabel();
+  const theme = useDashboardTheme((s) => s.theme);
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left?: number; right?: number }>({
     top: 0,
@@ -322,7 +327,7 @@ function CollapsedFlyout({
           {icon}
         </Link>
       ) : (
-        <button type="button" className={triggerClasses} aria-label={label(item)}>
+        <button type="button" className={triggerClasses} aria-expanded={open} aria-label={label(item)}>
           {icon}
         </button>
       )}
@@ -334,8 +339,11 @@ function CollapsedFlyout({
             style={{ position: "fixed", top: pos.top, left: pos.left, right: pos.right }}
             onMouseEnter={show}
             onMouseLeave={scheduleHide}
-            data-theme={document.documentElement.dataset.theme}
-            className="animate-in fade-in-0 zoom-in-95 z-[200] w-56 overflow-hidden rounded-xl border border-border bg-overlay text-foreground shadow-lg duration-100"
+            onFocus={show}
+            onBlur={scheduleHide}
+            onKeyDown={(event) => { if (event.key === "Escape") { anchorRef.current?.querySelector<HTMLElement>("button, a")?.focus(); setOpen(false); } }}
+            data-theme={theme}
+            className={cn(dashboardFontVariables, "animate-in fade-in-0 zoom-in-95 z-[200] w-56 overflow-hidden rounded-xl border border-border bg-overlay text-foreground shadow-lg duration-100")}
           >
             <div className="px-3 py-2 text-[13px] font-semibold text-foreground">
               {label(item)}
@@ -388,6 +396,7 @@ function FlyoutTree({
             <Link
               key={it.id}
               href={it.href}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 "flex items-center gap-2 rounded-md py-1.5 pe-2 text-[13px] transition-colors",
                 active

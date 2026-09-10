@@ -1,6 +1,8 @@
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { localizedPageMetadata } from "@/lib/site-meta";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
@@ -14,32 +16,16 @@ import {
   Code, PaintBrush, Compass, AirplaneTilt,
 } from "@phosphor-icons/react/dist/ssr";
 
-/**
- * EN metadata is unchanged; AR is assembled from this page's own approved
- * strings (its nav label and its hero subheading) — see `lib/site-meta.ts`.
- * As a static `const metadata` this block served the English title and
- * description on the Arabic route.
- */
-export async function generateMetadata({
-  params,
-}: {
+export async function generateMetadata({ params }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "About" });
-  const nav = await getTranslations({ locale, namespace: "Nav" });
-
-  return localizedPageMetadata({
-    locale,
-    enTitle: "About",
-    enDescription:
-      "Codescope is the product-engineering company behind Tourscope — a team of 18 engineers, designers, and product people building independently from Iraq.",
-    arTitleLabel: nav("about"),
-    arDescription: t("hero.subheading"),
-  });
+  return pageMetadata("/about", locale);
 }
 
+
 export default async function AboutPage() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("About");
 
   const values = [
@@ -57,7 +43,8 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="relative pt-40 pb-24 px-6 overflow-hidden">
+      <BreadcrumbData path="/about" locale={locale} />
+      <section className="site-hero relative pt-24 sm:pt-40 pb-16 px-6 overflow-hidden sm:pb-24">
         <HeroBackground />
         {/* No eyebrow. "About Codescope" above a headline that reads "We are
             Codescope." is the label restating the thing it labels — the same
@@ -66,7 +53,7 @@ export default async function AboutPage() {
           <AnimatedHeadline
             text={t("hero.heading")}
             accent={t("hero.headlineAccent")}
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6"
+            className="text-[clamp(2.25rem,10vw,3rem)] sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6"
             accentClassName="text-zinc-400"
           />
           <FadeIn delay={0.5}>
@@ -82,7 +69,7 @@ export default async function AboutPage() {
           as a wall. `items-start` keeps the heading level with the statement's
           first line. Padding is up from `py-16` because the statement is now
           roughly three times the height it was and needs the air. */}
-      <section className="py-24 sm:py-28 px-6">
+      <section className="py-16 sm:py-28 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-10 lg:gap-16 items-start">
           <FadeIn>
             <h2 className="text-2xl font-bold text-white tracking-tight">{t("story.heading")}</h2>
@@ -99,7 +86,7 @@ export default async function AboutPage() {
       </section>
 
       {/* ── The team — composition, not fabricated headshots ──────────────── */}
-      <section className="py-24 px-6 border-t border-white/5">
+      <section className="py-16 px-6 border-t border-white/5 sm:py-24">
         <div className="max-w-7xl mx-auto">
           {/* Plain heading inside the FadeIn, not a per-token ScrollReveal.
               The manifesto on the home page is the one place that reveal is
@@ -138,13 +125,13 @@ export default async function AboutPage() {
                 restyled to the house register (small, medium, brand tint)
                 instead of the tracked-uppercase form PRODUCT.md calls out. */}
             <p className="text-sm font-medium text-cs-teal-hover mb-8">{t("positioning.label")}</p>
-            <div className="relative flex items-center justify-between gap-4 mb-10">
+            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 mb-10">
               <div className="text-sm text-zinc-400 font-medium shrink-0">{t("positioning.left")}</div>
-              <div className="flex-1 h-px bg-gradient-to-r from-white/5 via-cs-teal/40 to-white/5" />
+              <div className="h-6 w-px sm:flex-1 sm:h-px sm:w-auto bg-gradient-to-b sm:bg-gradient-to-r from-white/5 via-cs-teal/40 to-white/5" />
               <div className="shrink-0 px-4 py-2 rounded-full border border-cs-teal/30 bg-cs-teal/10 text-sm font-semibold text-cs-teal">
                 {t("positioning.center")}
               </div>
-              <div className="flex-1 h-px bg-gradient-to-r from-white/5 via-cs-teal/40 to-white/5" />
+              <div className="h-6 w-px sm:flex-1 sm:h-px sm:w-auto bg-gradient-to-b sm:bg-gradient-to-r from-white/5 via-cs-teal/40 to-white/5" />
               <div className="text-sm text-zinc-400 font-medium shrink-0">{t("positioning.right")}</div>
             </div>
             <blockquote className="text-2xl sm:text-3xl font-bold text-white leading-snug mb-6 max-w-[50ch]">
@@ -155,7 +142,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-6">
+      <section className="py-16 px-6 sm:py-24">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl font-bold text-white tracking-tight mb-12">{t("values.heading")}</h2>
@@ -183,7 +170,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-6 border-t border-white/5">
+      <section className="py-16 px-6 border-t border-white/5 sm:py-24">
         <div className="max-w-3xl mx-auto text-center">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t("cta.heading")}</h2>

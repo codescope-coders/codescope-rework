@@ -1,3 +1,6 @@
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
@@ -22,31 +25,23 @@ import { HeroBackground } from "@/components/site/HeroBackground";
  * `/contact` is unchanged and stays what it was: a general way to write to us.
  */
 
-export async function generateMetadata({
-  params,
-}: {
+export async function generateMetadata({ params }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "GetStarted" });
-
-  return {
-    // `absolute`, like the pricing page: the title already names the product
-    // and the company, and the layout template would print "…by Codescope |
-    // CodeScope".
-    title: { absolute: t("meta.title") },
-    description: t("meta.description"),
-    openGraph: { title: t("meta.title"), description: t("meta.description") },
-  };
+  return pageMetadata("/get-started", locale);
 }
 
+
 export default async function GetStartedPage() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("GetStarted");
   const tContact = await getTranslations("Contact");
 
   return (
     <>
-      <section className="relative pt-40 pb-16 px-6 overflow-hidden">
+      <BreadcrumbData path="/get-started" locale={locale} />
+      <section className="site-hero relative pt-24 sm:pt-40 pb-10 sm:pb-16 px-6 overflow-hidden">
         <HeroBackground />
         <div className="relative max-w-3xl mx-auto">
           {/* A plain `h1`, not `AnimatedHeadline`. That component takes a
@@ -64,7 +59,7 @@ export default async function GetStartedPage() {
         </div>
       </section>
 
-      <section className="py-16 px-6 pb-32">
+      <section className="py-10 sm:py-16 px-6 pb-16 sm:pb-32">
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-start">
           {/* The page's ONE reveal. The form is the page; a cascade of
               staggered fades over six fields would animate a task rather than

@@ -20,14 +20,14 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0">
-        <h1 className="text-xl font-extrabold tracking-tight text-foreground">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-[28px] text-foreground">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-1 text-[13px] text-muted-foreground">{subtitle}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{subtitle}</p>
         )}
       </div>
-      {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
+      {action && <div className="flex max-w-full flex-wrap items-center gap-2">{action}</div>}
     </div>
   );
 }

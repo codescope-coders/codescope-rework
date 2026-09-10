@@ -1,43 +1,30 @@
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { localizedPageMetadata } from "@/lib/site-meta";
 import { FadeIn } from "@/components/site/FadeIn";
 import { HeroBackground } from "@/components/site/HeroBackground";
 import { AnimatedHeadline } from "@/components/site/AnimatedHeadline";
 import { Envelope } from "@phosphor-icons/react/dist/ssr";
 import ContactForm from "@/components/site/ContactForm";
 
-/**
- * EN metadata is unchanged; AR is assembled from this page's own approved
- * strings (its nav label and its hero subheading) — see `lib/site-meta.ts`.
- * As a static `const metadata` this block served the English title and
- * description on the Arabic route.
- */
-export async function generateMetadata({
-  params,
-}: {
+export async function generateMetadata({ params }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Contact" });
-  const nav = await getTranslations({ locale, namespace: "Nav" });
-
-  return localizedPageMetadata({
-    locale,
-    enTitle: "Contact",
-    enDescription:
-      "Tell us about your agency or project. Request a Tourscope demo or a general inquiry — we reply within 24 hours.",
-    arTitleLabel: nav("contact"),
-    arDescription: t("hero.subheading"),
-  });
+  return pageMetadata("/contact", locale);
 }
 
+
 export default async function ContactPage() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("Contact");
 
   return (
     <>
-      <section className="relative pt-40 pb-16 px-6 overflow-hidden">
+      <BreadcrumbData path="/contact" locale={locale} />
+      <section className="site-hero relative pt-24 sm:pt-40 pb-10 sm:pb-16 px-6 overflow-hidden">
         <HeroBackground />
         {/* No eyebrow — "Get in touch" above "Let's build something real." on
             the contact page is the third restatement of the same fact. */}
@@ -54,7 +41,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="py-16 px-6 pb-32">
+      <section className="py-10 sm:py-16 px-6 pb-16 sm:pb-32">
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 items-start">
           <FadeIn>
             <ContactForm />

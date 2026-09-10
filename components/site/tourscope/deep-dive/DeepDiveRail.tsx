@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
+import { getLenis } from "@/lib/lenis";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import {
   DEEP_DIVE_SECTION_IDS,
@@ -11,19 +12,11 @@ import {
 
 /**
  * The deep-dive region's topic nav — a sticky rail on desktop, a sticky chip
- * bar on a phone.
+ * bar on phones and tablets.
  *
- * ── Lenis owns the scroll ───────────────────────────────────────────────────
- * Every item is a plain `<a href="#dd-…">`. `SmoothScroll` constructs Lenis
- * with `anchors: true`, so an in-page anchor is eased for free — and under
- * `prefers-reduced-motion` Lenis is never constructed at all, so the browser's
- * own instant jump takes over, which is the correct behaviour there.
- *
- * ⚠️ Do NOT add `preventDefault` + `scrollIntoView` here, and do NOT add
- * `scroll-behavior: smooth` in CSS. Either one takes the scroll away from Lenis
- * and the two then fight: the native jump lands first and Lenis eases from
- * wherever it was left, which is the teleport-then-drift the `anchors: true`
- * flag exists to prevent.
+ * Desktop anchors use the existing Lenis driver. Touch devices use the
+ * browser's smooth anchor scrolling on demand, without an idle animation loop.
+ * Reduced motion and unmodified server HTML retain native instant anchors.
  *
  * ── Active tracking ─────────────────────────────────────────────────────────
  * One IntersectionObserver over the section elements, with a `rootMargin` that
@@ -107,6 +100,27 @@ export function DeepDiveRail() {
     scroller.scrollBy({ left: delta, behavior: reduced ? "auto" : "smooth" });
   }, [activeId, reduced]);
 
+  function scrollToTopic(event: MouseEvent<HTMLAnchorElement>) {
+    // Leave modified clicks and Lenis-owned navigation to their existing path.
+    if (
+      event.defaultPrevented || event.button !== 0 ||
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
+      getLenis() || reduced ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
+
+    const hash = event.currentTarget.hash;
+    const section = document.getElementById(hash.slice(1));
+    if (!section) return;
+
+    event.preventDefault();
+    // Updating history directly avoids an instant hash jump before the glide.
+    if (window.location.hash !== hash) {
+      window.history.pushState(window.history.state, "", hash);
+    }
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   const railLabel = t("railLabel");
 
   return (
@@ -116,11 +130,7 @@ export function DeepDiveRail() {
           the viewport edge while its chips stay on the text grid. `top-16` is
           the navbar's real height (`h-16` in NavbarShell), measured rather than
           guessed. */}
-      {/* `/95`, not a lighter tint: this bar has section headings and 44px
-          carrier tiles passing directly under it, and at 85% the heading behind
-          it stayed legible enough to read as a rendering fault rather than as a
-          bar. The blur alone does not carry it. */}
-      <div className="sticky top-16 z-30 -mx-6 border-y border-white/[0.06] bg-cs-ink/95 px-6 py-2.5 backdrop-blur-xl lg:hidden">
+      <div className="sticky top-16 z-30 -mx-6 border-y border-white/[0.06] bg-cs-ink px-6 py-2.5 lg:hidden">
         <nav aria-label={railLabel}>
           <div
             ref={scrollerRef}
@@ -139,10 +149,11 @@ export function DeepDiveRail() {
                       chipRefs.current[section.id] = node;
                     }}
                     href={`#${section.id}`}
+                    onClick={scrollToTopic}
                     aria-current={active ? "true" : undefined}
                     data-active={active ? "true" : "false"}
                     data-dd-chip={section.id}
-                    className={`shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
+                    className={`inline-flex min-h-11 items-center shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
                       active
                         ? "border-ts-purple/40 bg-ts-purple/15 text-white"
                         : "border-white/[0.08] bg-white/[0.03] text-zinc-400 hover:text-zinc-200"
@@ -177,6 +188,7 @@ export function DeepDiveRail() {
                     <li key={section.id}>
                       <a
                         href={`#${section.id}`}
+                        onClick={scrollToTopic}
                         aria-current={active ? "true" : undefined}
                         data-active={active ? "true" : "false"}
                         data-dd-rail={section.id}

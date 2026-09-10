@@ -1,3 +1,6 @@
+import { getLocale as getSchemaLocale } from "next-intl/server";
+import { BreadcrumbData, TourscopeData } from "@/components/site/StructuredData";
+import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
@@ -25,16 +28,16 @@ import {
   ArrowRight, ArrowUpRight, Check,
 } from "@phosphor-icons/react/dist/ssr";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("TourScope.meta");
-  return {
-    title: { absolute: t("title") },
-    description: t("description"),
-    openGraph: { title: t("title"), description: t("description") },
-  };
+export async function generateMetadata({ params }: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata("/tourscope", locale);
 }
 
+
 export default async function TourScopePage() {
+  const locale = await getSchemaLocale();
   const t = await getTranslations("TourScope");
   const tFooter = await getTranslations("Footer");
 
@@ -112,13 +115,15 @@ export default async function TourScopePage() {
 
   return (
     <>
+      <BreadcrumbData path="/tourscope" locale={locale} />
+      <TourscopeData locale={locale} />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative pt-36 sm:pt-40 pb-24 px-6 overflow-hidden">
+      <section className="site-hero relative pt-22 sm:pt-40 pb-10 px-6 overflow-hidden sm:pb-24">
         <HeroBackground variant="purple" />
 
-        <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-14 lg:gap-16 items-center">
+        <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 sm:gap-14 lg:gap-16 items-center">
           <div>
-            <FadeIn delay={0}>
+            <FadeIn delay={0} className="hidden sm:block">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ts-purple/10 border border-ts-purple/25 text-xs font-semibold text-ts-purple-text mb-7">
                 <span className="w-1.5 h-1.5 rounded-full bg-cs-teal animate-pulse" />
                 {t("hero.label")}
@@ -131,45 +136,49 @@ export default async function TourScopePage() {
                 alt="TourScope"
                 width={340}
                 height={36}
-                className="h-9 sm:h-10 w-auto mb-7"
+                className="h-auto w-[180px] sm:h-10 sm:w-auto mb-4 sm:mb-7"
                 priority
               />
             </FadeIn>
 
             <FadeIn delay={0.16}>
-              <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-[1.08] mb-5 text-balance">
-                {t("hero.headline")}
+              <h1 className="text-[clamp(1.75rem,8vw,2rem)] sm:text-5xl font-bold text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-3 sm:mb-5 text-balance">
+                <span className="sm:hidden">{t("hero.mobileHeadline")}</span>
+                <span className="hidden sm:inline">{t("hero.headline")}</span>
               </h1>
             </FadeIn>
 
             <FadeIn delay={0.24}>
-              <p className="text-lg text-zinc-300 leading-relaxed max-w-[52ch] mb-8">
-                {t("hero.desc")}
+              <p className="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-[52ch] mb-5 sm:mb-8">
+                <span className="sm:hidden">{t("hero.mobileDesc")}</span>
+                <span className="hidden sm:inline">{t("hero.desc")}</span>
               </p>
             </FadeIn>
 
             <FadeIn delay={0.32}>
-              <div className="flex flex-wrap gap-3 mb-8">
+              <div className="site-hero-actions flex flex-wrap gap-3 sm:mb-8">
                 <StarfieldButton variant="primary" accent="purple">
                   <Link
                     href="/get-started"
-                    className="group inline-flex items-center gap-2 px-7 py-3 bg-[#170b2b] text-white text-sm font-semibold rounded-full hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
+                    className="group inline-flex items-center gap-2 px-7 py-3 bg-ts-purple sm:bg-[#170b2b] text-white text-sm font-semibold rounded-full hover:bg-ts-purple-hover sm:hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
                   >
                     {t("hero.cta")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
                   </Link>
                 </StarfieldButton>
-                <StarfieldButton variant="secondary" accent="purple">
-                  <a
-                    href="#platform"
-                    className="inline-flex items-center gap-2 px-7 py-3 bg-[#101013] text-zinc-300 text-sm font-medium rounded-full hover:bg-[#18181d] hover:text-white transition-colors duration-200"
-                  >
-                    {t("hero.ctaSecondary")}<ArrowUpRight size={15} className="rtl:-scale-x-100" />
-                  </a>
-                </StarfieldButton>
+                <span className="hidden sm:contents">
+                  <StarfieldButton variant="secondary" accent="purple">
+                    <a
+                      href="#platform"
+                      className="inline-flex items-center gap-2 px-7 py-3 bg-[#101013] text-zinc-300 text-sm font-medium rounded-full hover:bg-[#18181d] hover:text-white transition-colors duration-200"
+                    >
+                      {t("hero.ctaSecondary")}<ArrowUpRight size={15} className="rtl:-scale-x-100" />
+                    </a>
+                  </StarfieldButton>
+                </span>
               </div>
             </FadeIn>
 
-            <FadeIn delay={0.4}>
+            <FadeIn delay={0.4} className="hidden sm:block">
               <div className="flex flex-wrap gap-2">
                 {chips.map((chip) => (
                   <span
@@ -195,12 +204,19 @@ export default async function TourScopePage() {
             <ProductFrame caption={t("shots.homeCaption")}>
               <StorefrontSearchSlice />
             </ProductFrame>
+            <a
+              href="#platform"
+              className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-zinc-300 transition-colors hover:text-white sm:hidden"
+            >
+              {t("hero.ctaSecondary")}
+              <ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
+            </a>
           </FadeIn>
         </div>
       </section>
 
       {/* ── Two sides ────────────────────────────────────────────────────── */}
-      <section id="platform" className="py-28 sm:py-32 px-6 border-t border-white/5 scroll-mt-20">
+      <section id="platform" className="py-16 sm:py-32 px-6 border-t border-white/5 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             {/* One of two kept eyebrows on this page (the other is the business
@@ -212,16 +228,16 @@ export default async function TourScopePage() {
             </h2>
           </FadeIn>
 
-          <div className="grid lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* B2C */}
             <FadeIn delay={0.05}>
-              <div className="relative h-full rounded-2xl border border-white/[0.07] bg-zinc-900/30 p-8 sm:p-10 flex flex-col">
+              <div className="relative h-full rounded-2xl border border-white/[0.07] bg-zinc-900/30 p-5 sm:p-10 flex flex-col">
                 <span className="self-start px-2.5 py-1 rounded-full border border-cs-teal/25 bg-cs-teal/[0.07] text-[11px] font-semibold text-cs-teal mb-6 tracking-wide">
                   {t("twoSides.b2cTag")}
                 </span>
                 <h3 className="text-2xl font-bold text-white leading-snug mb-3">{t("twoSides.b2cTitle")}</h3>
                 <p className="text-zinc-300 leading-relaxed max-w-[46ch] mb-7">{t("twoSides.b2cBody")}</p>
-                <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
                   {[t("twoSides.b2cB1"), t("twoSides.b2cB2"), t("twoSides.b2cB3"), t("twoSides.b2cB4")].map((b) => (
                     <li key={b} className="flex items-center gap-2.5 text-sm text-zinc-300">
                       <Check size={14} weight="bold" className="text-cs-teal shrink-0" />
@@ -241,13 +257,13 @@ export default async function TourScopePage() {
 
             {/* B2B */}
             <FadeIn delay={0.1}>
-              <div className="card-ts-gradient relative h-full overflow-hidden rounded-2xl border border-white/[0.07] p-8 sm:p-10 flex flex-col">
+              <div className="card-ts-gradient relative h-full overflow-hidden rounded-2xl border border-white/[0.07] p-5 sm:p-10 flex flex-col">
                 <span className="self-start px-2.5 py-1 rounded-full border border-ts-purple/30 bg-ts-purple/15 text-[11px] font-semibold text-ts-purple-text mb-6 tracking-wide">
                   {t("twoSides.b2bTag")}
                 </span>
                 <h3 className="text-2xl font-bold text-white leading-snug mb-3">{t("twoSides.b2bTitle")}</h3>
                 <p className="text-zinc-300 leading-relaxed max-w-[46ch] mb-7">{t("twoSides.b2bBody")}</p>
-                <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
                   {[t("twoSides.b2bB1"), t("twoSides.b2bB2"), t("twoSides.b2bB3"), t("twoSides.b2bB4")].map((b) => (
                     <li key={b} className="flex items-center gap-2.5 text-sm text-zinc-300">
                       <Check size={14} weight="bold" className="text-ts-purple-hover shrink-0" />
@@ -279,7 +295,7 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── Six verticals ────────────────────────────────────────────────── */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3">
@@ -314,7 +330,7 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── The business engine — spec sheet ─────────────────────────────── */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <p className="text-sm font-medium text-ts-purple-text mb-3">{t("engine.eyebrow")}</p>
@@ -366,8 +382,8 @@ export default async function TourScopePage() {
           the deep dive is drawn per vertical, and language is the one quality
           that cuts across all of them. It reads as a single editorial split
           rather than a tour, so the item's own title is the section heading. */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
-        <div className="max-w-7xl mx-auto grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20 overflow-x-clip">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-snug mb-4 max-w-[18ch] text-balance">
               {t("marketTour.i3Title")}
@@ -386,13 +402,13 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── More than a booking tool ─────────────────────────────────────── */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-3 max-w-[20ch] text-balance">
               {t("beyond.headline")}
             </h2>
-            <p className="text-lg text-zinc-300 leading-relaxed max-w-[56ch]">{t("beyond.sub")}</p>
+            <p className="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-[56ch]">{t("beyond.sub")}</p>
           </FadeIn>
 
           {/* Two columns of hairline rows. The rule is on each item's block
@@ -430,7 +446,7 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── Why agencies switch — the build story ────────────────────────── */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20">
         <div className="max-w-7xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight max-w-[22ch] text-balance mb-8">
@@ -470,7 +486,7 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── Trust bar ────────────────────────────────────────────────────── */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <FadeIn className="text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-12 max-w-[24ch] mx-auto text-balance">
@@ -517,13 +533,13 @@ export default async function TourScopePage() {
       {/* ── APP STORE ICONS — the same white-label, one layer further out ── */}
       {/* Tinted: the trust ledger above and the CTA below are both untinted, so
           the band is what separates this exhibit from the claims it evidences. */}
-      <section className="py-28 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20">
+      <section className="py-16 sm:py-32 px-6 border-t border-white/5 bg-zinc-900/20">
         <div className="max-w-4xl mx-auto text-center">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4 text-balance">
               {t("appGrid.headline")}
             </h2>
-            <p className="text-lg text-zinc-300 leading-relaxed max-w-[54ch] mx-auto mb-12">
+            <p className="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-[54ch] mx-auto mb-12">
               {t("appGrid.sub")}
             </p>
           </FadeIn>
@@ -532,7 +548,7 @@ export default async function TourScopePage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <section className="relative py-32 px-6 overflow-hidden border-t border-white/5">
+      <section className="relative py-16 sm:py-32 px-6 overflow-hidden border-t border-white/5">
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
@@ -562,6 +578,11 @@ export default async function TourScopePage() {
                 </a>
               </StarfieldButton>
             </div>
+            <p className="mt-6 text-sm text-zinc-300">
+              <Link href="/pricing" className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-white">
+                {locale === "ar" ? "قارن باقات تورسكوب وتكاليف الإعداد" : "Compare Tourscope packages and setup costs"}
+              </Link>
+            </p>
           </FadeIn>
         </div>
       </section>

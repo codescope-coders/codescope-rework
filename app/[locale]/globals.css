@@ -172,28 +172,28 @@ html {
    globally cannot affect the dashboard. */
 @font-face {
   font-family: "IBM Plex Sans Arabic";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -225,7 +225,7 @@ html {
    thing and nothing else. */
 @font-face {
   font-family: "IBM Plex Sans Arabic Fallback";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -234,7 +234,7 @@ html {
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic Fallback";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -243,7 +243,7 @@ html {
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic Fallback";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -252,7 +252,7 @@ html {
 }
 @font-face {
   font-family: "IBM Plex Sans Arabic Fallback";
-  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.ttf") format("truetype");
+  src: url("/Branding/Fonts/IBMPlexSansArabic-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -663,6 +663,62 @@ body:has([data-site="public"]) {
 
 
 /* ── Global polish ────────────────────────────────────────────────────────── */
+/* Phone refinements are scoped to the public site. Native scrolling and
+   readable content remain available regardless of animation support. */
+[data-site="public"] .site-mobile-menu-body {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 639px) {
+  /* The first screen must paint before hydration on a slow connection.
+     Motion remains on the menu, globe, disclosures and scroll narrative. */
+  [data-site="public"] .site-hero .site-fade-in,
+  [data-site="public"] .site-hero h1 span {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  [data-site="public"] .site-hero-actions > *,
+  [data-site="public"] .site-hero-actions > div > span,
+  [data-site="public"] .site-hero-actions a {
+    width: 100%;
+  }
+
+  [data-site="public"] .site-hero-actions a {
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  [data-site="public"] .site-home-hero h1 {
+    text-wrap: initial;
+  }
+
+  [data-site="public"] .site-form :is(input, textarea, [data-slot="select-trigger"]) {
+    font-size: 16px;
+  }
+
+  [data-site="public"] .site-code-field {
+    opacity: 0.55;
+  }
+
+  /* Secondary labels in dense product previews need readable contrast on
+     their dark panels, especially at phone sizes. */
+  [data-site="public"] :is(.text-zinc-500, .text-zinc-600, .text-zinc-700) {
+    color: #a1a1aa;
+  }
+}
+
+@media (pointer: coarse) {
+  [data-site="public"] :is(button, summary, a, select) {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 167, 157, 0.15);
+  }
+
+  [data-site="public"] .site-scroll-reveal span {
+    text-shadow: none !important;
+  }
+}
+
 /* Both scoped: the dashboard keeps the teal `::selection` and the shadcn
    `--ring` focus treatment declared in the public half above. */
 [data-site="public"] ::selection {

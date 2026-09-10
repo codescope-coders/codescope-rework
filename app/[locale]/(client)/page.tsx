@@ -1,3 +1,5 @@
+import { pageMetadata } from "@/lib/site-meta";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { FadeIn } from "@/components/site/FadeIn";
@@ -17,6 +19,13 @@ import { ArrowUpRight } from "lucide-react";
 import {
   AirplaneTilt, Bed, MapTrifold, IdentificationBadge, ShieldCheck, SimCard,
 } from "@phosphor-icons/react/dist/ssr";
+
+export async function generateMetadata({ params }: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return pageMetadata("/", locale);
+}
 
 export default async function HomePage() {
   const t = await getTranslations("Home");
@@ -46,10 +55,10 @@ export default async function HomePage() {
   return (
     <>
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
+      <section className="site-home-hero relative min-h-[100svh] flex items-center overflow-hidden">
         <HeroBackground />
 
-        <div className="relative max-w-7xl mx-auto px-6 pt-28 pb-20 w-full grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 lg:gap-20 items-center">
+        <div className="relative max-w-7xl mx-auto px-6 pt-24 sm:pt-28 pb-12 sm:pb-20 w-full grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-12 lg:gap-20 items-center">
           <div>
             <FadeIn delay={0}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 text-xs text-zinc-400 mb-8 bg-white/3">
@@ -61,7 +70,7 @@ export default async function HomePage() {
             <AnimatedHeadline
               text={t("hero.headline")}
               accent={t("hero.headlineAccent")}
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6 text-balance"
+              className="text-[clamp(2.25rem,10vw,3rem)] sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter leading-[1.05] mb-6 text-balance"
               accentClassName="text-cs-teal-hover"
             />
 
@@ -71,13 +80,13 @@ export default async function HomePage() {
                 primary CTA arriving at 1.13s: a second of watching a page
                 assemble itself before you can act on it, every visit. */}
             <FadeIn delay={0.06}>
-              <p className="text-lg text-zinc-300 leading-relaxed max-w-[50ch] mb-10">
+              <p className="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-[50ch] mb-10">
                 {t("hero.subhead")}
               </p>
             </FadeIn>
 
             <FadeIn delay={0.12}>
-              <div className="flex flex-wrap gap-3 mb-14">
+              <div className="site-hero-actions flex flex-wrap gap-3 mb-8 sm:mb-14">
                 <MagneticButton>
                   <StarfieldButton variant="primary">
                     <Link
@@ -134,7 +143,7 @@ export default async function HomePage() {
           <HeroGlobe />
         </div>
 
-        <FadeIn delay={0.4} className="absolute bottom-8 left-1/2 -translate-x-1/2">
+        <FadeIn delay={0.4} className="hidden lg:block absolute bottom-8 left-1/2 -translate-x-1/2">
           <ScrollCue label={t("hero.scrollCue")} />
         </FadeIn>
       </section>
@@ -147,7 +156,7 @@ export default async function HomePage() {
       />
 
       {/* ── THE PLATFORM — promoted Tourscope showcase ───────────────────── */}
-      <section className="relative py-24 px-6 border-t border-white/5 bg-zinc-900/30 overflow-hidden">
+      <section className="site-hero relative py-16 px-6 border-t border-white/5 bg-zinc-900/30 overflow-hidden sm:py-24">
         {/* Depth: purple aurora anchored to the top of the section */}
         <div
           aria-hidden
@@ -162,7 +171,7 @@ export default async function HomePage() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
               {t("platform.headline")}
             </h2>
-            <p className="text-lg text-zinc-300 leading-relaxed max-w-[56ch] mb-10">
+            <p className="text-base sm:text-lg text-zinc-300 leading-relaxed max-w-[56ch] mb-10">
               {t("platform.body")}
             </p>
           </FadeIn>
@@ -284,7 +293,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── PRODUCTION FACTS — a ledger strip, not an icon grid ──────────── */}
-      <section className="py-24 px-6 border-t border-white/5">
+      <section className="py-16 px-6 border-t border-white/5 sm:py-24">
         <div className="max-w-5xl mx-auto">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
@@ -325,7 +334,7 @@ export default async function HomePage() {
           the ground IS the surface they sit on, so a wash here would read as a
           box drawn around all of them at once. `overflow-hidden` is what keeps
           the full-bleed rows from scrolling the page sideways. */}
-      <section className="py-24 border-t border-white/5 overflow-hidden">
+      <section className="py-16 border-t border-white/5 overflow-hidden sm:py-24">
         <div className="max-w-7xl mx-auto px-6">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
@@ -345,7 +354,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── THE COMPANY — compact strip ──────────────────────────────────── */}
-      <section className="py-24 px-6 border-t border-white/5 bg-zinc-900/20">
+      <section className="py-16 px-6 border-t border-white/5 bg-zinc-900/20 sm:py-24">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <FadeIn>
             <p className="text-sm font-medium text-cs-teal-hover mb-3">{t("about.eyebrow")}</p>

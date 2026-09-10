@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale } from "next-intl";
+import { dashboardFontVariables } from "@/lib/dashboard/appearance";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,6 +31,7 @@ export function Modal({
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
+  const locale = useLocale();
   const theme = useDashboardTheme((s) => s.theme);
   const width =
     size === "sm" ? "max-w-[400px]" : size === "lg" ? "max-w-[640px]" : "max-w-[480px]";
@@ -40,7 +43,8 @@ export function Modal({
         <Dialog.Content
           data-theme={theme}
           className={cn(
-            "fixed left-1/2 top-1/2 z-50 flex max-h-[90vh] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-overlay text-foreground shadow-2xl outline-none data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0",
+            "fixed left-1/2 top-1/2 z-50 flex max-h-[90dvh] w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-overlay text-foreground shadow-2xl outline-none data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0",
+            dashboardFontVariables,
             width,
             className,
           )}
@@ -59,7 +63,7 @@ export function Modal({
                   </Dialog.Description>
                 )}
               </div>
-              <Dialog.Close className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+              <Dialog.Close aria-label={locale === "ar" ? "إغلاق" : "Close"} className="grid size-9 shrink-0 place-items-center rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                 <X className="size-4" />
               </Dialog.Close>
             </div>
@@ -68,7 +72,7 @@ export function Modal({
             {children}
           </div>
           {footer && (
-            <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+            <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-5 py-3">
               {footer}
             </div>
           )}

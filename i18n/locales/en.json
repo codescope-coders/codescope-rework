@@ -534,6 +534,8 @@
       "description": "Tourscope is a multi-tenant, white-label travel-commerce platform: a consumer marketplace and a B2B agency dashboard. Flights, hotels, tours, visas, insurance, and eSIMs — 80+ supplier integrations, six languages, live in production."
     },
     "hero": {
+      "mobileHeadline": "Your agency. One platform.",
+      "mobileDesc": "Your branded booking website. One dashboard for bookings, suppliers and payments.",
       "label": "Flagship product · Live in production",
       "headline": "The white-label travel platform agencies actually run on.",
       "desc": "Tourscope is a complete travel-commerce platform: a marketplace your travelers book on, and a command center your team runs the business from. Six verticals, 80+ supplier integrations, six languages — multi-tenant from the ground up.",
@@ -1367,6 +1369,10 @@
     }
   },
   "Jobs": {
+    "errorTitle": "We couldn’t load careers.",
+    "errorBody": "Please try again, or contact info@codescope.dev about current openings.",
+    "retry": "Try again",
+    "retrying": "Trying again…",
     "heading": "Discover your next career step",
     "apply": "Apply now",
     "loadingMore": "Loading more...",

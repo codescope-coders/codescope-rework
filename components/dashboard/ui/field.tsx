@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export const controlClass =
-  "h-9 w-full rounded-md border border-border bg-overlay px-3 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary disabled:opacity-60";
+  "h-10 w-full rounded-xl border border-border bg-overlay px-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary disabled:opacity-60";
 
 export function Field({
   label,
@@ -18,7 +18,7 @@ export function Field({
   return (
     <label className={cn("block", className)}>
       {label && (
-        <span className="mb-1.5 block text-xs font-bold text-muted-foreground">
+        <span className="mb-1.5 block text-xs font-medium text-foreground">
           {label}
         </span>
       )}

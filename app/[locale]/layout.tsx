@@ -1,21 +1,26 @@
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
 import "./globals.css";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { getDir } from "@/lib/utils";
-import { NextIntlClientProvider } from "next-intl";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/config";
+import { hasLocale } from "next-intl";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import localFont from "next/font/local";
 import { QueryProvider } from "@/lib/queryClientProvider";
-import { ApplicationSentMessage } from "@/components/ApplicationSentMessage";
 
 export const urbanist = Urbanist({
+  preload: false,
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-urbanist",
 });
 
+// These faces belong to the app shell. Marketing uses Geist / IBM Plex;
+// loading all six OTF weights eagerly costs ~225 KB on every public visit.
 const dahabArabic = localFont({
+  preload: false,
   src: [
     {
       path: "./fonts/Dahab Arabic ITF Black.otf",
@@ -63,9 +68,9 @@ interface Props {
 
 export default async function RootLayout({ children, params }: Props) {
   const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const messages = await getMessages();
   const dir = getDir(locale);
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
@@ -73,14 +78,11 @@ export default async function RootLayout({ children, params }: Props) {
         className={`antialiased ${locale == "en" && urbanist.className} ${locale == "ar" && dahabArabic.className}`}
         suppressHydrationWarning
       >
-        <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <NuqsAdapter>
-              <ApplicationSentMessage />
               {children}
             </NuqsAdapter>
           </QueryProvider>
-        </NextIntlClientProvider>
       </body>
     </html>
   );
