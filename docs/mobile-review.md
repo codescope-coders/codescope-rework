@@ -67,3 +67,22 @@ The live local `/api/jobs` endpoint returns HTTP 500. Its backend issue remains;
 **TourScope mobile hero follow-up**
 
 The phone hero now uses a 180px wordmark, compact localized headline and introduction, and one prominent purple “Request a demo” button. The existing booking preview follows immediately; the secondary exploration link sits beneath it. Desktop copy, colors and layout remain unchanged. At 375px, the preview moved from 878px to 372px from the top in English, and from 811px to 318px in Arabic. Checked 320, 375 and 390px layouts in both languages, with desktop geometry compared at 1440px.
+
+## Follow-up: delayed mobile menu (2026-09-10)
+
+The reported symptom was a roughly two-second pause followed by an abrupt menu open/close and page navigation. The exact delay on the user's phone was not measured locally.
+
+Implemented for the public Codescope/Tourscope menu:
+
+- Keep the small menu tree mounted and animate opacity/row movement with CSS (180ms panel, 200ms rows), instead of mounting Motion controllers on each tap. The icon transitions with CSS as well. Closed/closing content is inert and hidden from assistive technology.
+- Move the header backdrop filter to a separate decorative layer. The fixed menu now uses the viewport directly; WebKit establishes a fixed-position containing block even for an ancestor with `blur(0px)`.
+- Focus without scrolling; avoid automatically focusing the first menu row for touch input. Preserve Escape, focus containment/restoration, scroll locking, RTL, and reduced-motion behavior.
+- Show Link-owned navigation feedback outside the closing menu, so slow requests are acknowledged immediately and the state clears when Next finishes navigating.
+- Add loading boundaries to the six fixed marketing routes linked from the menu. Keep careers outside those boundaries so invalid job URLs continue returning HTTP 404.
+- Remove the sequential outgoing-page wait; new content has a short CSS fade on arrival.
+
+Validation: production build, TypeScript, scoped ESLint, whitespace checks, and the full public SEO regression script passed. Browser checks covered English at 390px, Arabic at 320px, desktop navigation at 1280px, open/close intermediate opacity, Escape cleanup, route completion, and console errors. The panel starts at y=64 and fills the available viewport below the header.
+
+A local read-only proxy delayed navigation responses by four seconds. During that simulated delay, the menu reported closed and visible "Loading page…" feedback appeared before the URL changed; the feedback disappeared once navigation completed. This is a controlled local check, not a measurement on physical Safari/Chrome or the live deployment.
+
+References: [Next.js linking and navigating](https://nextjs.org/docs/app/getting-started/linking-and-navigating), [useLinkStatus](https://nextjs.org/docs/app/api-reference/functions/use-link-status), [WebKit fixed descendants under backdrop filters](https://bugs.webkit.org/show_bug.cgi?id=215256).

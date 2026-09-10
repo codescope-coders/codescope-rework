@@ -1,0 +1,54 @@
+/* No filtered ancestor: the panel is a viewport layer, including in WebKit. */
+[data-site="public"] .site-menu-panel {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease-out, visibility 0s linear 180ms;
+}
+
+[data-site="public"] .site-menu-panel[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+[data-site="public"] .site-menu-row {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease-out, transform 200ms cubic-bezier(0.2, 0.7, 0.3, 1), color 150ms ease-out;
+}
+
+[data-site="public"] .site-menu-panel[data-open="true"] .site-menu-row {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-site="public"] .site-menu-glyph {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+[data-site="public"] .site-menu-glyph > span {
+  position: absolute;
+  inset-inline: 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 180ms ease-out, opacity 120ms ease-out;
+}
+
+.site-menu-glyph > span:nth-child(1) { top: 3px; }
+.site-menu-glyph > span:nth-child(2) { top: 9.25px; }
+.site-menu-glyph > span:nth-child(3) { top: 15.5px; }
+.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(1) { transform: translateY(6.25px) rotate(45deg); }
+.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
+.site-menu-trigger[aria-expanded="true"] .site-menu-glyph > span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-site="public"] :is(.site-menu-panel, .site-menu-row, .site-menu-glyph > span) {
+    transition: none;
+    transform: none;
+  }
+}

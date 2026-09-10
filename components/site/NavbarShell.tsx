@@ -37,20 +37,19 @@ export function NavbarShell({ navItems, ctaLabel, loginLabel }: Props) {
   });
 
   return (
-    <header
-      // Only the two interpolatable properties transition. `transition-all` also
-      // named `backdrop-filter`, which cannot interpolate from the keyword
-      // `none` — the browser simply snapped it, so the blur popped in while the
-      // background faded. The filter is now always declared, at 0px when idle,
-      // which IS interpolatable.
-      className="fixed top-0 inset-x-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300"
-      style={{
-        backgroundColor: scrolled ? "rgba(9,9,11,0.85)" : "transparent",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
-        backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px) saturate(100%)",
-        WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px) saturate(100%)",
-      }}
-    >
+    <header className="fixed top-0 inset-x-0 z-50">
+      {/* Keep the filtered paint layer separate from fixed menu descendants.
+          Even blur(0px) makes a containing block in Safari/WebKit. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 transition-[background-color,border-color] duration-200"
+        style={{
+          backgroundColor: scrolled ? "rgba(9,9,11,0.85)" : "transparent",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
+          backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+        }}
+      />
       {/* Navigation switches at lg, when all desktop links fit. The logo
           scales down below 360px to leave two full 44px touch controls. */}
       <nav className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-2 md:gap-8">
