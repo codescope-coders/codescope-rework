@@ -6,9 +6,8 @@ import { getLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
 
-// Minimal, full-screen chrome for the single public route (login). Intentionally
-// omits the marketing Header/Footer + smooth-scroll provider so the login owns
-// the whole viewport (editorial split layout).
+// Authentication has its own responsive shell and shares the dashboard theme
+// preference. Marketing navigation, analytics and smooth scrolling stay outside.
 export default async function AuthLayout({
   children,
 }: {

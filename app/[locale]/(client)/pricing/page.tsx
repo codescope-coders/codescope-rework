@@ -3,7 +3,7 @@ import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowRight, Check } from "@phosphor-icons/react/dist/ssr";
-import { Link } from "@/i18n/routing";
+import { PageLink as Link } from "@/components/site/PageLink";
 import { AnimatedHeadline } from "@/components/site/AnimatedHeadline";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
@@ -351,7 +351,7 @@ export default async function PricingPage() {
                           className={[
                             "inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors duration-200 active:scale-[0.98]",
                             isAdvanced
-                              ? "bg-[#170b2b] text-white hover:bg-[#20103c]"
+                              ? "site-solid-action bg-[#170b2b] text-white hover:bg-[#20103c]"
                               : "bg-[#101013] text-zinc-300 hover:bg-[#18181d] hover:text-white",
                           ].join(" ")}
                         >

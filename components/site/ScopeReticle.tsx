@@ -3,9 +3,8 @@
 import { useId } from "react";
 import { motion } from "motion/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { CS_TEAL_GLOW } from "@/lib/colors";
 
-const T = CS_TEAL_GLOW;
+const T = "var(--site-scope-color, rgb(8,186,168))";
 
 // Geometry derived from public/Branding/logomark.svg (viewBox 265.83×102.72), scaled to 500×200.
 // Outer rect: 0,0 → 500,200

@@ -1,17 +1,17 @@
 "use client";
 
 import { type CSSProperties, useCallback, useEffect, useId, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
-import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import { Link as InternalLink } from "@/i18n/internal-routing";
 import { PRODUCT_NAV_HREF } from "@/lib/nav-product-pill";
 import { pauseSmoothScroll, resumeSmoothScroll } from "@/lib/lenis";
-import { NavigationPending } from "./NavigationPending";
+import { installMenuDiagnostics } from "@/lib/menu-diagnostics";
+import { beginMenuNavigation, cancelMenuNavigation, cancelPageNavigation } from "@/lib/menu-navigation";
 import "./mobile-menu.css";
 
 type NavItem = { href: string; label: string };
-const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex="0"]';
+const FOCUSABLE = 'a[href], button:not([disabled]):not([tabindex="-1"]), [tabindex="0"]';
 
 export default function MobileMenu({ items, ctaLabel, loginLabel }: {
   items: NavItem[];
@@ -21,15 +21,32 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
   const [open, setOpen] = useState(false);
   const t = useTranslations("Nav");
   const pathname = usePathname();
+  const rtl = useLocale() === "ar";
+  const primaryItems = items.filter(({ href }) => href !== "/" && href !== "/contact");
+  const secondaryItems = items.filter(({ href }) => href === "/" || href === "/contact");
   const panelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement>(null);
   const disclosureRef = useRef<HTMLDetailsElement>(null);
   const touchActivation = useRef(false);
+  const navigated = useRef(false);
   const closeMenu = useCallback(() => {
+    cancelMenuNavigation(panelRef.current);
     if (disclosureRef.current) disclosureRef.current.open = false;
     setOpen(false);
   }, []);
+
+  const navigateTo = (to: string) => {
+    const panel = panelRef.current;
+    if (!panel || to === pathname || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      closeMenu();
+      return;
+    }
+    beginMenuNavigation({ from: pathname, to, panel, complete: () => {
+      navigated.current = true;
+      closeMenu();
+    } });
+  };
 
   // The browser may have opened the disclosure before hydration completed.
   // Subscribe directly so React only enhances focus/scroll behavior; it never
@@ -37,8 +54,16 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
   useEffect(() => {
     const disclosure = disclosureRef.current;
     const trigger = triggerRef.current;
+    const panel = panelRef.current;
     if (!disclosure || !trigger) return;
-    const sync = () => setOpen(disclosure.open);
+    const stopDiagnostics = process.env.NODE_ENV === "development"
+      ? installMenuDiagnostics(disclosure, trigger, panel)
+      : undefined;
+    const sync = () => {
+      if (disclosure.open) cancelPageNavigation();
+      if (!disclosure.open) cancelMenuNavigation(panel);
+      setOpen(disclosure.open);
+    };
 
     // Activate on a completed tap, without waiting for Safari's compatibility
     // mouse/click sequence. Cancelling touchend prevents a second native toggle.
@@ -76,6 +101,8 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
     trigger.addEventListener("touchend", onTouchEnd, { passive: false });
     trigger.addEventListener("keydown", onKeyboardActivation);
     return () => {
+      cancelMenuNavigation(panel);
+      stopDiagnostics?.();
       disclosure.removeEventListener("toggle", sync);
       trigger.removeEventListener("touchstart", onTouchStart);
       trigger.removeEventListener("touchmove", onTouchMove);
@@ -87,15 +114,14 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
 
   useEffect(() => {
     if (!open) return;
+    navigated.current = false;
     pauseSmoothScroll();
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    const onDesktop = () => { if (desktop.matches) closeMenu(); };
-    desktop.addEventListener("change", onDesktop);
+    window.addEventListener("popstate", closeMenu);
     // The panel owns vertical scrolling and contains overscroll. Block gestures
     // on the header too, without changing root overflow/viewport geometry when
     // opening; that can resize and repaint the decorative canvases behind it.
     const preventBackgroundScroll = (event: TouchEvent | WheelEvent) => {
-      if (!panelRef.current?.contains(event.target as Node) && event.cancelable) event.preventDefault();
+      if (!panelRef.current?.querySelector(".site-menu-scroll")?.contains(event.target as Node) && event.cancelable) event.preventDefault();
     };
     document.addEventListener("touchmove", preventBackgroundScroll, { passive: false });
     document.addEventListener("wheel", preventBackgroundScroll, { passive: false });
@@ -133,11 +159,11 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      desktop.removeEventListener("change", onDesktop);
+      window.removeEventListener("popstate", closeMenu);
       document.removeEventListener("touchmove", preventBackgroundScroll);
       document.removeEventListener("wheel", preventBackgroundScroll);
       resumeSmoothScroll();
-      if (keyboardOpened) trigger?.focus({ preventScroll: true });
+      if (keyboardOpened && !navigated.current) trigger?.focus({ preventScroll: true });
     };
   }, [open, closeMenu]);
 
@@ -146,18 +172,26 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
       <details
         ref={disclosureRef}
         suppressHydrationWarning
-        className="site-menu-toggle lg:hidden shrink-0"
+        className="site-menu-toggle shrink-0"
       >
         <summary
           ref={triggerRef}
-          className="site-menu-trigger inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center p-2 text-zinc-400 hover:text-white"
+          className="site-menu-trigger"
           aria-controls={panelId}
         >
           <span className="site-menu-label-open sr-only">{t("openMenu")}</span>
           <span className="site-menu-label-close sr-only">{t("closeMenu")}</span>
-          <span aria-hidden="true" className="site-menu-glyph">
-            <span /><span /><span />
+          <span aria-hidden="true" className="site-menu-caption">
+            <span className="site-menu-label-open">{t("menuShort")}</span>
+            <span className="site-menu-label-close">{t("closeShort")}</span>
           </span>
+          {/* Familiar menu bars, with the logo's squared geometry and tapered
+              cuts. Only rigid transforms and opacity change during the morph. */}
+          <svg aria-hidden="true" focusable="false" className="site-menu-glyph" width="28" height="28" viewBox="0 0 28 28" fill="currentColor">
+            <path className="site-menu-rail site-menu-rail-top" d="M2 5h24l-3 3H2Z" />
+            <path className="site-menu-rail-middle" d="M2 12.5h19l-3 3H2Z" />
+            <path className="site-menu-rail site-menu-rail-bottom" d="M2 20h24l-3 3H2Z" />
+          </svg>
         </summary>
       </details>
 
@@ -170,38 +204,57 @@ export default function MobileMenu({ items, ctaLabel, loginLabel }: {
         aria-modal={open ? true : undefined}
         aria-label={t("menuLabel")}
         data-lenis-prevent
-        className="site-menu-panel lg:hidden fixed top-16 inset-x-0 bottom-0 z-40 overflow-y-auto overscroll-contain bg-zinc-950"
+        className="site-menu-panel"
       >
-        <nav className="site-mobile-menu-body max-w-2xl mx-auto px-6 py-4 sm:py-8 flex flex-col gap-1">
-          {items.map((item, index) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={false}
-              onClick={closeMenu}
-              style={{ "--menu-item-index": index } as CSSProperties}
-              aria-current={pathname === item.href ? "page" : undefined}
-              className={`site-menu-row flex items-center min-h-14 py-4 sm:py-5 border-b border-white/5 text-2xl font-medium transition-colors ${pathname === item.href ? "text-cs-teal" : "text-zinc-300 hover:text-white"}`}
-            >
-              {item.href === PRODUCT_NAV_HREF ? (
-                <span className="flex h-8 items-center">
-                  <Image src="/Branding/tourscope.svg" alt={item.label} width={507} height={54} className="h-[15px] w-auto brightness-0 invert" />
-                </span>
-              ) : item.label}
-              <NavigationPending />
-            </Link>
-          ))}
-          <div className="site-menu-row mt-6" style={{ "--menu-item-index": items.length } as CSSProperties}>
-            <Link href="/get-started" prefetch={false} onClick={closeMenu} className="block w-full text-center py-3.5 px-6 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors">
-              {ctaLabel}
-              <NavigationPending />
-            </Link>
-            <InternalLink href="/login" prefetch={false} onClick={closeMenu} className="block w-full text-center py-3 px-6 text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-              {loginLabel}
-              <NavigationPending />
-            </InternalLink>
-          </div>
-        </nav>
+        <button type="button" tabIndex={-1} aria-hidden="true" aria-label={t("closeMenu")} className="site-menu-backdrop" onClick={closeMenu} />
+        <div className="site-menu-sheet" aria-hidden="true" />
+        <div className="site-menu-scroll">
+          <nav className="site-mobile-menu-body site-menu-content">
+            <div className="site-menu-primary">
+              {primaryItems.map((item, index) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  prefetch={false}
+                  onNavigate={() => navigateTo(item.href)}
+                  style={{ "--menu-item-index": index } as CSSProperties}
+                  aria-label={item.label}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  className="site-menu-link"
+                >
+                  <span className="site-menu-label" aria-hidden="true">
+                    <span className="site-menu-text">
+                      {item.href === PRODUCT_NAV_HREF ? (
+                        <span className="site-menu-product" />
+                      ) : rtl ? item.label : Array.from(item.label).map((letter, letterIndex) => (
+                        <span key={letterIndex} className="site-menu-letter" style={{ "--letter-order": (letterIndex * 3) % item.label.length } as CSSProperties}>{letter}</span>
+                      ))}
+                    </span>
+                  </span>
+                  <svg className="site-menu-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+            <div className="site-menu-footer">
+              <div className="site-menu-secondary">
+                {secondaryItems.map((item) => (
+                  <Link key={item.href} href={item.href} prefetch={false} onNavigate={() => navigateTo(item.href)} aria-current={pathname === item.href ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                ))}
+                <InternalLink href="/login" prefetch={false} onClick={closeMenu}>
+                  {loginLabel}
+                </InternalLink>
+              </div>
+              <Link href="/get-started" prefetch={false} onNavigate={() => navigateTo("/get-started")} className="site-menu-cta">
+                {ctaLabel}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </Link>
+            </div>
+          </nav>
+        </div>
       </div>
     </>
   );

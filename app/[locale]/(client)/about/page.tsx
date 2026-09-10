@@ -3,7 +3,7 @@ import { BreadcrumbData } from "@/components/site/StructuredData";
 import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { PageLink as Link } from "@/components/site/PageLink";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { ScrollRevealText } from "@/components/site/ScrollRevealText";
@@ -102,7 +102,7 @@ export default async function AboutPage() {
           <FadeIn delay={0.06}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-white/[0.07] bg-white/[0.06]">
               {disciplines.map((d) => (
-                <div key={d.label} className="bg-[#0a0a0c] p-6 flex flex-col gap-3.5">
+                <div key={d.label} className="bg-cs-ink p-6 flex flex-col gap-3.5">
                   <div className="w-10 h-10 rounded-lg bg-cs-teal/12 border border-cs-teal/20 flex items-center justify-center">
                     <d.Icon size={19} weight="duotone" className="text-cs-teal" />
                   </div>
@@ -176,7 +176,7 @@ export default async function AboutPage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t("cta.heading")}</h2>
             <p className="text-zinc-300 mb-10">{t("cta.subheading")}</p>
             <StarfieldButton variant="primary">
-              <Link href="/get-started" className="group inline-flex items-center gap-2 px-9 py-4 bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
+              <Link href="/get-started" className="group inline-flex items-center gap-2 px-9 py-4 site-solid-action bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
                 {t("cta.button")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
               </Link>
             </StarfieldButton>

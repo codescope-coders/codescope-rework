@@ -61,7 +61,7 @@ export function OtpInput({
 
   return (
     <div
-      className="flex justify-between gap-2 sm:gap-2.5"
+      className="auth-otp-grid grid grid-cols-6 gap-1.5 sm:gap-2.5"
       dir="ltr"
       role="group"
       aria-label={t("otp_group_label")}
@@ -82,7 +82,7 @@ export function OtpInput({
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
-          className="h-12 w-full rounded-md border border-input-border bg-background text-center text-lg font-bold text-foreground outline-none transition-colors focus:border-primary focus:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-12 min-w-0 w-full rounded-xl border border-input-border bg-background text-center text-lg font-bold text-foreground outline-none transition-colors focus:border-primary focus:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
         />
       ))}
     </div>

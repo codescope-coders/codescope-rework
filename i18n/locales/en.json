@@ -1,5 +1,15 @@
 {
   "auth": {
+    "workspace_label": "Codescope workspace",
+    "back_site": "Back to website",
+    "theme_light": "Switch to light mode",
+    "theme_dark": "Switch to dark mode",
+    "panel_eyebrow": "The company behind Tourscope",
+    "panel_heading": "Your work.",
+    "panel_accent": "In focus.",
+    "panel_summary": "Projects, people, and day-to-day operations. One workspace for the Codescope team.",
+    "panel_caption": "Built with care. Run with clarity.",
+    "access_note": "For authorized Codescope team members.",
     "login_title": "Sign in",
     "login_subtitle": "Enter your email and we'll send you a sign-in code.",
     "email_label": "Email",
@@ -272,6 +282,8 @@
     "keywords": "white-label travel platform, B2B travel booking software, travel agency software, multi-tenant travel marketplace, Tourscope, CodeScope"
   },
   "Nav": {
+    "themeLight": "Switch to light mode",
+    "themeDark": "Switch to dark mode",
     "home": "Home",
     "services": "Engineering",
     "about": "About",
@@ -280,6 +292,8 @@
     "cta": "Request a demo",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
+    "menuShort": "Menu",
+    "closeShort": "Close",
     "menuLabel": "Site menu",
     "jobs": "Careers",
     "pricing": "Pricing",
@@ -300,6 +314,9 @@
     "careers": "Careers"
   },
   "Home": {
+    "globe": {
+      "description": "Illustrative travel network: flights, hotel stays and connected group-tour stops around the globe. Tourscope also supports visas, insurance and eSIMs."
+    },
     "hero": {
       "eyebrow": "Building from Iraq",
       "headline": "Travel agencies deserved better.",

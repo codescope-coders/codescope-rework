@@ -472,7 +472,7 @@ export const ApplicationForm = () => {
               >
                 <SelectValue placeholder={t("form.expectedSalaryPlaceholder")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="site-popover">
                 {expectedSalaryEnum?.enumValues.map((v, i) => (
                   <SelectItem key={i} value={v}>
                     {optionLabel("salary", v)}
@@ -755,7 +755,7 @@ export const ApplicationForm = () => {
               >
                 <SelectValue placeholder={t("form.educationLevelPlaceholder")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="site-popover">
                 {educationLevelEnum?.enumValues.map((v, i) => (
                   <SelectItem key={i} value={v}>
                     {optionLabel("education", v)}
@@ -819,7 +819,7 @@ export const ApplicationForm = () => {
         <Button
           type="submit"
           disabled={isPending || isUploadingFile}
-          className="sticky bottom-5 left-0 mt-10 h-14 w-full rounded-xl bg-cs-teal text-base font-semibold text-white opacity-100 shadow-none hover:bg-cs-teal-hover"
+          className="sticky bottom-5 left-0 mt-10 h-14 w-full rounded-xl bg-cs-teal site-action-ink text-base font-semibold text-white opacity-100 shadow-none hover:bg-cs-teal-hover"
         >
           {isUploadingFile
             ? t("form.uploadingCv")

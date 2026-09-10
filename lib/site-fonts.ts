@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 /**
  * Shared Codescope fonts, applied as scoped variables on marketing and dashboard
- * surfaces (including dashboard portals). Authentication keeps its existing font.
+ * surfaces (including dashboard portals) and authentication.
  * Arabic faces are declared locally in globals.css as IBM Plex Sans Arabic.
  */
 export const geistSans = Geist({

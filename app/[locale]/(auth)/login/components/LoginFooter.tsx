@@ -11,8 +11,7 @@ const LANGS: { code: "en" | "ar"; label: string }[] = [
 
 export function LoginFooter() {
   const t = useTranslations("auth");
-  // Same locale switch the marketing header uses — a cookie write plus a
-  // server refresh, so the URL stays bare and the page does not jump.
+  // Authentication keeps its existing cookie-based locale and bare URL.
   const { switchLocale, isPending, activeLocale: locale } = useSwitchLocale();
 
   const setLang = (code: "en" | "ar") => switchLocale(code);
@@ -33,10 +32,11 @@ export function LoginFooter() {
             )}
             <button
               type="button"
+              aria-pressed={locale === l.code}
               disabled={isPending}
               onClick={() => setLang(l.code)}
               className={cn(
-                "cursor-pointer rounded-md px-2 py-1 text-xs font-medium transition-colors disabled:opacity-50",
+                "cursor-pointer min-h-11 rounded-lg px-3 py-2 text-xs font-medium transition-colors disabled:opacity-50",
                 locale === l.code
                   ? "text-primary"
                   : "text-subtitle-color hover:text-foreground",

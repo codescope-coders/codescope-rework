@@ -1,7 +1,7 @@
 import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { PageLink as Link } from "@/components/site/PageLink";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { HeroBackground } from "@/components/site/HeroBackground";
@@ -91,7 +91,7 @@ export default async function HomePage() {
                   <StarfieldButton variant="primary">
                     <Link
                       href="/tourscope"
-                      className="group inline-flex items-center gap-2 px-7 py-3 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
+                      className="group inline-flex items-center gap-2 px-7 py-3 site-solid-action bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
                     >
                       {t("hero.ctaPrimary")}
                       <ArrowRightIcon size={15} className="text-white rtl:rotate-180" />
@@ -140,7 +140,7 @@ export default async function HomePage() {
             </FadeIn>
           </div>
 
-          <HeroGlobe />
+          <HeroGlobe description={t("globe.description")} />
         </div>
 
         <FadeIn delay={0.4} className="hidden lg:block absolute bottom-8 left-1/2 -translate-x-1/2">
@@ -187,7 +187,7 @@ export default async function HomePage() {
                 section is `overflow-hidden`, so the bleed cannot scroll the
                 page sideways, and `-mx-` is symmetric so it needs no RTL
                 counterpart. */}
-            <div className="relative -mx-6 sm:mx-auto sm:max-w-[1160px]">
+            <div className="site-device-stage relative -mx-6 sm:mx-auto sm:max-w-[1160px]">
               <div
                 aria-hidden
                 className="pointer-events-none absolute -inset-x-8 -inset-y-10 blur-3xl"
@@ -200,7 +200,7 @@ export default async function HomePage() {
                 height={887}
                 priority={false}
                 sizes="(max-width: 1200px) 100vw, 1160px"
-                className="relative w-full h-auto select-none mix-blend-lighten"
+                className="site-device-image relative w-full h-auto select-none mix-blend-lighten"
                 style={{
                   maskImage: "linear-gradient(90deg, transparent, black 4%, black 96%, transparent), linear-gradient(0deg, transparent, black 4%, black 96%, transparent)",
                   maskComposite: "intersect",
@@ -395,7 +395,7 @@ export default async function HomePage() {
               <StarfieldButton variant="primary">
                 <Link
                   href="/get-started"
-                  className="group inline-flex items-center gap-2 px-9 py-4 bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
+                  className="group inline-flex items-center gap-2 px-9 py-4 site-solid-action bg-[#0a1c1a] text-white font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]"
                 >
                   {t("cta.button")}
                   <ArrowRightIcon size={16} className="text-white rtl:rotate-180" />

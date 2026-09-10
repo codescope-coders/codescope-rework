@@ -268,14 +268,14 @@ html {
    continues to resolve them exactly as it did before this block existed. */
 @theme inline {
   /* CodeScope — teal */
-  --color-cs-teal: #00a79d;
-  --color-cs-teal-hover: #00c4b8;
+  --color-cs-teal: var(--site-teal, #00a79d);
+  --color-cs-teal-hover: var(--site-teal-hover, #00c4b8);
   --color-cs-teal-dark: #007f77;
 
   /* The brighter "animation teal": glows, reticle strokes, scroll reveals.
      Single source of truth for the value — JS that needs it as a string
      (SVG paint, interpolated colors) mirrors it in `lib/colors.ts`. */
-  --color-cs-teal-glow: #08baa8;
+  --color-cs-teal-glow: var(--site-teal-text, #08baa8);
 
   /* TourScope — purple */
   --color-ts-purple: #6f00ff;
@@ -285,14 +285,14 @@ html {
      which clears AA only for large (≥24px) display type — so eyebrows, tags,
      numerals and labels use this lighter tint (5.4:1) instead. Icons and
      display-size type keep `-hover`. */
-  --color-ts-purple-text: #a76bff;
+  --color-ts-purple-text: var(--site-purple-text, #a76bff);
 
   /* Surfaces. These are page grounds, not accents: the body ink, the near-black
      panel the ledger blocks sit on, and the manifesto's blue-black. Each was
      re-typed as a bracket hex in two or three files. */
-  --color-cs-ink: #09090b;
-  --color-cs-panel: #0a0711;
-  --color-cs-manifesto: #0a0e1a;
+  --color-cs-ink: var(--site-ground, #09090b);
+  --color-cs-panel: var(--site-panel, #0a0711);
+  --color-cs-manifesto: var(--site-manifesto, #0a0e1a);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────────── */
@@ -704,7 +704,7 @@ body:has([data-site="public"]) {
   /* Secondary labels in dense product previews need readable contrast on
      their dark panels, especially at phone sizes. */
   [data-site="public"] :is(.text-zinc-500, .text-zinc-600, .text-zinc-700) {
-    color: #a1a1aa;
+    color: var(--site-mobile-muted, #a1a1aa);
   }
 }
 

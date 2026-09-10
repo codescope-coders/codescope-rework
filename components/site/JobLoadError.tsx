@@ -19,7 +19,7 @@ export function JobLoadError({
         type="button"
         onClick={onRetry}
         disabled={pending}
-        className="mt-6 min-h-12 rounded-full border border-cs-teal/30 bg-[#0a1c1a] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#0f2a27] disabled:opacity-60"
+        className="mt-6 min-h-12 rounded-full border border-cs-teal/30 site-solid-action bg-[#0a1c1a] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#0f2a27] disabled:opacity-60"
       >
         {t(pending ? "retrying" : "retry")}
       </button>

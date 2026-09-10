@@ -1,3 +1,5 @@
+import "./codescope-logo.css";
+
 interface Props {
   className?: string;
 }
@@ -9,7 +11,7 @@ export function CodeScopeLogo({ className }: Props) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="35 190 356 44"
-      className={className}
+      className={`site-brand-logo ${className ?? ""}`}
       aria-label="CodeScope"
       fill="#00a79d"
     >
@@ -26,11 +28,15 @@ export function CodeScopeLogo({ className }: Props) {
       {/* O */}
       <polygon points="206.9 194.6 198 194.6 198 202.9 198 203.6 198 208 198 212.5 198 217 198 217 198 221.4 198 221.4 198 230.4 206.9 230.4 215.8 230.4 224.7 230.4 224.7 221.4 215.8 221.4 206.9 221.4 206.9 217 206.9 217 206.9 212.5 206.9 208 206.9 203.6 215.8 203.6 224.7 203.6 224.7 194.6 215.8 194.6 206.9 194.6" />
       {/* P/S shape */}
-      <path d="M229.7,230.3h91.9v-35.5h-91.9v35.5ZM238.1,209.5l75.1-5.4v16.8l-75.1-5.3v-6.1Z" />
+      <path className="site-logo-aperture" d="M229.7,230.3h91.9v-35.5h-91.9v35.5ZM238.1,209.5l75.1-5.4v16.8l-75.1-5.3v-6.1Z" />
       {/* C */}
       <path d="M335.3,194.6h-9.5v22.3h0v4.5h0v8.9h8.9v-4.5h0v-8.9h0s.6,0,.6,0h17.9v-22.3h-17.9ZM344.2,208h-9.5v-4.4h9.5v4.4Z" />
       {/* E */}
       <polygon points="375.5 203.6 384.4 203.6 384.4 194.6 375.5 194.6 366.6 194.6 357.6 194.6 357.6 203.6 357.6 208 357.6 212.5 357.6 217 357.7 217 357.7 221.4 357.6 221.4 357.6 230.4 366.6 230.4 375.5 230.4 384.4 230.4 384.4 221.4 375.5 221.4 366.6 221.4 366.6 217 375.5 217 384.4 217 384.4 208 375.5 208 366.6 208 366.6 203.6 375.5 203.6" />
+      {/* Focus corners echo the central scope, without changing its outline. */}
+      <g className="site-logo-focus" aria-hidden="true" fill="none" stroke="#7ae9d6" strokeWidth="0.9">
+        <path d="M235 191H227V194M316 191H324V194M235 233H227V230M316 233H324V230" />
+      </g>
     </svg>
   );
 }

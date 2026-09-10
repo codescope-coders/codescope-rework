@@ -3,7 +3,7 @@ import { BreadcrumbData } from "@/components/site/StructuredData";
 import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { PageLink as Link } from "@/components/site/PageLink";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
 import { SpotlightCard } from "@/components/site/SpotlightCard";
@@ -127,7 +127,7 @@ export default async function ServicesPage() {
           </FadeIn>
           <FadeIn delay={0.08}>
             <StarfieldButton variant="primary" className="shrink-0">
-              <Link href="/contact" className="group shrink-0 inline-flex items-center gap-2 px-7 py-3 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
+              <Link href="/contact" className="group shrink-0 inline-flex items-center gap-2 px-7 py-3 site-solid-action bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 active:scale-[0.98]">
                 {t("cta.button")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
               </Link>
             </StarfieldButton>

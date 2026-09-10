@@ -1,80 +1,182 @@
-/* No filtered ancestor: the panel is a viewport layer, including in WebKit. */
+/* The sheet moves with transform; its clipping bounds never animate.
+   Text has a separate layer, so expanding the ground cannot scale the letters.
+   Native [open] starts both transitions without waiting for a React render. */
 [data-site="public"] .site-menu-panel {
-  opacity: 0;
+  position: fixed;
+  inset: 64px 0 max(12px, env(safe-area-inset-bottom));
+  z-index: 40;
+  overflow: hidden;
+  isolation: isolate;
   visibility: hidden;
   pointer-events: none;
-  contain: layout paint;
-  transform: translate3d(0, 0, 0);
-  overscroll-behavior: contain;
-  touch-action: pan-y pinch-zoom;
-  transition: opacity 140ms ease-out, visibility 0s linear 140ms;
+  transition: visibility 0s linear 440ms;
 }
-
 [data-site="public"] .site-menu-toggle[open] + .site-menu-panel {
-  opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transition: opacity 220ms ease-out, visibility 0s;
+  transition-delay: 0s;
 }
-
-[data-site="public"] .site-menu-row {
-  opacity: 0;
-  transform: translate3d(0, 12px, 0);
-  transition: opacity 100ms ease-out, transform 140ms ease-out, color 150ms ease-out;
+[data-site="public"] .site-menu-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  touch-action: none;
 }
-
-[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-row {
+[data-site="public"] .site-menu-sheet {
+  position: absolute;
+  inset: 0;
+  background: var(--site-menu-ground);
+  border-radius: 0 0 24px 24px;
+  transform: translate3d(0, -100%, 0);
+  will-change: transform;
+  transition: transform 440ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-sheet {
+  transform: translate3d(0, 0, 0);
+  transition: transform 860ms cubic-bezier(0.22, 0.8, 0.25, 1);
+}
+[data-site="public"] .site-menu-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+  border-radius: 0 0 24px 24px;
+}
+[data-site="public"] .site-menu-content {
+  min-height: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: clamp(32px, 6svh, 64px) clamp(24px, 7vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(28px, 5svh, 48px);
+}
+[data-site="public"] .site-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--site-menu-line);
+  color: var(--site-menu-ink);
+  font-size: clamp(34px, 10.8vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+  transition: color 180ms ease;
+}
+[data-site="public"] .site-menu-link[aria-current="page"] { color: var(--site-menu-active); }
+[data-site="public"] .site-menu-label { overflow: hidden; padding-block: 2px; }
+[data-site="public"] .site-menu-text { display: block; opacity: 0; transform: translate3d(0, 80%, 0); transition: opacity 140ms ease, transform 240ms ease; }
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-text {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  /* A fresh animation on every opening: no dependency on a hidden element's
-     previous paint. First item starts immediately; the CTA follows at 210ms.
-     Delays only apply on entry, so closing and rapid reversals stay responsive. */
-  animation: site-menu-item-enter 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(var(--menu-item-index, 0) * 35ms);
+  transition: opacity 500ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(120ms + var(--menu-item-index, 0) * 75ms);
 }
-
-@keyframes site-menu-item-enter {
-  from { opacity: 0; transform: translate3d(0, 12px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+[data-site="public"] .site-menu-letter { display: inline-block; white-space: pre; opacity: 0; transition: opacity 140ms ease; }
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-letter {
+  opacity: 1;
+  transition: opacity 380ms ease-out;
+  transition-delay: calc(120ms + var(--menu-item-index, 0) * 75ms + var(--letter-order, 0) * 18ms);
 }
-
-[data-site="public"] .site-menu-glyph {
-  position: relative;
-  width: 20px;
-  height: 20px;
+[data-site="public"] .site-menu-product {
+  display: block;
+  width: clamp(176px, 57vw, 246px);
+  aspect-ratio: 507 / 54;
+  max-width: 100%;
+  margin-block: 5px;
+  /* Keep the original wordmark as a fixed alpha mask. Interpolating its actual
+     color avoids the dark/desaturated midpoint of brightness + invert filters. */
+  -webkit-mask: url("/Branding/tourscope.svg") center / contain no-repeat;
+  mask: url("/Branding/tourscope.svg") center / contain no-repeat;
+  background-color: var(--site-menu-product);
+  transition: background-color 180ms ease;
 }
+[data-site="public"] .site-menu-link:focus-visible .site-menu-product { background-color: #6f00ff; }
+[data-site="public"] .site-menu-arrow { flex-shrink: 0; opacity: 0; transform: translateX(-6px); transition: opacity 120ms, transform 180ms; }
+[data-site="public"] .site-menu-link:focus-visible .site-menu-arrow { opacity: 1; transform: none; }
+[data-site="public"] .site-menu-footer { position: relative; opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity 140ms ease, transform 240ms ease; }
+[data-site="public"] .site-menu-toggle[open] + .site-menu-panel .site-menu-footer { opacity: 1; transform: translate3d(0, 0, 0); transition: opacity 500ms 340ms ease, transform 600ms 340ms cubic-bezier(0.16, 1, 0.3, 1); }
+[data-site="public"] .site-menu-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; margin-bottom: 20px; }
+[data-site="public"] .site-menu-secondary a { display: flex; align-items: center; min-height: 44px; color: var(--site-menu-muted); font-size: 15px; transition: color 150ms; }
+[data-site="public"] .site-menu-secondary a[aria-current="page"] { color: var(--site-menu-active); }
 
-[data-site="public"] .site-menu-glyph > span {
-  position: absolute;
-  inset-inline: 0;
-  height: 1.5px;
-  border-radius: 2px;
-  background: currentColor;
-  transition: transform 180ms ease-out, opacity 120ms ease-out;
+/* Page selection exits DOWN. The close control still retracts UP. Both moving
+   layers use the same distance/easing so the incoming page follows the menu. */
+[data-site="public"] .site-menu-panel[data-navigation="leaving"] {
+  pointer-events: none;
+  animation: site-menu-page-exit 820ms cubic-bezier(0.65, 0, 0.25, 1) both;
 }
-
-.site-menu-glyph > span:nth-child(1) { top: 3px; }
-.site-menu-glyph > span:nth-child(2) { top: 9.25px; }
-.site-menu-glyph > span:nth-child(3) { top: 15.5px; }
-.site-menu-toggle[open] .site-menu-glyph > span:nth-child(1) { transform: translateY(6.25px) rotate(45deg); }
-.site-menu-toggle[open] .site-menu-glyph > span:nth-child(2) { opacity: 0; transform: scaleX(0.3); }
-.site-menu-toggle[open] .site-menu-glyph > span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
-
-@media (prefers-reduced-motion: reduce) {
-  [data-site="public"] :is(.site-menu-panel, .site-menu-row, .site-menu-glyph > span) {
-    animation: none !important;
-    transition: none;
-    transform: none;
-  }
-}
-
-/* Native disclosure activation works before hydration and without JavaScript. */
-[data-site="public"] .site-menu-trigger {
-  list-style: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
+@keyframes site-menu-page-exit { to { transform: translate3d(0, calc(100svh - 64px), 0); } }
+[data-site="public"] .site-menu-panel[data-navigation="reset"] { visibility: hidden; transition: none; }
+[data-site="public"] .site-menu-panel[data-navigation="reset"] .site-menu-sheet { transform: translate3d(0, -100%, 0); transition: none; }
+[data-site="public"] .site-menu-cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; padding: 14px 20px; border-radius: 999px; background: #24d5be; color: #062b25; font-size: 14px; font-weight: 600; transition: background-color 150ms; }
+[data-site="public"] .site-menu-trigger { position: static; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; height: 44px; padding: 4px; cursor: pointer; list-style: none; color: var(--site-menu-ink); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+/* The header's own stacking context keeps this ground below its logo/controls.
+   No root overflow changes, filtered ancestors, or full-page :has() selectors. */
+[data-site="public"] .site-menu-trigger::before { content: ""; position: fixed; inset: 0 0 auto; height: 64px; z-index: -1; pointer-events: none; background: var(--site-menu-ground); opacity: 0; transition: opacity 160ms ease; }
+[data-site="public"] .site-menu-toggle[open] .site-menu-trigger::before { opacity: 1; }
 [data-site="public"] .site-menu-trigger::-webkit-details-marker { display: none; }
+[data-site="public"] .site-menu-caption { display: none; font-size: 13px; }
+[data-site="public"] .site-menu-glyph { display: block; width: 28px; height: 28px; flex-shrink: 0; overflow: visible; color: var(--site-menu-glyph); transition: color 240ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+[data-site="public"] .site-menu-glyph > path { transform-box: view-box; transform-origin: 14px 14px; }
+[data-site="public"] .site-menu-rail { transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1); }
+[data-site="public"] .site-menu-glyph > .site-menu-rail-middle { transform-origin: 2px 14px; transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease; }
+[data-site="public"] .site-menu-toggle[open] .site-menu-glyph { color: var(--site-heading); }
+[data-site="public"] .site-menu-toggle[open] .site-menu-rail-top { transform: rotate(45deg) translateY(7.5px); }
+[data-site="public"] .site-menu-toggle[open] .site-menu-rail-bottom { transform: rotate(-45deg) translateY(-7.5px); }
+[data-site="public"] .site-menu-toggle[open] .site-menu-rail-middle { opacity: 0; transform: translateX(6px) scaleX(0.65); }
 [data-site="public"] .site-menu-label-close { display: none; }
 [data-site="public"] .site-menu-toggle[open] .site-menu-label-open { display: none; }
 [data-site="public"] .site-menu-toggle[open] .site-menu-label-close { display: block; }
+[data-site="public"] .site-menu-panel:dir(rtl) .site-menu-link { letter-spacing: 0; line-height: 1.35; }
+[data-site="public"] .site-menu-panel:dir(rtl) :is(.site-menu-arrow, .site-menu-cta svg) { scale: -1 1; }
+@media (min-width: 640px) { [data-site="public"] .site-menu-caption { display: inline; } }
+@media (min-width: 1024px) {
+  [data-site="public"] .site-menu-sheet,
+  [data-site="public"] .site-menu-scroll { bottom: auto; height: min(540px, calc(100svh - 76px)); }
+  [data-site="public"] .site-menu-content {
+    max-width: 1280px;
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.2fr);
+    align-content: center;
+    gap: clamp(48px, 7vw, 104px);
+    padding: 48px 32px;
+  }
+  [data-site="public"] .site-menu-primary { grid-column: 2; grid-row: 1; }
+  [data-site="public"] .site-menu-footer { grid-column: 1; grid-row: 1; align-self: start; max-width: 310px; padding-top: 12px; }
+  [data-site="public"] .site-menu-link { font-size: clamp(48px, 4.5vw, 64px); min-height: 88px; padding-block: 10px; }
+  [data-site="public"] .site-menu-product { width: clamp(240px, 24vw, 340px); }
+  [data-site="public"] .site-menu-caption { font-size: 16px; }
+  [data-site="public"] .site-menu-trigger { gap: 12px; }
+  [data-site="public"] .site-menu-secondary { grid-template-columns: 1fr; margin-bottom: 32px; }
+  [data-site="public"] .site-menu-secondary a { font-size: 17px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-site="public"] .site-menu-trigger:hover .site-menu-glyph { color: var(--site-heading); transform: scale(1.08); }
+  [data-site="public"] .site-menu-toggle:not([open]) .site-menu-trigger:hover .site-menu-rail-top { transform: translateY(-1px); }
+  [data-site="public"] .site-menu-toggle:not([open]) .site-menu-trigger:hover .site-menu-rail-bottom { transform: translateY(1px); }
+  [data-site="public"] .site-menu-toggle:not([open]) .site-menu-trigger:hover .site-menu-rail-middle { transform: scaleX(1.15); }
+  [data-site="public"] .site-menu-toggle[open] .site-menu-trigger:hover .site-menu-rail-top { transform: rotate(50deg) translateY(7.5px); }
+  [data-site="public"] .site-menu-toggle[open] .site-menu-trigger:hover .site-menu-rail-bottom { transform: rotate(-50deg) translateY(-7.5px); }
+  [data-site="public"] .site-menu-link:hover { color: var(--site-menu-active); }
+  [data-site="public"] .site-menu-link:hover .site-menu-product { background-color: #6f00ff; }
+  [data-site="public"] .site-menu-link:hover .site-menu-arrow { opacity: 1; transform: none; }
+  [data-site="public"] .site-menu-secondary a:hover { color: var(--site-heading); }
+  [data-site="public"] .site-menu-cta:hover { background: #5ae5d2; }
+}
+[data-site="public"] .site-menu-trigger:active .site-menu-glyph { transform: scale(0.94); }
+@media (prefers-reduced-motion: reduce) {
+  [data-site="public"] .site-menu-panel[data-navigation="leaving"] { animation: none !important; }
+  [data-site="public"] :is(.site-menu-panel, .site-menu-sheet, .site-menu-glyph, .site-menu-glyph > path),
+  [data-site="public"] .site-menu-trigger::before { transition: none !important; }
+  [data-site="public"] .site-menu-panel :is(.site-menu-text, .site-menu-letter, .site-menu-footer) { transition: none !important; opacity: 1; transform: none; }
+}

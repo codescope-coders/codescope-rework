@@ -202,7 +202,7 @@ export const Content = ({ initialJobs }: { initialJobs?: JobDto[] }) => {
                 </div>
                 <Link
                   href={`/jobs/${job.id}`}
-                  className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-cs-teal text-sm font-semibold text-white transition-colors duration-200 hover:bg-cs-teal-hover active:scale-[0.99]"
+                  className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-cs-teal site-action-ink text-sm font-semibold text-white transition-colors duration-200 hover:bg-cs-teal-hover active:scale-[0.99]"
                 >
                   {t("apply")}
                 </Link>

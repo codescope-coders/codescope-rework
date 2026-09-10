@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { CS_TEAL_GLOW_UNIT, csInk, tealGlow } from "@/lib/colors";
 import { isLand } from "@/lib/land-mask";
+import { createServiceGlyphs, drawServiceGlyph, TOUR_PATHS } from "./globe-network";
 
 /**
  * The hero's globe — a solid dark ball with its continents picked out in dots,
@@ -368,17 +369,14 @@ const AIRCRAFT: ReadonlyArray<readonly [number, number]> = [
 
 /*
  * ── Destinations ───────────────────────────────────────────────────────────
- * Beacon markers PINNED to real cities: a bright core with a soft glow and an
- * expanding ring that pulses on its own clock per city. Unlike the planes they
+ * Destination points distributed around real cities. Unlike planes they
  * live on the SURFACE and rotate with it — a destination is a place, not a
  * vehicle — so they ride the same spin as the land dots, disappear round the
  * far side, and come back.
  *
- * ⚠️ The first version drew literal hotel BUILDINGS here — a tower with
- * windows and a door. At twelve pixels a building is a smudge with holes in
- * it; the founder called it ugly and unrelated, and he was right. A pulsing
- * beacon says "we are live here", which is the true claim, in the globe's own
- * dot language.
+ * Locations are illustrative. Destination points use depth culling
+ * to stay anchored to the surface. These are visual
+ * cues for the inventory, not a claim of live availability at these points.
  */
 const HOTEL_SPOTS: ReadonlyArray<readonly [number, number]> = [
   [44.4, 33.3], // Baghdad
@@ -389,6 +387,15 @@ const HOTEL_SPOTS: ReadonlyArray<readonly [number, number]> = [
   [-74.0, 40.7], // New York
   [139.7, 35.7], // Tokyo
   [36.8, -1.3], // Nairobi
+  [-118.2, 34.05], // Los Angeles
+  [-99.1, 19.4], // Mexico City
+  [-43.2, -22.9], // Rio de Janeiro
+  [-58.4, -34.6], // Buenos Aires
+  [151.2, -33.9], // Sydney
+  [100.5, 13.75], // Bangkok
+  [77.2, 28.6], // Delhi
+  [18.4, -33.9], // Cape Town
+  [-157.86, 21.3], // Honolulu
 ];
 
 /** The spots as unit vectors in the globe's OBJECT space — the exact inverse
@@ -409,12 +416,9 @@ const HOTELS: ReadonlyArray<readonly [number, number, number]> = HOTEL_SPOTS.map
 
 /** Below this facing, a marker is gone; it fades in across the band above so
  *  beacons dissolve at the limb instead of popping. */
+const HOTEL_ICON_IDS = [4, 5, 6, 10, 12, 15, 16];
 const HOTEL_CULL = 0.08;
 const HOTEL_FADE = 0.3;
-/** Seconds per beacon pulse. Staggered per city by `hash`, so the fleet of
- *  rings never fires in unison like a status page. */
-const PULSE_S = 2.6;
-
 /** Contrail length, as an ARC of the orbit, in radians (~29 deg).
  *
  *  ⚠️ Not seconds. A duration-based trail scales with speed, and the fastest
@@ -475,7 +479,7 @@ function hash(a: number, b: number): number {
   return n - Math.floor(n);
 }
 
-export function HeroGlobe() {
+export function HeroGlobe({ description }: { description: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduced = useReducedMotionSafe();
 
@@ -485,6 +489,15 @@ export function HeroGlobe() {
     // Fail soft: a browser that hands back no 2D context leaves an empty,
     // correctly-sized box rather than throwing through the hero.
     if (!canvas || !ctx) return;
+    const glyphs = createServiceGlyphs();
+    const hotelIconOrder = [...HOTEL_ICON_IDS];
+    const hotelIconFacing = new Float32Array(HOTELS.length);
+    // Theme-aware mineral surface and ink. Read on theme changes, never in
+    // the animation loop; geometry and motion are shared between themes.
+    let lightPage = document.documentElement.getAttribute("data-public-theme") === "light";
+    const skyInk = (alpha: number) => lightPage
+      ? `rgba(7, 111, 101, ${alpha})`
+      : tealGlow(alpha);
 
     // ── Writing direction ──────────────────────────────────────────────────
     // Same rule as `AuroraBand`'s `uFlip`: the light mirrors with the LAYOUT,
@@ -704,9 +717,9 @@ export function HeroGlobe() {
         // which is also what hides the fact that the widest part of the arc may
         // lie outside the cell.
         const g = ctx.createLinearGradient(0, rgy - ry, 0, rgy - ry * RING_FADE_END);
-        g.addColorStop(0, tealGlow(RING_INK));
-        g.addColorStop(0.55, tealGlow(RING_INK * 0.5));
-        g.addColorStop(1, tealGlow(0));
+        g.addColorStop(0, skyInk(RING_INK * (lightPage ? 1.6 : 1)));
+        g.addColorStop(0.55, skyInk(RING_INK * (lightPage ? 0.8 : 0.5)));
+        g.addColorStop(1, skyInk(0));
         ctx.strokeStyle = g;
         ctx.beginPath();
         ctx.ellipse(rgx, rgy, rx, ry, 0, 0, TAU);
@@ -722,7 +735,7 @@ export function HeroGlobe() {
       // the light for the matte shading. Two fills of ONE path.
       ctx.beginPath();
       ctx.arc(gx, gy, R, 0, TAU);
-      ctx.fillStyle = csInk(1);
+      ctx.fillStyle = lightPage ? "#d8e5de" : csInk(1);
       ctx.fill();
 
       const sheen = ctx.createRadialGradient(
@@ -733,9 +746,18 @@ export function HeroGlobe() {
         gy,
         R * 1.08,
       );
-      sheen.addColorStop(0, tealGlow(BODY_SHEEN * (1 + glow * GLOW_SHEEN)));
-      sheen.addColorStop(0.5, tealGlow(BODY_SHEEN * 0.42 * (1 + glow * GLOW_SHEEN)));
-      sheen.addColorStop(1, tealGlow(0));
+      if (lightPage) {
+        // Porcelain light on the shoulder, mineral green on the receding edge.
+        // Opaque stops still occlude the page and preserve the sphere's depth.
+        sheen.addColorStop(0, "#ffffff");
+        sheen.addColorStop(0.38, "#f3f8f5");
+        sheen.addColorStop(0.72, "#dceae2");
+        sheen.addColorStop(1, "#aecbbd");
+      } else {
+        sheen.addColorStop(0, tealGlow(BODY_SHEEN * (1 + glow * GLOW_SHEEN)));
+        sheen.addColorStop(0.5, tealGlow(BODY_SHEEN * 0.42 * (1 + glow * GLOW_SHEEN)));
+        sheen.addColorStop(1, tealGlow(0));
+      }
       ctx.fillStyle = sheen;
       ctx.fill();
 
@@ -784,7 +806,9 @@ export function HeroGlobe() {
         if (!bucket.length) continue;
         // Undo the sqrt taken when bucketing, at the level's midpoint.
         const t = (L + 0.5) / ALPHA_LEVELS;
-        ctx.fillStyle = `rgba(${DOT_RGB[0]}, ${DOT_RGB[1]}, ${DOT_RGB[2]}, ${(t * t).toFixed(4)})`;
+        ctx.fillStyle = lightPage
+          ? `rgba(16, 103, 88, ${(t * t * 0.88).toFixed(4)})`
+          : `rgba(${DOT_RGB[0]}, ${DOT_RGB[1]}, ${DOT_RGB[2]}, ${(t * t).toFixed(4)})`;
         ctx.beginPath();
         for (const i of bucket) {
           // ⚠️ `moveTo` before each `arc`, or the arc is joined to the previous
@@ -807,14 +831,79 @@ export function HeroGlobe() {
         gx - lnx * R,
         gy + lny * R,
       );
-      spec.addColorStop(0, tealGlow(Math.min(1, RIM_ALPHA * (1 + glow * GLOW_RIM))));
-      spec.addColorStop(RIM_FADE, tealGlow(RIM_ALPHA * 0.16 * (1 + glow * GLOW_RIM)));
-      spec.addColorStop(1, tealGlow(0));
+      spec.addColorStop(0, lightPage ? "rgba(255,255,255,.9)" : tealGlow(Math.min(1, RIM_ALPHA * (1 + glow * GLOW_RIM))));
+      spec.addColorStop(RIM_FADE, lightPage ? "rgba(255,255,255,.25)" : tealGlow(RIM_ALPHA * 0.16 * (1 + glow * GLOW_RIM)));
+      spec.addColorStop(1, lightPage ? "rgba(48,107,84,.13)" : tealGlow(0));
       ctx.strokeStyle = spec;
       ctx.lineWidth = RIM_WIDTH;
       ctx.beginPath();
       ctx.arc(gx, gy, R - RIM_WIDTH / 2, 0, TAU);
       ctx.stroke();
+
+      // ── Group journeys: three stops joined along the sphere ─────────────
+      // Smooth surface splines rotate with the land. Subtle travelling lights
+      // connect the stops without angular elbows or clusters of icon-like dots.
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      for (let routeIndex = 0; routeIndex < TOUR_PATHS.length; routeIndex++) {
+        const route = TOUR_PATHS[routeIndex];
+        const progress = (elapsed / 12 + routeIndex * 0.19) % 1;
+        const traveller = Math.floor(progress * (route.length - 1));
+        let previousX = 0;
+        let previousY = 0;
+        let previousFacing = 0;
+        for (let i = 0; i < route.length; i++) {
+          const point = route[i];
+          const x = point[0] * cs + point[2] * ss;
+          const z = -point[0] * ss + point[2] * cs;
+          const y = point[1] * ct - z * st;
+          const facing = point[1] * st + z * ct;
+          const ex = gx + x * R;
+          const ey = gy - y * R;
+          const alpha = Math.min(1, Math.max(0, (facing - 0.08) / 0.3));
+          if (alpha > 0) {
+            if (previousFacing > 0.08) {
+              ctx.strokeStyle = lightPage ? `rgba(38, 102, 82, ${alpha * 0.5})` : `rgba(184, 186, 176, ${alpha * 0.6})`;
+              ctx.lineWidth = 0.85;
+              ctx.beginPath(); ctx.moveTo(previousX, previousY); ctx.lineTo(ex, ey); ctx.stroke();
+            }
+            if (i % 32 === 0) {
+              ctx.fillStyle = lightPage ? skyInk(alpha * 0.7) : `rgba(213, 226, 220, ${alpha * 0.7})`;
+              ctx.beginPath(); ctx.arc(ex, ey, 1.4, 0, TAU); ctx.fill();
+            }
+            if (i === traveller) {
+              const next = route[i + 1];
+              const nx = next[0] * cs + next[2] * ss;
+              const nz = -next[0] * ss + next[2] * cs;
+              const ny = next[1] * ct - nz * st;
+              const fraction = progress * (route.length - 1) - traveller;
+              const groupX = ex + (gx + nx * R - ex) * fraction;
+              const groupY = ey + (gy - ny * R - ey) * fraction;
+              ctx.fillStyle = lightPage ? skyInk(alpha) : `rgba(227, 233, 221, ${alpha})`;
+              ctx.beginPath(); ctx.arc(groupX, groupY, 1.4, 0, TAU); ctx.fill();
+              // A small group follows selected journeys, offset just above
+              // the route so the line remains legible through the stops.
+              if (routeIndex % 2 === 0) {
+                const groupFade = Math.min(1, Math.max(0, (facing - 0.35) / 0.35));
+                const endpointFade = Math.min(1, progress / 0.1, (1 - progress) / 0.1);
+                drawServiceGlyph(ctx, glyphs.group, groupX, groupY - 10,
+                  Math.max(14, Math.min(18.5, R * 0.079)), groupFade * endpointFade * 0.75, lightPage);
+              }
+            }
+          }
+          previousX = ex; previousY = ey; previousFacing = facing;
+        }
+      }
+
+      // Rank only the sparse icon positions. A soft cutoff at the fourth
+      // facing keeps at most three hotel icons visible without hard swaps.
+      for (const index of HOTEL_ICON_IDS) {
+        const point = HOTELS[index];
+        const z = -point[0] * ss + point[2] * cs;
+        hotelIconFacing[index] = point[1] * st + z * ct;
+      }
+      hotelIconOrder.sort((a, b) => hotelIconFacing[b] - hotelIconFacing[a]);
+      const iconCutoff = Math.max(0.42, hotelIconFacing[hotelIconOrder[3]]);
 
       // ── Destination beacons ─────────────────────────────────────────────
       // Surface objects: they take the SPIN (unlike the planes) and sit under
@@ -837,30 +926,13 @@ export function HeroGlobe() {
         const hey = gy - hy2 * R;
         const hs = (0.55 + 0.45 * hz2) * (R / 240);
 
-        // Soft glow, then the bright core over it.
-        ctx.fillStyle = tealGlow(0.22 * hInk);
-        ctx.beginPath();
-        ctx.arc(hex, hey, 5.5 * hs, 0, TAU);
-        ctx.fill();
-
-        ctx.fillStyle = `rgba(235, 255, 252, ${(0.95 * hInk).toFixed(3)})`;
-        ctx.beginPath();
-        ctx.arc(hex, hey, 2.1 * hs, 0, TAU);
-        ctx.fill();
-
-        // The pulse: one ring expanding out of the core and fading as it
-        // grows, on a per-city phase so the set never fires in unison. Squashed
-        // by the surface's facing, so a ring near the limb flattens into the
-        // sphere instead of hovering over it as a flat sticker.
-        const pulse = (elapsed / PULSE_S + hash(3, hi)) % 1;
-        const pr = (2.5 + pulse * 8.5) * hs;
-        const pa = (1 - pulse) * (1 - pulse) * 0.55 * hInk;
-        if (pa > MIN_VISIBLE_ALPHA) {
-          ctx.strokeStyle = tealGlow(pa);
-          ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.ellipse(hex, hey, pr, pr * (0.35 + 0.65 * hz2), 0, 0, TAU);
-          ctx.stroke();
+        // Open bed glyphs share the planes' pale ink, anchored to the surface.
+        ctx.fillStyle = lightPage ? skyInk(0.65 * hInk) : `rgba(203, 234, 224, ${0.65 * hInk})`;
+        ctx.beginPath(); ctx.arc(hex, hey, Math.max(1, hs), 0, TAU); ctx.fill();
+        if (HOTEL_ICON_IDS.includes(hi)) {
+          const iconFade = Math.min(1, Math.max(0, (hz2 - iconCutoff) / 0.18));
+          drawServiceGlyph(ctx, glyphs.hotel, hex, hey - 7,
+            Math.max(16, Math.min(21, R * 0.092)), iconFade * 0.86, lightPage);
         }
       }
 
@@ -928,7 +1000,8 @@ export function HeroGlobe() {
             // each. The far side is dimmed as well as faded, so a trail
             // wrapping the limb recedes instead of just stopping.
             const tail = 1 - seg / TRAIL_SEGS;
-            ctx.strokeStyle = tealGlow(
+            const trailInk = lightPage ? skyInk : tealGlow;
+            ctx.strokeStyle = trailInk(
               TRAIL_INK * Math.pow(tail, 1.8) * (0.35 + 0.65 * dep),
             );
             ctx.lineWidth = 0.4 + 1.5 * tail;
@@ -949,7 +1022,7 @@ export function HeroGlobe() {
 
           // A soft halo under the dart, so the head reads at a glance even
           // over the bright side of the ball.
-          ctx.fillStyle = tealGlow(0.08 + 0.16 * headDep);
+          ctx.fillStyle = lightPage ? skyInk(0.035 + 0.025 * headDep) : tealGlow(0.08 + 0.16 * headDep);
           ctx.beginPath();
           ctx.arc(headEx, headEy, 5.5 * sc, 0, TAU);
           ctx.fill();
@@ -958,7 +1031,7 @@ export function HeroGlobe() {
           ctx.save();
           ctx.translate(headEx, headEy);
           ctx.rotate(headAng);
-          ctx.fillStyle = `rgba(235, 255, 252, ${(0.55 + 0.45 * headDep).toFixed(3)})`;
+          ctx.fillStyle = lightPage ? skyInk(0.75 + 0.25 * headDep) : `rgba(235, 255, 252, ${(0.55 + 0.45 * headDep).toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(AIRCRAFT[0][0] * sc, AIRCRAFT[0][1] * sc);
           for (let k = 1; k < AIRCRAFT.length; k++) {
@@ -967,6 +1040,8 @@ export function HeroGlobe() {
           ctx.closePath();
           ctx.fill();
           ctx.restore();
+
+
         }
       }
     }
@@ -1085,6 +1160,13 @@ export function HeroGlobe() {
     // on when that lands.
     if (layout()) draw();
 
+    const themeObserver = new MutationObserver(() => {
+      lightPage = document.documentElement.getAttribute("data-public-theme") === "light";
+      // Repaint a paused/reduced-motion globe too; rotation never restarts.
+      draw();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-public-theme"] });
+
     const ro = new ResizeObserver(() => {
       if (layout() && !raf) draw();
     });
@@ -1110,6 +1192,7 @@ export function HeroGlobe() {
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
       io?.disconnect();
+      themeObserver.disconnect();
       ro.disconnect();
       stop();
     };
@@ -1119,13 +1202,14 @@ export function HeroGlobe() {
     // The cell HeroProductPreview occupied. Its height at `lg` is unchanged at
     // 600px — the hero grid is `items-center`, so a taller cell here would
     // re-centre the copy column beside it and move the headline.
-    <div className="relative select-none" aria-hidden="true">
+    <figure className="relative m-0 select-none">
       {/* Ambient wash, around the ball rather than under it — the body is
           opaque, so this only reads as the glow the sphere casts into the cell.
           A gradient and not a blur filter: layered shadows on a near-black
           ground turn into grey mud. */}
       <div
-        className="pointer-events-none absolute -inset-8"
+        aria-hidden="true"
+        className="site-globe-wash pointer-events-none absolute -inset-8"
         style={{
           background: `radial-gradient(ellipse 62% 55% at 50% 46%, ${tealGlow(0.16)}, transparent 72%)`,
         }}
@@ -1138,9 +1222,11 @@ export function HeroGlobe() {
           copy column; the extra height re-centres the row by ~20px, which the
           `items-center` grid absorbs symmetrically. */}
       <canvas
+        aria-hidden="true"
         ref={canvasRef}
         className="relative mx-auto block h-[300px] sm:h-[400px] w-full max-w-[420px] lg:-mx-10 lg:h-[640px] lg:w-[calc(100%+5rem)] lg:max-w-none"
       />
-    </div>
+      <figcaption className="sr-only">{description}</figcaption>
+    </figure>
   );
 }

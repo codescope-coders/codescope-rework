@@ -3,7 +3,7 @@ import { BreadcrumbData, TourscopeData } from "@/components/site/StructuredData"
 import { pageMetadata } from "@/lib/site-meta";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/routing";
+import { PageLink as Link } from "@/components/site/PageLink";
 import Image from "next/image";
 import { FadeIn } from "@/components/site/FadeIn";
 import { StarfieldButton } from "@/components/site/StarfieldButton";
@@ -160,7 +160,7 @@ export default async function TourScopePage() {
                 <StarfieldButton variant="primary" accent="purple">
                   <Link
                     href="/get-started"
-                    className="group inline-flex items-center gap-2 px-7 py-3 bg-ts-purple sm:bg-[#170b2b] text-white text-sm font-semibold rounded-full hover:bg-ts-purple-hover sm:hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
+                    className="group inline-flex items-center gap-2 px-7 py-3 bg-ts-purple sm:site-solid-action bg-[#170b2b] text-white text-sm font-semibold rounded-full hover:bg-ts-purple-hover sm:hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
                   >
                     {t("hero.cta")}<ArrowRight size={15} weight="bold" className="rtl:rotate-180" />
                   </Link>
@@ -564,7 +564,7 @@ export default async function TourScopePage() {
               <StarfieldButton variant="primary" accent="purple">
                 <Link
                   href="/get-started"
-                  className="group inline-flex items-center gap-2 px-9 py-4 bg-[#170b2b] text-white font-semibold rounded-full hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
+                  className="group inline-flex items-center gap-2 px-9 py-4 site-solid-action bg-[#170b2b] text-white font-semibold rounded-full hover:bg-[#20103c] transition-colors duration-200 active:scale-[0.98]"
                 >
                   {t("cta.cta")}<ArrowRight size={16} weight="bold" className="rtl:rotate-180" />
                 </Link>

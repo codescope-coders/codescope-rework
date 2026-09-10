@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useId } from "react";
+import { useRef, useEffect } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,7 +11,6 @@ import {
 } from "motion/react";
 import { ScopeReticle } from "./ScopeReticle";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { tealGlow } from "@/lib/colors";
 import "./hero-background.css";
 
 interface Props {
@@ -21,7 +20,7 @@ interface Props {
 // Halved (0.16 -> 0.08) in the same pass that halved the token field's lit
 // alpha: the two stack on every hero, and the COMPOUND is what read as a shine
 // following the cursor around the site.
-const CURSOR_GLOW = `radial-gradient(circle, ${tealGlow(0.08)} 0%, ${tealGlow(0.025)} 40%, transparent 70%)`;
+const CURSOR_GLOW = "radial-gradient(circle, var(--site-cursor-core, rgba(8,186,168,.08)) 0%, var(--site-cursor-edge, rgba(8,186,168,.025)) 40%, transparent 70%)";
 
 
 export function HeroBackground({ variant = "teal" }: Props) {
@@ -55,36 +54,26 @@ export function HeroBackground({ variant = "teal" }: Props) {
   const pendingAnim = useRef<{ stop: () => void } | null>(null);
   const isOver      = useRef(false);
 
-  // The noise filter is referenced by `url(#…)`, which is document-global: two
-  // heroes on one page (or a hero plus any future consumer) would both point at
-  // the first `hero-noise`. `useId` is per-instance; its React delimiters are
-  // stripped because they are not valid in a CSS `url()` fragment.
-  const noiseId = `hero-noise-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     let visible = false;
     const update = () => {
-      const covered = document.querySelector(".site-menu-toggle[open]") !== null;
-      const state = visible && !document.hidden && !covered ? "running" : "paused";
+      // Opening navigation must not pause/demote the large blurred layers at
+      // the exact moment Safari needs to composite its first menu frame.
+      const state = visible && !document.hidden ? "running" : "paused";
       for (const orb of [primaryOrbRef.current, secondaryOrbRef.current]) {
         if (orb) orb.style.animationPlayState = state;
       }
-    };
-    const onToggle = (event: Event) => {
-      if ((event.target as Element)?.matches?.(".site-menu-toggle")) update();
     };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       update();
     });
     observer.observe(container);
-    document.addEventListener("toggle", onToggle, true);
     document.addEventListener("visibilitychange", update);
     return () => {
       observer.disconnect();
-      document.removeEventListener("toggle", onToggle, true);
       document.removeEventListener("visibilitychange", update);
     };
   }, []);
@@ -195,16 +184,18 @@ export function HeroBackground({ variant = "teal" }: Props) {
           at `/8` and `/5` over a `blur-3xl` these are atmosphere, not shine.
 
           CSS transform loops preserve the drift without JavaScript per frame.
-          Pause at the current position while outside the viewport or covered
-          by navigation; resume the decoration when the page is visible again. */}
+          Pause outside the viewport or in a background tab. Menu activation
+          leaves these compositor layers alone. */}
       <div
         ref={primaryOrbRef}
-        className={`site-hero-orb site-hero-orb-primary pointer-events-none absolute -top-32 ${isTeal ? "-start-32" : "-end-32"} h-[650px] w-[650px] rounded-full blur-3xl ${isTeal ? "bg-cs-teal/8" : "bg-ts-purple/8"}`}
+        data-color={isTeal ? "teal" : "purple"}
+        className={`site-hero-orb site-hero-orb-primary pointer-events-none absolute -top-32 ${isTeal ? "-start-32" : "-end-32"} h-[650px] w-[650px]`}
       />
 
       <div
         ref={secondaryOrbRef}
-        className={`site-hero-orb site-hero-orb-secondary pointer-events-none absolute -bottom-48 ${isTeal ? "-end-24" : "-start-24"} h-[500px] w-[500px] rounded-full blur-3xl ${isTeal ? "bg-ts-purple/5" : "bg-cs-teal/5"}`}
+        data-color={isTeal ? "purple" : "teal"}
+        className={`site-hero-orb site-hero-orb-secondary pointer-events-none absolute -bottom-48 ${isTeal ? "-end-24" : "-start-24"} h-[500px] w-[500px]`}
       />
 
       {/* ── Ghost scope — barely-visible silhouette at rest (desktop) ── */}
@@ -212,14 +203,9 @@ export function HeroBackground({ variant = "teal" }: Props) {
         <ScopeReticle className="w-full" />
       </div>
 
-      {/* Noise texture */}
-      <svg className="absolute inset-0 h-full w-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
-        <filter id={noiseId}>
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
-        <rect width="100%" height="100%" filter={`url(#${noiseId})`} />
-      </svg>
+      {/* Same fractal grain, pre-rendered as a repeating tile. A full-hero SVG
+          turbulence filter can be rasterized again when overlay layers change. */}
+      <div className="site-hero-noise pointer-events-none absolute inset-0 opacity-[0.025]" />
 
 
       {/* ── Cursor-driven layers ───────────────────────────────────────
@@ -229,7 +215,7 @@ export function HeroBackground({ variant = "teal" }: Props) {
         <>
           {/* Bright scope — revealed inside the cursor spotlight */}
           <motion.div
-            className="hidden lg:flex absolute inset-0 items-center opacity-[0.6]"
+            className="site-cursor-scope hidden lg:flex absolute inset-0 items-center opacity-[0.6]"
             style={{ WebkitMaskImage: mask, maskImage: mask }}
           >
             <ScopeReticle className="w-full" />

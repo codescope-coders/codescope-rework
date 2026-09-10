@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, type PointerEvent, type CSSProperties } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { SPOTLIGHT_TEAL, withAlpha } from "@/lib/colors";
+import { SPOTLIGHT_TEAL, SPOTLIGHT_PURPLE, SPOTLIGHT_NEUTRAL, withAlpha } from "@/lib/colors";
 import { useSpotlightGroup } from "@/components/site/SpotlightGroup";
 
 /* Tilt is deliberately shallower than the 9° the technique is usually drawn
@@ -165,7 +165,7 @@ export function SpotlightCard({
       // below gates itself on `group-hover`, so a consumer that forgot the
       // class would get a spotlight stuck on at full strength.
       className={[
-        "group relative overflow-hidden rounded-2xl",
+        "site-spotlight-card group relative overflow-hidden rounded-2xl",
         surfaceClassName,
         className,
       ]
@@ -181,6 +181,9 @@ export function SpotlightCard({
           "--mouse-x": "-999px",
           "--mouse-y": "-999px",
           "--spotlight-color": spotlightColor,
+          "--spotlight-light-color": spotlightColor === SPOTLIGHT_PURPLE ? "rgba(111,0,255,.13)"
+            : spotlightColor === SPOTLIGHT_TEAL ? "rgba(7,111,101,.14)"
+            : spotlightColor === SPOTLIGHT_NEUTRAL ? "rgba(23,53,44,.10)" : spotlightColor,
           ...(animated ? { rotateX, rotateY, transformPerspective: 900 } : null),
         } as CSSProperties
       }
@@ -193,7 +196,7 @@ export function SpotlightCard({
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300 opacity-0 group-hover:opacity-100"
           style={{
-            background: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), var(--spotlight-color), transparent 70%)`,
+            background: `radial-gradient(300px circle at var(--mouse-x) var(--mouse-y), var(--site-active-spotlight, var(--spotlight-color)), transparent 70%)`,
           }}
         />
       )}

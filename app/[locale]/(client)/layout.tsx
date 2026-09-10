@@ -7,6 +7,8 @@ import { OrganizationData } from "@/components/site/StructuredData";
 import { SITE_URL } from "@/lib/site-urls";
 import type { Metadata } from "next";
 import { ReactNode } from "react";
+import { PublicTheme } from "@/components/site/PublicTheme";
+import "@/components/site/public-theme.css";
 
 import { Toaster } from "sonner";
 import Navbar from "@/components/site/Navbar";
@@ -45,6 +47,7 @@ export default async function ClientLayout({ children }: { children: ReactNode }
   const analyticsEnabled = process.env.GA4_ENABLED === "true" && /^G-[A-Z0-9]+$/.test(measurementId);
   return (
     <NextIntlClientProvider messages={messages}>
+    <PublicTheme>
     <div
       data-site="public"
       className={`${geistSans.variable} ${geistMono.variable} min-h-[100dvh] flex flex-col`}
@@ -63,6 +66,7 @@ export default async function ClientLayout({ children }: { children: ReactNode }
       <Footer />
       {analyticsEnabled && <PublicAnalytics measurementId={measurementId} debug={process.env.GA4_DEBUG_MODE === "true"} />}
     </div>
+    </PublicTheme>
     </NextIntlClientProvider>
   );
 }

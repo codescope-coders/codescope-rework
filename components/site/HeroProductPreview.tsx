@@ -538,6 +538,7 @@ export function HeroProductPreview() {
             the one thing this layer must not be — the depth is carried by
             ground value, by the overlap, and by the front card's cast shadow. */}
         <motion.div
+      data-site-tone="dark"
           initial={reduced ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 0.88, y: 0 }}
           transition={enter(0.28)}
@@ -550,6 +551,7 @@ export function HeroProductPreview() {
             edges. They ride inside this wrapper so their anchoring is the same
             in both layout modes: the card, never the scene. */}
         <motion.div
+      data-site-tone="dark"
           initial={reduced ? false : { opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           transition={enter(0.4, DURATION.base)}
@@ -572,6 +574,7 @@ export function HeroProductPreview() {
               Below `lg` there is no console to bridge to, so it drops to the
               card's bottom edge and simply says the search was booked. */}
           <motion.div
+      data-site-tone="dark"
             initial={reduced ? false : { opacity: 0, y: 8, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={enter(0.6, DURATION.base)}
@@ -584,6 +587,7 @@ export function HeroProductPreview() {
               corner — in the same column as the console's financial block
               above, so the two read as one side of the business. */}
           <motion.div
+      data-site-tone="dark"
             initial={reduced ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={enter(0.68, DURATION.base)}

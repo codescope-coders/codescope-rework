@@ -1,0 +1,45 @@
+/* A small focus gesture around the logo's existing scope. All effects stay
+   inside the SVG, leaving the header's layout and native menu activation alone. */
+[data-site="public"] .site-brand-logo > :is(path, polygon) {
+  fill: var(--site-logo-ink, #00a79d);
+  transition: fill 300ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-site="public"] .site-brand-logo > :nth-child(2) { transition-delay: 20ms; }
+[data-site="public"] .site-brand-logo > :nth-child(3) { transition-delay: 40ms; }
+[data-site="public"] .site-brand-logo > :nth-child(4) { transition-delay: 60ms; }
+[data-site="public"] .site-brand-logo > :nth-child(5) { transition-delay: 80ms; }
+[data-site="public"] .site-brand-logo > :nth-child(6) { transition-delay: 100ms; }
+[data-site="public"] .site-brand-logo > :nth-child(7) { transition-delay: 120ms; }
+[data-site="public"] .site-brand-logo > :nth-child(8) { transition-delay: 140ms; }
+[data-site="public"] .site-brand-logo > :nth-child(9) { transition-delay: 160ms; }
+[data-site="public"] .site-logo-aperture {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: var(--site-logo-aperture, scale(1));
+}
+[data-site="public"] .site-logo-focus {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: var(--site-logo-focus, 0);
+  transform: scale(var(--site-logo-focus-scale, 0.94));
+  transition: opacity 320ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-site="public"] .site-brand-link:focus-visible {
+  --site-logo-ink: #4ad8c4;
+  --site-logo-aperture: scale(1.04, 1.08);
+  --site-logo-focus: 0.8;
+  --site-logo-focus-scale: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-site="public"] .site-brand-link:hover {
+    --site-logo-ink: #4ad8c4;
+    --site-logo-aperture: scale(1.04, 1.08);
+    --site-logo-focus: 0.8;
+    --site-logo-focus-scale: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-site="public"] .site-brand-logo > :is(path, polygon),
+  [data-site="public"] .site-logo-focus { transition: none; }
+  [data-site="public"] :is(.site-logo-aperture, .site-logo-focus) { transform: none; }
+}

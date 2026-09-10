@@ -116,3 +116,244 @@ Validation on the final production build: TypeScript, focused ESLint, production
 Additional evidence: Safari in an iPhone 17 Pro / iOS 26.5 simulator was operated through the native UI. A temporary localhost-only timing proxy observed the baseline touch event passing through `mousemove`, then native click/toggle at 53ms after `touchend`. On the final build, toggle occurred at 1ms and the first item animation started at 7ms, with no compatibility mouse/click event and no new resource requests during the sampled opening. These are individual instrumented simulator samples, not INP or physical-phone results. The simulator's animation-frame callbacks remained uneven (roughly 150–200ms apart in the final sample), so they do not establish smooth frame delivery on the user's devices. The temporary proxy and instrumentation are outside the repository and are not deployed.
 
 References: [MDN touch events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events), [Next.js Link prefetch](https://nextjs.org/docs/app/api-reference/components/link#prefetch), [MDN overscroll behavior](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overscroll-behavior).
+
+
+## Follow-up: Anveril menu and phone diagnosis (2026-09-10, local only)
+
+The user confirmed the delayed opening also occurs on the current development
+server at `192.168.101.9:3000`; this report cannot be attributed to an old live
+build. Desktop success has not established a fix on the physical iPhones.
+
+- Adapted the reference's large divided links, secondary navigation, dotted
+  toggle, and expanding top-down ground to Codescope. Arabic words stay joined.
+- Replaced the first adaptation's animated full-panel `clip-path` with a separate
+  sheet using only a vertical transform, inside static clipping bounds. Text and
+  footer use independent transform/opacity transitions. Opening lasts 860ms;
+  closing lasts 440ms, with shorter text fades and no entry delays on close.
+- Preserved native disclosure activation and the existing completed-touch handler,
+  decorations, localized destinations, keyboard focus, and desktop navigation.
+- Added opt-in `?menu-debug=1` instrumentation in development only. It shows event
+  queue delay, native toggle, sheet transition events, animation-frame callback
+  timing, and the reduced-motion setting. No data is stored or transmitted. rAF
+  callbacks do not prove when the GPU presented pixels on a physical screen.
+
+One local in-app browser opening recorded 1ms input queue, native toggle at 10ms,
+sheet transition start at 25ms, end at 880ms, and a largest rAF interval of 9ms.
+These are a single desktop-engine sample, not physical iPhone or INP results.
+Physical-phone timing/visual confirmation is still needed.
+
+TypeScript, scoped ESLint, production build, and whitespace checks passed.
+Checked Arabic at 320px, keyboard Escape/focus, rapid reversals, short-screen
+scrolling and demo navigation, desktop hiding, and absence of the diagnostic
+readout in the production build even with the query parameter. No push made.
+
+Physical iPhone feedback for v2, provided by the user: input queue 17ms, native
+toggle 10ms, sheet start 39ms, sheet end 1021ms, first rAF 38ms, largest rAF gap
+981ms, Reduced Motion off. This places the large gap after activation; it does
+not identify a specific blocking function or prove a GPU cause.
+
+The next local revision (diagnostic label v3) preserves the decorative grain as
+a pre-rendered 256px WebP tile (~41KB) using the existing fractal-noise parameters,
+instead of a full-hero SVG turbulence filter. The reproducible generator is
+`scripts/generate-hero-noise.mjs`. Orb transforms retain their compositor hint
+and no longer pause on menu toggles; they still pause offscreen/in a background
+tab. This avoids changing the large blurred layers during menu activation.
+TypeScript and production build passed again. Physical v3 confirmation remains
+pending; the rendering changes are hypotheses being tested, not a confirmed fix.
+
+Physical iPhone v3 sample, supplied by the user: queue 21ms, toggle 10ms, sheet
+start 35ms, end 862ms, first rAF 34ms, largest rAF gap 359ms, Reduced Motion off.
+The gap is smaller in this sample but still substantial. Frame callbacks alone
+do not establish whether the compositor animation looked smooth.
+
+Revision v4 also pre-renders the two original blurred circles (650px and 500px,
+64px Gaussian falloff, brand teal/purple) with padded transparent bounds. Four
+small WebP assets (~7–9KB each; two used per hero) retain both color variants and
+the existing CSS motion paths, opacity and timing. No live blur filter remains
+on the orb elements. The diagnostics now include the first 15 callback intervals
+so a long first frame can be distinguished from sustained low callback cadence.
+TypeScript, scoped lint, and the production build passed for this revision.
+
+Physical iPhone v4 sample, supplied by the user: input queue 15ms, native toggle
+5ms, sheet start 36ms, end 865ms, first rAF 35ms, largest rAF gap 35ms. The first
+15 callback intervals were 35, 11, 3, 15, 16, 17, 17, 16, 17, 17, 17, 16, 17,
+17, 16ms; Reduced Motion was off. The user then confirmed: "it feels smooth".
+This validates the revised opening on the tested phone, with no long stall in
+that sample. It is not a fleet-wide benchmark or a live-site measurement.
+The original per-function cause was not profiled; the progressive results
+support the changes to decorative rendering as the effective remedy. The final
+version remains local and uncommitted/unpushed. The timing overlay is development
+only and disappears when `?menu-debug=1` is removed from the URL.
+
+## Follow-up: desktop menu and menu-to-page transition (2026-09-10, local only)
+
+Replaced the public desktop link row with the same dotted menu control used on
+phones. The desktop panel follows the Anveril reference's wide composition:
+large divided primary links on one side, secondary links and the demo action on
+the other. Grid placement mirrors in Arabic; short desktop windows scroll.
+
+Public menu selections now keep the menu interactive with a localized loading
+status until the destination content commits. The menu then moves downward while
+the incoming page moves down from above, using matching 820ms transform curves.
+The moving page is clipped to one viewport for the handoff, and its normal
+height/scrolling is restored afterward. The close icon still retracts upward.
+The confirmed phone grain/glow optimizations remain unchanged.
+
+Next Link owns navigation, history and network work. Its `onNavigate` callback
+starts the enhancement, so modifier clicks/new-tab actions stay native. The
+public loading boundary is explicitly identified; a scoped observer waits for
+its removal rather than animating a skeleton. Escape, closing during a pending
+request, back/forward, same-page links, reduced motion, animation cleanup and
+keyboard focus are handled. Internal login keeps normal routing and auth.
+Reference: https://anveril.com/
+API reference: https://nextjs.org/docs/app/api-reference/components/link#onnavigate
+
+Validation included English desktop at 1440px, Arabic desktop and 320px mobile,
+localized public links, unprefixed login, no horizontal overflow, keyboard focus
+on the destination, and scroll reset. A temporary read-only proxy delayed route
+responses by four seconds: the menu displayed loading feedback, waited through
+the loading fallback, and completed the handoff; closing while pending also
+worked. The user tested the local phone transition and confirmed: "yes it works
+and its amazing". This confirms that tested interaction, not performance on all
+devices or the live deployment. No commit or push performed.
+Final scoped ESLint, TypeScript, production build, and whitespace checks passed.
+Temporary production/proxy test servers were stopped; the existing development
+server on port 3000 remains available for review.
+
+## Follow-up: branded menu geometry with neutral color (2026-09-10, local only)
+
+The toggle now uses three recognizable menu bars with squared geometry and
+slanted ends inspired by the Codescope wordmark. Two bars rotate into an X;
+the middle bar fades away. Per the user's refinement, the icon uses neutral
+gray/white rather than brand teal. Fine-pointer hover spreads the bars, extends
+the middle bar and brightens the icon; the open X subtly tightens. Press feedback
+uses a small scale change. Motion remains transform/opacity based, respects
+reduced motion, and retains the native touch activation and 44px hit area.
+
+Checked the open/closed icon, hover transforms/color, Escape, repeated toggles,
+and Arabic at 320px without overflow. No commit or push performed.
+
+Tourscope hover refinement: use the existing SVG as a fixed alpha mask and
+transition its background color directly from white to brand purple. This
+replaces simultaneous brightness/inversion interpolation, which produced a
+muted midpoint. Menu arrows now appear on hover or keyboard focus; the current
+page alone no longer keeps its arrow visible. Checked Tourscope while active:
+white with arrow opacity 0 at rest; purple with arrow opacity 1 on focus, with
+no image filter in either state. Native activation and menu/page motion remain
+unchanged. Local only.
+
+Desktop menu background handoff: the shorter desktop curtain leaves part of the
+document exposed. Preserve the outgoing main/footer viewport in a temporary,
+inert, aria-hidden visual copy before routing, conceal destination/loading
+content while waiting, then place the incoming page above that surface during
+the existing downward handoff. Remove the copy on completion, cancellation,
+or menu unmount. The surface is clipped to one viewport and never animated;
+mobile and reduced-motion navigation skip it entirely.
+
+Local browser sampling confirmed English and Arabic keep the old heading in
+the background across the destination commit, with the incoming page starting
+above the viewport as the menu exits. Confirmed cleanup, destination focus,
+Escape during navigation, and zero desktop copies at 390px mobile width.
+TypeScript, scoped ESLint, production build, and diff whitespace checks passed.
+Physical-device smoothness for this desktop-only refinement has not been
+measured. No commit or push performed.
+
+Homepage globe follow-up: DOM cloning does not copy canvas pixels, so the
+temporary desktop background initially lost the globe. Copy each visible,
+non-empty canvas's current bitmap into its counterpart before hiding the live
+page. This preserves the rendered globe frame without another animation loop
+or image encoding; offscreen and zero-size canvases are skipped. Confirmed in
+a local screenshot during Arabic homepage navigation: the globe remains visible
+beneath the menu in the waiting state. TypeScript, scoped lint, production build,
+and diff checks passed. Still local, with no commit or push.
+
+Globe service coverage refinement: restored the original aircraft fleet,
+silhouette, scale and drawing routine exactly from HEAD, at the user's request.
+The user selected fine-line icons after rejecting the coverage callout.
+Hotel beds and small group outlines now use open, monochrome paths in the
+same pale tone as the original planes. Reused Path2D geometry draws with a
+narrow dark keyline for separation from land dots; no filled badges or plates.
+Hotel positions use a smooth fourth-facing cutoff so at most three glyphs are
+visible, fading continuously as the globe rotates. Group outlines follow
+selected smooth routes and fade at the horizon and journey endpoints.
+
+The callout and its dedicated CSS have been removed. No service labels appear
+beneath the globe. Reviewed English desktop and Arabic 320px appearance, with
+legible outlines, no callout remnants and no horizontal overflow.
+
+Group journeys retain smooth cubic paths projected onto the sphere, with
+shared tangents through each stop and a small travelling light. Six illustrative
+journeys have 65 precomputed points each. Checked finite unit-sphere coordinates
+and continuous sampled joins (minimum adjacent tangent alignment 0.9903).
+Locations and journeys do not represent live availability or promised routes.
+
+An English/Arabic screen-reader caption describes the illustration; the
+existing homepage copy retains the 1.5M+ hotel figure. Mobile frame cap,
+reduced-motion handling, offscreen pause and menu canvas-frame preservation
+remain in place. Reviewed Arabic desktop and English mobile appearance; no
+physical-device frame timings collected. Changes remain local.
+
+Small-icon and logo follow-up: hotel and group glyphs are approximately 12%
+smaller, with slightly shorter offsets from their anchors. The public header
+logo now brightens its lettering in sequence on fine-pointer hover or keyboard
+focus, gently expands the central scope, and reveals fine focus corners. It
+uses local SVG fill/transform/opacity transitions, with motion disabled under
+reduced-motion preferences. Header dimensions do not change. Verified hover
+computed styles and stable bounds, keyboard focus, native menu open/Escape,
+and Arabic 320px layout without overflow. Scoped lint, TypeScript and production
+build passed. Changes remain local; no commit or push.
+
+Public CTA navigation now shares the menu's 820ms downward handoff. Homepage,
+Tourscope, About, Engineering and Pricing page links use a localized `PageLink`:
+the current viewport stays visible while Next loads, then moves down while the
+destination enters from above. Canvas pixels are preserved, cloned decorations
+are paused, and the moving surfaces are clipped to one viewport. The mobile
+menu retains its existing lightweight curtain path.
+
+Routing remains with Next Link's `onNavigate`, following the official API:
+https://nextjs.org/docs/app/api-reference/components/link#onnavigate
+Modified/new-tab clicks, external links and downloads keep native behavior;
+hash links, same-path changes and `scroll={false}` skip the handoff. Reduced
+motion skips the movement. The temporary surface is inert and hidden from
+assistive technology. Cleanup restores scrolling, interactivity and destination
+focus; Escape, history navigation, menu opening and a stalled-request timeout
+can release the temporary state. Forms and analytics are unchanged.
+
+Verified English homepage-to-Tourscope and pricing-to-demo navigation, selected
+package query preservation, Tourscope hash scrolling, desktop menu navigation,
+and Arabic demo navigation at 320px. Sampled both animation transforms: they
+advanced together across the 676px travel distance at a 740px viewport. No
+remaining snapshot, inert main or horizontal overflow after arrival. This is
+local browser verification, not physical iPhone performance measurement.
+
+Scoped ESLint, TypeScript and production build passed. Compiled production
+homepage and pricing CTA flows completed without new browser errors. Development
+pricing reloads showed a hydration warning at the public layout/JSON-LD boundary;
+it did not reproduce in the compiled production checks. Existing build warning
+about multiple workspace lockfiles remains. Changes are local only.
+
+Navigation loading follow-up: removed the public pending banner, menu loading
+message/spinner, and route skeletons. Retained the invisible route-readiness
+marker so the existing page/menu stays visible while the destination loads,
+then the approved downward transition runs. No form-submission indicators were
+changed. Local browser checks observed the old homepage preserved during pending
+navigation with no loading text, then verified Tourscope and demo arrival and
+cleanup. TypeScript, scoped ESLint, production build and whitespace checks pass.
+Local only; nothing committed or pushed.
+
+Login consistency follow-up: replaced the legacy gray/Urbanist editorial view
+with an isolated auth shell using Codescope's real wordmark/scope asset, Geist
+and IBM Plex Arabic, teal accents, pill actions and light/dark surfaces. Reuses
+the existing per-device dashboard theme preference; adds a localized theme
+control and website return link. Desktop uses a brand panel; mobile prioritizes
+the form. No generated imagery, new dependencies, marketing tracking or auth
+endpoint changes. Removed rotating promotional copy and email autofocus.
+
+Updated both credential and OTP styling, responsive six-column code fields,
+email error association and reduced-motion step transitions. Existing send,
+verify, resend, expiry and dashboard redirect logic remains unchanged. Reviewed
+English desktop in both themes and Arabic at 320px in both themes, with no
+horizontal overflow, 16px email inputs, theme persistence, native invalid-email
+validation and noindex/nofollow retained. No code emails were sent and no live
+OTP sign-in was performed. Scoped lint, TypeScript, production build and
+whitespace checks pass. Changes remain local, without commit or push.

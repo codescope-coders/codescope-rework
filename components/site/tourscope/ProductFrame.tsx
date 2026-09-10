@@ -127,7 +127,7 @@ export function ProductFrame(props: ProductFrameProps) {
   const rounding = variant === "device" ? "rounded-[1.75rem] p-1.5" : "rounded-xl";
 
   return (
-    <div className={`relative min-w-0 ${className}`}>
+    <div data-site-tone="dark" className={`relative min-w-0 ${className}`}>
       {/* Ambient wash. One soft radial rather than a stack of drop-shadows —
           layered shadows on a near-black ground turn into grey mud. It sits
           before the frame in the DOM, so the frame paints over it without

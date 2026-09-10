@@ -14,7 +14,7 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { useTouchDevice } from "@/lib/useTouchDevice";
 import { useMounted } from "@/lib/useMounted";
 import { isRtlLocale } from "@/lib/motion";
-import { CS_TEAL_GLOW, tealGlow } from "@/lib/colors";
+import { tealGlow } from "@/lib/colors";
 
 /**
  * The site's spoken-statement reveal: a band of light travelling along a
@@ -33,15 +33,15 @@ import { CS_TEAL_GLOW, tealGlow } from "@/lib/colors";
  * copy (a button's supporting line is an instruction, not a statement).
  */
 
-const TEAL       = CS_TEAL_GLOW;
+const TEAL       = "var(--site-reveal-accent, #08baa8)";
 // 0.30, not the 0.62 this used to be. At 0.62 the unrevealed tail was so close
 // to the revealed head that the whole reveal read as nothing happening — the
 // effect existed and was invisible, which is the worst of both. The dim state
 // is only reachable once JS has mounted (see `useMounted` below): the server
 // HTML renders this paragraph at REVEALED, so nothing is ever gated on a
 // script, and that is what buys the licence to dim this far.
-const UNREVEALED = "rgba(255,255,255,0.30)";
-const REVEALED   = "rgba(255,255,255,1)";
+const UNREVEALED = "var(--site-reveal-dim, rgba(255,255,255,.30))";
+const REVEALED   = "var(--site-reveal-ink, #fff)";
 // TWO shadow layers, not one and not three. One tight bright core plus one wide
 // soft halo is what makes the frontier read as a lit cursor rather than a
 // slightly bolder letter; a single mid-radius layer (what this was) is too
@@ -159,10 +159,16 @@ function Token({
   // dim → flash → settled. A highlighted phrase settles lit (teal, faint glow)
   // instead of going white: those are the phrases the paragraph is built
   // around, and against a pure-white settled line they need to stay marked.
-  const color = useTransform(
-    progress, [start, mid, end],
-    [dimColor, TEAL, isHighlighted ? TEAL : REVEALED],
-  );
+  const color = useTransform(progress, (value) => {
+    // CSS owns the palette so an in-progress reveal adapts to theme changes
+    // without remounting its tokens or touching its scroll timing.
+    const beforePeak = value < mid;
+    const mix = Math.max(0, Math.min(1, beforePeak
+      ? (value - start) / (mid - start) : (value - mid) / (end - mid)));
+    const from = beforePeak ? dimColor : TEAL;
+    const to = beforePeak || isHighlighted ? TEAL : REVEALED;
+    return `color-mix(in srgb, ${from} ${(1 - mix) * 100}%, ${to})`;
+  });
   const textShadow = useTransform(
     progress, [start, mid, end],
     [GLOW_OFF, GLOW_ON, isHighlighted ? GLOW_REST : GLOW_OFF],
@@ -280,7 +286,7 @@ export function ScrollRevealText({
             total={animatable}
             isHighlighted={isHighlighted}
             phase={phase}
-            dimColor={touch ? "rgba(255,255,255,0.46)" : UNREVEALED}
+            dimColor={touch ? "var(--site-reveal-touch, rgba(255,255,255,.46))" : UNREVEALED}
           />
         )
       )}

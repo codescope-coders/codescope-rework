@@ -218,7 +218,7 @@ export default function ContactForm() {
           whileHover={reduced ? undefined : { scale: 1.01 }}
           whileTap={reduced ? undefined : { scale: 0.98 }}
           transition={{ duration: DURATION.instant, ease: EASE_OUT }}
-          className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-2 px-7 py-3.5 site-solid-action bg-[#0a1c1a] text-white text-sm font-semibold rounded-full hover:bg-[#0f2a27] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {status === "sending" ? (
             <>

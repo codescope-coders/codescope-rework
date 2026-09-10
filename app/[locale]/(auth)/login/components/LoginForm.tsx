@@ -131,14 +131,14 @@ export function LoginForm() {
           initial={{ opacity: 0, x: enterX }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: exitX }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduce ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col gap-6"
         >
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="auth-form-title">
               {t("login_title")}
             </h1>
-            <p className="mt-1.5 text-sm text-subtitle-color">
+            <p className="mt-3 text-sm leading-relaxed text-subtitle-color">
               {t("login_subtitle")}
             </p>
           </div>
@@ -161,14 +161,15 @@ export function LoginForm() {
                   if (emailError) setEmailError(null);
                 }}
                 disabled={isLoading}
-                autoFocus
-                error={[emailError, send.error ? decodeError(send.error, "invalid_otp") : null]}
+                aria-invalid={!!emailError || !!send.error}
+                aria-describedby={emailError || send.error ? "login-email-error" : undefined}
               />
+              {(emailError || send.error) && <p id="login-email-error" role="alert" className="text-sm text-invalid-color">{emailError ?? decodeError(send.error, "invalid_otp")}</p>}
             </div>
 
             <Button
               type="submit"
-              className="w-full"
+              className="auth-submit w-full"
               disabled={isLoading || !canSubmit}
             >
               {isLoading && <Loader2 className="size-4 animate-spin" />}
@@ -183,7 +184,7 @@ export function LoginForm() {
           initial={{ opacity: 0, x: enterX }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: exitX }}
-          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduce ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col gap-6"
         >
           <div className="flex flex-col gap-3">
@@ -200,12 +201,12 @@ export function LoginForm() {
             </Button>
 
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              <h1 className="auth-form-title">
                 {t("verify_title")}
               </h1>
-              <p className="mt-1.5 text-sm text-subtitle-color">
+              <p className="mt-3 text-sm leading-relaxed text-subtitle-color">
                 {t("otp_sent")}{" "}
-                <span dir="ltr" className="font-semibold text-foreground">
+                <span dir="ltr" className="break-all font-semibold text-foreground">
                   {email.trim()}
                 </span>
               </p>
@@ -227,7 +228,7 @@ export function LoginForm() {
 
           <Button
             type="button"
-            className="w-full"
+            className="auth-submit w-full"
             onClick={() => submitCode(otp)}
             disabled={isLoading || otp.length < 6}
           >

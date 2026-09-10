@@ -50,7 +50,7 @@ export function StorefrontMock({ className = "" }: { className?: string }) {
   ];
 
   return (
-    <div className={`${surface} ${className}`} style={surfaceStyle}>
+    <div data-site-tone="dark" className={`${surface} ${className}`} style={surfaceStyle}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
         <span className="text-sm font-semibold text-white tracking-tight">
@@ -161,7 +161,7 @@ export function DashboardMock({ className = "" }: { className?: string }) {
   ];
 
   return (
-    <div className={`${surface} ${className} flex`} style={surfaceStyle}>
+    <div data-site-tone="dark" className={`${surface} ${className} flex`} style={surfaceStyle}>
       {/* Sidebar */}
       <div className="hidden sm:flex flex-col gap-1 w-[132px] shrink-0 p-3 border-e border-white/[0.06]">
         <div className="flex items-center gap-1.5 px-2 pb-3 mb-1">

@@ -84,7 +84,7 @@ function Mark({ box, locale }: { box: Box; locale: string }) {
         // Already trimmed and emitted at 2x the render ceiling; see the header
         // comment in `data/partners.ts` for why the optimizer is bypassed.
         unoptimized
-        className={`${common} opacity-70 group-hover:opacity-0`}
+        className={`site-partner-mono ${common} opacity-70 group-hover:opacity-0`}
         style={{ transitionTimingFunction: EASE }}
       />
       <Image

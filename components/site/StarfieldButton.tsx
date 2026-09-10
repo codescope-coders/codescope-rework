@@ -140,31 +140,20 @@ const ACCENT: Record<Accent, { glow: string; channels: string; alpha: (a: number
   purple: { glow: TS_PURPLE_GLOW, channels: TS_PURPLE_GLOW_CHANNELS, alpha: tsPurpleGlow },
 };
 
-/**
- * Both variants are DARK pills now, which is what the reference actually is —
- * a near-black face with a hairline, filling with light only on hover. The
- * earlier build kept `primary` as a solid teal face and gave it a white, quiet
- * treatment, because a teal light on a teal face is invisible. Making the face
- * dark solves that at the source, so both variants can carry the accent hue and
- * the real effect.
- *
- * ⚠️ They must still not look the same. The hierarchy is carried by the RING
- * and the field's strength, not by a fill: primary gets an accent-tinted
- * hairline and a field at full strength, secondary a neutral white hairline and
- * a field at roughly half. Flatten those and the page has two identical CTAs
- * sitting next to each other with nothing saying which one to press.
- */
+/** Filled primary actions use a quiet white sheen; secondary actions carry
+ * the brand-colored field. Face, text and border colors are theme tokens in
+ * public-theme.css, shared across all public CTA callers. */
 function resolveSpec(variant: "primary" | "secondary", accent: Accent): VariantSpec {
   const a = ACCENT[accent];
   return variant === "primary"
     ? {
         dot: 96,
-        core: a.glow,
-        edge: a.alpha(0),
+        core: "rgba(255,255,255,.75)",
+        edge: "rgba(255,255,255,0)",
         lapMs: 3200,
-        starChannels: a.channels,
-        starPeak: 0.72,
-        ring: a.alpha(0.4),
+        starChannels: "255, 255, 255",
+        starPeak: 0.08,
+        ring: "rgba(255,255,255,.2)",
       }
     : {
         dot: 96,
@@ -279,7 +268,7 @@ interface Props {
   children: React.ReactNode;
   /**
    * Extra classes for the WRAPPER. The pill's own padding, font, radius and
-   * colour stay on the caller's `<Link>` / `<button>` inside — this component
+   * sizing stay on the caller's `<Link>` / `<button>` inside — this component
    * introduces none of its own and reads the radius it needs off that child.
    *
    * ⚠️ Do NOT pass a `display` utility here — `hidden`, `flex`, `block`, or a
@@ -558,16 +547,15 @@ export function StarfieldButton({
     <Tag
       ref={hostRef}
       data-starfield={variant}
+      data-accent={accent}
       className={`relative inline-flex ${className}`}
     >
       {children}
 
       {active && (
         <>
-          {/* The field sits ABOVE the caller's face. Both faces are now
-              translucent, so it could sit under them — but it would then be
-              under the LABEL too on any caller that paints one, and the point
-              of measuring label contrast is that this layer is over it. */}
+          {/* The field sits above the face. Filled primary actions use a
+              quieter white shimmer to preserve the label's contrast. */}
           <canvas
             ref={canvasRef}
             aria-hidden="true"
@@ -581,7 +569,7 @@ export function StarfieldButton({
               ref={ringRef}
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
-              style={{ ...RING_MASK, padding: 1, background: spec.ring }}
+              style={{ ...RING_MASK, padding: 1, background: "var(--site-button-ring, " + spec.ring + ")" }}
             />
           )}
 

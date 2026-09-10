@@ -85,7 +85,7 @@ export default function LanguageSwitcher() {
         aria-busy={isPending}
         className={`flex items-center gap-1.5 min-h-11 px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white transition-colors duration-150 text-sm font-medium ${isPending ? "opacity-40 pointer-events-none" : ""}`}
       >
-        <GlobeHemisphereWestIcon size={15} weight="bold" className="text-zinc-400" />
+        <GlobeHemisphereWestIcon size={15} weight="bold" className="hidden min-[400px]:block text-zinc-400" />
         <span>{current.short}</span>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}

@@ -1,74 +1,28 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
-/**
- * The site's background: a field of code tokens that parts around the cursor.
- *
- * Replaces the 64px rule-grid this page used to sit on. Same rhythm, same
- * near-invisible weight at rest — the tokens sit on the grid the lines used to
- * draw, so nothing about the page's proportions changed. What is new is that
- * the field reacts: tokens inside a radius of the pointer are pushed outward
- * and lit in brand teal, and settle back when it leaves.
- *
- * ── ⚠️ Why this is a canvas and not ~350 elements ──────────────────────────
- * The technique is usually written one element per dot, each with its own
- * transform springs. That is affordable inside a 400px card and is not
- * affordable here: this layer is `fixed inset-0` on EVERY marketing page, so at
- * the grid's own 64px pitch a 1440x900 viewport holds ~350 tokens and a 4K
- * display ~1,700. As DOM that is thousands of spring subscriptions re-rendering
- * under a smooth-scroll loop that is already asking for every frame. One canvas
- * draws the whole field in a single pass with no reconciliation, and the token
- * count stops being an architectural decision.
- *
- * ── Why it idles at zero cost ─────────────────────────────────────────────
- * The loop is not always running. At rest the field is drawn ONCE and the rAF
- * is cancelled; a pointer move starts it, and it stops itself again a frame
- * after every token is within a tenth of a pixel of ITS OWN TARGET — which,
- * with the pointer parked over the page, is a displaced position rather than
- * home. A reader who is not moving the mouse pays for nothing.
- *
- * ⚠️ That distinction is the whole fix. The test used to be "is every offset
- * near zero", i.e. distance from HOME, and it was additionally gated on the
- * pointer having left the document. So a pointer merely resting anywhere on the
- * page held ~30 tokens at a large permanent offset, the test could never come
- * back true, and the loop ran at 60fps for as long as the tab was open —
- * measured at 69,660 token draws per second. Only the pointer-off-page half of
- * the condition ever stopped it, which is exactly the case the test covered.
- */
-
-/**
- * Much denser than the 64px rule-grid this replaced. A grid of lines can be
- * sparse because the lines connect; loose glyphs cannot, so at anything near
- * the old pitch the tokens read as scattered rather than as a field. 34px is
- * ~3.5x the token count of the grid it replaced and is where the eye starts
- * joining them into a surface.
- */
-const SPACING = 34;
-/** How far from the pointer a token starts reacting. */
-const RADIUS = 190;
-/** Peak displacement, in px, for a token directly under the pointer. */
-const PUSH = 15;
-/** Per-frame approach to the target offset. Higher is snappier. */
-const EASE = 0.11;
-/**
- * Below this, the field is treated as settled and the loop stops. Measured as
- * the largest remaining distance from any token to its TARGET offset — not from
- * zero, which would never be reached while the pointer is on the page.
- */
-const SETTLED = 0.1;
-/**
- * Radius of the subtractive hole punched at the pointer.
- *
- * Deliberately well under `RADIUS`: the field parts and lights across the full
- * 190px, and only dissolves in the middle 105. That surviving lit ring is the
- * effect — let `HOLE` approach `RADIUS` and the lighting has nothing left to
- * happen on, so it reads as a bug rather than as a scope.
- */
-const HOLE = 105;
-
-const FONT = '11px ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace';
+/** Quiet code texture in the open spaces between public-site content.
+ * One canvas, cached content bounds, and a short-lived response to movement.
+ * The animation stops after the pointer rests and the response fades away. */
+const SPACING = 56;
+const RADIUS = 220;
+const PUSH = 4;
+const SETTLED = 0.03;
+const HOLD_MS = 700;
+const FADE_MS = 1800;
+const BASE_SIZE = 14;
+const SIZE_GAIN = 2;
+const FONTS = Array.from({ length: SIZE_GAIN * 2 + 1 }, (_, i) =>
+  `${BASE_SIZE + i / 2}px ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace`,
+);
+const CONTENT = "h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,a,button,input,textarea,select,summary,[data-code-field-exclude]";
+const smoothstep = (value: number) => {
+  const t = Math.max(0, Math.min(1, value));
+  return t * t * (3 - 2 * t);
+};
 
 /**
  * Real tokens rather than loose punctuation. A grid of stray `;` and `{` reads
@@ -82,7 +36,7 @@ const TOKENS = [
 ];
 
 /** Base ink — the old grid line's weight, so the field is texture, not content. */
-const REST = "rgba(255, 255, 255, 0.055)";
+const REST_OPACITY = 0.007;
 /** Teal, as rgb channels — the lit state near the pointer. */
 const LIT = "8, 186, 168";
 
@@ -100,6 +54,8 @@ interface Token {
   alpha: number;
   ox: number;
   oy: number;
+  proximity: number;
+  clearance: number;
 }
 
 /**
@@ -115,6 +71,7 @@ function hash(col: number, row: number): number {
 export function CodeFieldBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduced = useReducedMotionSafe();
+  const pathname = usePathname();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -125,6 +82,24 @@ export function CodeFieldBackground() {
     let width = 0;
     let height = 0;
     let raf = 0;
+    let restOpacity = REST_OPACITY;
+    let restRGB = [255, 255, 255];
+    let litRGB = LIT.split(",").map(Number);
+    let litStrength = 0.30;
+    const media = window.matchMedia(INTERACTIVE);
+    const site = canvas.closest('[data-site="public"]');
+    let boundsStale = true;
+    let lastMove = -Infinity;
+    let previousFrame = 0;
+    let disposed = false;
+    const readPalette = () => {
+      const styles = getComputedStyle(canvas);
+      restOpacity = Number(styles.getPropertyValue("--site-field-rest-opacity").trim() || REST_OPACITY);
+      restRGB = document.documentElement.getAttribute("data-public-theme") === "light" ? [23, 53, 44] : [255, 255, 255];
+      litRGB = (styles.getPropertyValue("--site-field-lit").trim() || LIT).split(",").map(Number);
+      litStrength = Number(styles.getPropertyValue("--site-field-strength").trim() || "0.30");
+    };
+
     // Off-screen until the pointer arrives, so nothing is lit on first paint.
     const mouse = { x: -9999, y: -9999 };
 
@@ -152,9 +127,34 @@ export function CodeFieldBackground() {
             alpha: 0.55 + hash(row, col) * 0.75,
             ox: 0,
             oy: 0,
+            proximity: 0,
+            clearance: 1,
           });
         }
       }
+      boundsStale = true;
+    }
+
+    // Read content geometry only after layout/scroll changes, not pointer moves.
+    // Cache a feathered exclusion factor per token; its padding includes the
+    // glyph's width and small displacement, so strokes cannot cross the text.
+    function measureContent() {
+      if (!site) return;
+      const boxes = Array.from(site.querySelectorAll(CONTENT))
+        .filter((element) => !element.closest('[aria-hidden="true"],[hidden],.site-menu-outgoing-page') && getComputedStyle(element).visibility !== "hidden")
+        .map((element) => element.getBoundingClientRect())
+        .filter((box) => box.width > 0 && box.height > 0 && box.bottom > -44 && box.top < height + 44);
+      for (const token of tokens) {
+        let clearance = 1;
+        for (const box of boxes) {
+          const dx = Math.max(box.left - token.x, 0, token.x - box.right);
+          const dy = Math.max(box.top - token.y, 0, token.y - box.bottom);
+          clearance = Math.min(clearance, smoothstep((Math.hypot(dx, dy) - 20) / 24));
+          if (clearance === 0) break;
+        }
+        token.clearance = clearance;
+      }
+      boundsStale = false;
     }
 
     /**
@@ -163,11 +163,16 @@ export function CodeFieldBackground() {
      */
     let maxDelta = 0;
 
-    function draw() {
+    function draw(now = performance.now(), dt = 1 / 60) {
       if (!ctx) return;
       maxDelta = 0;
       ctx.clearRect(0, 0, width, height);
-      ctx.font = FONT;
+      if (reduced || !media.matches) return;
+      if (boundsStale) measureContent();
+      const activity = 1 - smoothstep((now - lastMove - HOLD_MS) / FADE_MS);
+      const approach = 1 - Math.exp(-dt * 12);
+      let fontIndex = 0;
+      ctx.font = FONTS[fontIndex];
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
@@ -186,7 +191,7 @@ export function CodeFieldBackground() {
           // words for the composite were "not smooth, sharp". Smoothstep is
           // flat at both ends, so the light now breathes out to nothing.
           const f = 1 - dist / RADIUS;
-          const ease = f * f * (3 - 2 * f);
+          const ease = smoothstep(f) * activity;
           const force = ease * PUSH;
           const angle = Math.atan2(dy, dx);
           tx = Math.cos(angle) * force;
@@ -201,70 +206,42 @@ export function CodeFieldBackground() {
         if (dox > maxDelta) maxDelta = dox;
         if (doy > maxDelta) maxDelta = doy;
 
-        t.ox += (tx - t.ox) * EASE;
-        t.oy += (ty - t.oy) * EASE;
+        // Include brightness/size in the stop condition. Leaving the field
+        // fades the response out even after positional movement has settled.
+        maxDelta = Math.max(maxDelta, Math.abs(lit - t.proximity) * 20);
+        t.ox += (tx - t.ox) * approach;
+        t.oy += (ty - t.oy) * approach;
+        t.proximity += (lit - t.proximity) * approach;
 
-        if (lit > 0.01) {
-          // Teal fades in over the resting white rather than replacing it, so a
-          // token brightens on approach instead of changing colour abruptly.
-          // The grain's weight is deliberately compressed here (a quarter of
-          // its resting swing): full grain made adjacent lit tokens differ by
-          // 2x in brightness, which in motion reads as SPARKLE — pinpoints
-          // popping — rather than as a glow moving over a field.
-          // Halved from 0.34 on the founder's third pass over this effect
-          // ("that shine ... remove it or reduce it"): at this weight the teal
-          // is a presence you notice when looking FOR it, not a lamp you
-          // carry around the page.
-          ctx.fillStyle = `rgba(${LIT}, ${(0.03 + lit * 0.17) * (0.75 + 0.25 * t.alpha)})`;
-        } else {
-          ctx.fillStyle = REST;
-          ctx.globalAlpha = t.alpha;
+        const proximity = t.proximity;
+        const tint = Math.min(1, proximity * 3);
+        const r = Math.round(restRGB[0] + (litRGB[0] - restRGB[0]) * tint);
+        const g = Math.round(restRGB[1] + (litRGB[1] - restRGB[1]) * tint);
+        const b = Math.round(restRGB[2] + (litRGB[2] - restRGB[2]) * tint);
+        const opacity = (restOpacity + proximity * litStrength) * (0.8 + 0.2 * t.alpha) * t.clearance;
+        if (opacity < 0.002) continue;
+        ctx.fillStyle = `rgba(${r},${g},${b},${opacity})`;
+        // Prebuilt half-pixel font steps avoid creating font strings per frame.
+        const nextFont = Math.round(proximity * SIZE_GAIN * 2);
+        if (nextFont !== fontIndex) {
+          fontIndex = nextFont;
+          ctx.font = FONTS[fontIndex];
         }
         ctx.fillText(t.ch, t.x + t.ox, t.y + t.oy);
         ctx.globalAlpha = 1;
       }
 
-      // ── The hole ────────────────────────────────────────────────────────
-      // ⚠️ `destination-out`, NOT a fill in the page ground colour. The
-      // reference this borrows from can paint its own ground because its canvas
-      // IS the bottom layer; ours is transparent and, inside the hero, now has
-      // a lit shader behind it — painting #09090b there would stamp a dark disc
-      // over the beam. Erasing removes the tokens and nothing else, so it
-      // composites correctly over whatever happens to be underneath.
-      if (mouse.x !== -9999) {
-        ctx.save();
-        ctx.globalCompositeOperation = "destination-out";
-        const g = ctx.createRadialGradient(
-          mouse.x,
-          mouse.y,
-          0,
-          mouse.x,
-          mouse.y,
-          HOLE,
-        );
-        // Four stops tracing an S-curve. The old three had corners at 0.55
-        // and at the rim, and the rim corner sat exactly where the lit ring
-        // peaks — the two edges compounded into a visible bright annulus
-        // around the pointer.
-        g.addColorStop(0, "rgba(0,0,0,1)");
-        g.addColorStop(0.45, "rgba(0,0,0,0.78)");
-        g.addColorStop(0.75, "rgba(0,0,0,0.3)");
-        g.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = g;
-        ctx.fillRect(mouse.x - HOLE, mouse.y - HOLE, HOLE * 2, HOLE * 2);
-        ctx.restore();
-      }
     }
 
-    function tick() {
-      draw();
-      // Every token is now within `SETTLED` of where it was heading, so the next
-      // frame would be indistinguishable from this one — stop until the pointer
-      // moves again and `wake()` restarts it. No `mouse.x === -9999` clause:
-      // "the pointer left" is not what makes the field static, and requiring it
-      // is what kept the loop alive under a resting cursor.
-      if (maxDelta < SETTLED) {
+    function tick(now: number) {
+      const dt = previousFrame ? Math.min(0.05, (now - previousFrame) / 1000) : 1 / 60;
+      previousFrame = now;
+      draw(now, dt);
+      // Wait through the brief hold/fade, then sleep completely. Measuring
+      // proximity as well as displacement prevents a half-finished fade.
+      if (now >= lastMove + HOLD_MS + FADE_MS && maxDelta < SETTLED) {
         raf = 0;
+        previousFrame = 0;
         return;
       }
       raf = requestAnimationFrame(tick);
@@ -274,43 +251,67 @@ export function CodeFieldBackground() {
       if (!raf) raf = requestAnimationFrame(tick);
     }
 
+    readPalette();
     layout();
     draw();
+    // Palette changes repaint once; no new perpetual loop or layout work.
+    const themeObserver = new MutationObserver(() => { readPalette(); draw(); });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-public-theme"] });
 
-    const onResize = () => {
-      layout();
-      draw();
+    const invalidateBounds = () => { boundsStale = true; wake(); };
+    const onPageArrival = (event: AnimationEvent) => {
+      if (event.animationName === "site-page-menu-enter") invalidateBounds();
     };
-    window.addEventListener("resize", onResize);
-
-    // Reduced motion, or a device that cannot hover: the field is painted once
-    // and never touched again. It is texture either way.
-    const interactive = !reduced && window.matchMedia(INTERACTIVE).matches;
-    let onMove: ((e: MouseEvent) => void) | undefined;
-    let onLeave: (() => void) | undefined;
-
-    if (interactive) {
-      onMove = (e: MouseEvent) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-        wake();
-      };
-      onLeave = () => {
-        mouse.x = -9999;
-        mouse.y = -9999;
-        wake();
-      };
-      window.addEventListener("mousemove", onMove);
-      document.addEventListener("mouseleave", onLeave);
+    const onResize = () => { layout(); wake(); };
+    const onMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      lastMove = performance.now();
+      wake();
+    };
+    const onLeave = () => {
+      // Fade in place instead of moving the focal point abruptly off screen.
+      lastMove = Math.min(lastMove, performance.now() - HOLD_MS);
+      wake();
+    };
+    let listening = false;
+    function syncInteraction() {
+      const enabled = !reduced && media.matches;
+      if (enabled === listening) return;
+      listening = enabled;
+      if (enabled) {
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("scroll", invalidateBounds, { passive: true });
+        document.addEventListener("mouseleave", onLeave);
+      } else {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("scroll", invalidateBounds);
+        document.removeEventListener("mouseleave", onLeave);
+        lastMove = -Infinity;
+      }
+      invalidateBounds();
     }
+    syncInteraction();
+    media.addEventListener("change", syncInteraction);
+    window.addEventListener("resize", onResize);
+    site?.addEventListener("animationend", onPageArrival as EventListener);
+    const resizeObserver = new ResizeObserver(invalidateBounds);
+    if (site) resizeObserver.observe(site);
+    document.fonts.ready.then(() => { if (!disposed) invalidateBounds(); });
 
     return () => {
+      disposed = true;
+      themeObserver.disconnect();
+      resizeObserver.disconnect();
+      media.removeEventListener("change", syncInteraction);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
-      if (onMove) window.removeEventListener("mousemove", onMove);
-      if (onLeave) document.removeEventListener("mouseleave", onLeave);
+      site?.removeEventListener("animationend", onPageArrival as EventListener);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", invalidateBounds);
+      document.removeEventListener("mouseleave", onLeave);
     };
-  }, [reduced]);
+  }, [reduced, pathname]);
 
   return (
     <canvas
