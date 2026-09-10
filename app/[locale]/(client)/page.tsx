@@ -176,29 +176,11 @@ export default async function HomePage() {
             </p>
           </FadeIn>
 
-          {/* Real product — the traveler storefront across devices.
-              The composite is the section's centerpiece, so it runs wider than
-              the copy column above it and carries its own ambient wash. Capped
-              at 1160px: the source is 1742px, and anything wider drops the
-              render below the 1.5× density that keeps the wordmarks crisp.
-              The picture does NOT mirror under RTL — it is a photograph of real
-              product UI, and flipping it would mirror the product's own
-              chrome. Only the layout around it swaps sides.
-
-              The asset is alpha-keyed, so the wash below shows THROUGH the gaps
-              between the devices rather than being occluded by a black plate.
-              It is a plain positioned sibling painted before the image — NOT
-              `-z-10`, which would drop it behind the section's own
-              `bg-zinc-900/30` and mute it.
-
-              PNG, not WebP, and that is load-bearing: Next 16.1.3's image
-              optimizer FLATTENS the alpha of a WebP *source* (verified — the
-              same keyed pixels served through `/_next/image` come back with
-              α=255 everywhere), while a PNG source round-trips transparency
-              intact and is still delivered to the browser as WebP — measured
-              121KB at the widest size, against a 444KB source on disk.
-              Shipping the .webp source silently restored the black plate this
-              asset was keyed to remove. */}
+          {/* Generated studio mockup based on the existing Tourscope screens.
+              Complete device silhouettes and a dark studio ground replace the
+              rough alpha-keyed cutout. Blend the dark ground and feather only
+              the empty outer margin, keeping device silhouettes fully opaque.
+              Product imagery keeps its original orientation in both locales. */}
           <FadeIn delay={0.05}>
             {/* Below `sm` the negative inline margin cancels the section's own
                 `px-6` so three devices are not squeezed into 327px — the
@@ -212,13 +194,17 @@ export default async function HomePage() {
                 style={{ background: "radial-gradient(ellipse 62% 66% at 50% 50%, rgba(111,0,255,0.26), transparent 72%)" }}
               />
               <Image
-                src="/Mockups/platform-devices.png"
+                src="/Mockups/platform-devices-studio.webp"
                 alt={t("platform.devicesAlt")}
-                width={1742}
-                height={903}
+                width={1774}
+                height={887}
                 priority={false}
                 sizes="(max-width: 1200px) 100vw, 1160px"
-                className="relative w-full h-auto select-none"
+                className="relative w-full h-auto select-none mix-blend-lighten"
+                style={{
+                  maskImage: "linear-gradient(90deg, transparent, black 4%, black 96%, transparent), linear-gradient(0deg, transparent, black 4%, black 96%, transparent)",
+                  maskComposite: "intersect",
+                }}
               />
             </div>
           </FadeIn>
